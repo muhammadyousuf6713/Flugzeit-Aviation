@@ -6,10 +6,15 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\InquiryController;
+use App\Http\Controllers\PermissionAssignmentController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -88,18 +93,18 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     // Inquiry Types
-    Route::get('/inquiry', [InquiryController::class, 'get_inquiry_list']);
+    Route::get('/inquiry', [InquiryController::class, 'get_inquiry_list'])->middleware(['permission:Inquiry list']);
     Route::get('/get_followup_details/{id}', [AjaxController::class, 'get_followup_details']);
-    Route::get('/inquiry_edit/{inquiry_id}', [InquiryController::class, 'edit_inquiry_index']);
+    // Route::get('/inquiry_edit/{inquiry_id}', [InquiryController::class, 'edit_inquiry_index']);
     Route::get('/inquiry_ajax_list', [InquiryController::class, 'getdata']);
-    Route::get('/inquiry/create', [InquiryController::class, 'create']);
+    Route::get('/inquiry/create', [InquiryController::class, 'create'])->middleware(['permission:Inquiry add']);
     Route::get('/inquiry_test/create', [InquiryController::class, 'create_test']);
     Route::post('/inquiry/store', [InquiryController::class, 'store']);
     Route::post('/add_inquiry_remarks', [InquiryController::class, 'add_inquiry_remarks']);
     Route::post('/add_followup_remarks', [InquiryController::class, 'add_followup_remarks']);
     Route::post('/inquiry_edit_update', [InquiryController::class, 'inquiry_edit_update']);
     Route::get('/append_services_edit/{inq_id}', [InquiryController::class, 'append_services_edit']);
-    Route::get('/edit_inquiry/{id}', [InquiryController::class, 'edit'])->name('edit_inquiry');
+    Route::get('/edit_inquiry/{id}', [InquiryController::class, 'edit'])->name('edit_inquiry')->middleware(['permission:Inquiry edit']);
     Route::post('/update_inquiry/{id}', [InquiryController::class, 'update'])->name('update_inquiry');
     Route::get('/delete_inquiry/{id}', [InquiryController::class, 'destroy'])->name('delete_inquiry');
     Route::get('/get_sub_services/{id}', [AjaxController::class, 'get_sub_services'])->name('get_sub_services');
@@ -121,6 +126,54 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('users/store', [UsersController::class, 'store']);
     Route::get('users/edit/{id}', [UsersController::class, 'edit']);
     Route::post('users/update/{id}', [UsersController::class, 'update']);
+
+
+
+
+    //Roles
+    Route::group(['prefix' => 'roles', 'middleware' => ['auth']], function () {
+        Route::get('', [RoleController::class, 'index']);
+        Route::get('/add', [RoleController::class, 'create']);
+        Route::post('/store/', [RoleController::class, 'store']);
+        Route::get('/edit/{id}', [RoleController::class, 'edit']);
+        Route::post('/edit/{id}', [RoleController::class, 'update']);
+        Route::post('/delete', [RoleController::class, 'destroy']);
+    });
+
+    // create permission
+    Route::prefix('permission')->middleware(['permission:Super-Admin'])->group(function () {
+        Route::get('/', [PermissionController::class, 'index'])->name('permission.index'); // List permission
+        Route::get('/create', [PermissionController::class, 'create'])->name('permission.create'); // Create form
+        Route::get('/get-sub-modules', [PermissionController::class, 'getSubModules'])->name('get.sub.modules');
+        Route::post('/', [PermissionController::class, 'store'])->name('permission.store'); // Store permission
+        Route::get('/{permission}/edit', [PermissionController::class, 'edit'])->name('permission.edit'); // Edit form
+        Route::put('/{permission}', [PermissionController::class, 'update'])->name('permission.update'); // Update permission
+        Route::delete('/{permission}', [PermissionController::class, 'destroy'])->name('permission.destroy'); // Delete permission
+    });
+
+    //asign permission to role
+    Route::get('roles/permission/{id?}', [PermissionController::class, 'permission_index']);
+    Route::post('roles/permission/{role_id}', [PermissionController::class, 'assignPermissions']);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Route::get('/create-table', [App\Http\Controllers\Admin\AdminController::class, 'createtable']);
 });
 
 
@@ -135,6 +188,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/reset-password/{token}', [ResetController::class, 'resetPass'])->name('password.reset');
     Route::post('/reset-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
 });
+
 
 
 Route::get('/login', function () {

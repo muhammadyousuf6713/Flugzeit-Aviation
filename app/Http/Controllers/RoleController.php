@@ -19,42 +19,16 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    protected $role_id;
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    //     $this->middleware(function ($request, $next) {
-    //         $this->role_id = Auth::user()->role_id;
-    //         //    $slug_filter = preg_replace('/[0-9]+/', '', $request->path());
-    //         //    $slug_filter = preg_replace('/[0-9]+/', '', $request->path());
-    //         $ex = explode('/', $request->path());
-    //         if (count($ex) >= 3) {
-    //             $sliced = array_slice($ex, 0, -1);
-    //         } else {
-    //             $sliced = $ex;
-    //         }
 
-    //         $string = implode("/", $sliced);
-    //         //                 dd($string);
-    //         if (checkConstructor($this->role_id, count($ex) >= 3 ? $string . '/' : $string) == 1) {
-    //             return $next($request);
-    //         } else if (strpos($request->path(), 'store') !== false) {
-    //             return $next($request);
-    //         } else if (strpos($request->path(), 'update') !== false) {
-    //             return $next($request);
-    //         } else {
-    //             abort(404);
-    //         }
-    //     });
-    // }
 
     public function index()
     {
-        $roles = DB::table('roles')->where('id_roles', '!=', 45)->get()->toArray();
+        $roles = DB::table('roles')->where('id', '!=', 45)->get()->toArray();
         // dd($roles);
         //        print_r($roles); exit;
-        return view('Roles.index')->with(compact('roles'));
+        return view('roles.index')->with(compact('roles'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -112,7 +86,7 @@ class RoleController extends Controller
         $menu = 'role';
         $submenu = 'role';
         $page = 'edit';
-        $role = DB::table('roles')->where('id_roles', $id)->first();
+        $role = DB::table('roles')->where('id', $id)->first();
 
         return view('Roles.edit')->with(compact('title', 'menu', 'submenu', 'page', 'role'));
     }

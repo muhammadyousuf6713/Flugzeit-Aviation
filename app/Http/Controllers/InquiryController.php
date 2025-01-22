@@ -60,7 +60,7 @@ class InquiryController extends Controller
             ->groupBy('inquiry.id_inquiry')
             ->orderBy('inquiry.id_inquiry', 'DESC')
             ->get()->toArray();
-
+        // dd($inquiry);
         $saved_remarks = remarks::select('*', 'users.name as remarks_by', 'remarks.created_at as created_on')
             ->join('users', 'users.id', '=', 'remarks.created_by', 'left')
             ->get()->toArray();
@@ -288,7 +288,7 @@ class InquiryController extends Controller
                 return $inquiry->customer ? $inquiry->customer->customer_phone2 : '-';
             })
             ->addColumn('action', function ($inquiry) {
-                $html = '<a class=" text-secondary  "  href="' . url('/inquiry_edit/' . \Crypt::encrypt($inquiry->id_inquiry)) . '"><i class="fa fa-pen text-secondary"></i></a>';
+                $html = '<a class=" text-secondary  "  href="' . url('/edit_inquiry/' . \Crypt::encrypt($inquiry->id_inquiry)) . '"><i class="fa fa-pen text-secondary"></i></a>';
                 if (!empty($inquiry->services_sub_services)) {
                     $html .= '<a class="text-secondary  ms-4" style="text-decoration: none;" href="' . url('follow_up/' . $inquiry->id_inquiry) . '"><i class="fa fa-plus text-secondary"></i><span style="font-size:1rem;"> Remarks</span></a>';
                 }
@@ -355,7 +355,7 @@ class InquiryController extends Controller
         }
 
         // dd($sale_persons);
-        return view('./inquiry.create', compact('inquiry_types', 'get_permission_data', 'sales_person', 'sales_reference', 'customers', 'countries', 'packages', 'services', 'airlines', 'hotels', 'sale_persons', 'campaigns'));
+        return view('inquiry.create', compact('inquiry_types', 'get_permission_data', 'sales_person', 'sales_reference', 'customers', 'countries', 'packages', 'services', 'airlines', 'hotels', 'sale_persons', 'campaigns'));
 
         //    dd($sale_persons);
 

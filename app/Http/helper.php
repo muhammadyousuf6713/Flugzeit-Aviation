@@ -37,6 +37,7 @@ use App\quotation_issuance;
 use App\quotations_detail;
 use App\room_type;
 use App\User;
+use App\City;
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivityLogStatus;
 
@@ -112,13 +113,204 @@ function getuserCity()
     return $user_city[0]->city;
 }
 
+function getCity($city_id)
+{
+    $city_name = null;
+    $city_name_urdu = null;
+
+    $city = City::where('id_city', $city_id)->first();
+
+    if ($city !== null) {
+        $city_name = $city->city_name;
+        $city_name_urdu = $city->city_name_urdu;
+        return $city_name . ' - ' . $city_name_urdu;
+    } else {
+        return null;
+    }
+}
+
+// function getCustomerBalance($customer_id, $from, $till, $business_id, $type)
+// {
+//     // Determine the date condition based on the $till parameter
+//     $where = $till > 0
+//         ? "inv.created_at >= '$from' AND inv.created_at <= '$till'"
+//         : "inv.created_at <= '$from'";
+
+//     // Retrieve the transaction account ID
+//     $transactionId = getTransactionAccountId('RECEIVABLES FROM CUSTOMER');
+
+//     // Build the query with placeholders to avoid SQL injection
+//     $sql = "
+//         SELECT
+//             inv.customer_id,
+//             SUM(inv.balance) AS balance,
+//             SUM(inv.paid) AS paid
+//         FROM
+//             sales AS inv
+//         WHERE
+//             $where AND inv.customer_id = :customer_id AND inv.business_id = :business_id
+//         GROUP BY
+//             inv.customer_id
+//     ";
+
+//     // Use DB::select with parameter binding to prevent SQL injection
+//     try {
+//         $res = DB::select($sql, [
+//             'customer_id' => $customer_id,
+//             'business_id' => $business_id
+//         ]);
+
+//         // Process the result
+//         if (!empty($res)) {
+//             $response = $res[0]->balance - $res[0]->return_amount - $res[0]->paid;
+//         } else {
+//             $response = 0;
+//         }
+//     } catch (\Exception $e) {
+//         // Log the error and return a default value
+//         \Log::error("Error in getCustomerBalance: " . $e->getMessage());
+//         $response = 0;
+//     }
+
+//     return $response;
+// }
+
+// function getSupplierBalance($customer_id, $from, $till, $business_id, $type)
+// {
+
+//     //$customer_id = 9;
+//     if ($till > 0) {
+//         $where = "av.created_at >= '$from' AND av.created_at <= '$till' AND avd.transaction_account_id = 25 AND av.bp_type = 'Vendors' AND av.bp_id = '$customer_id' AND av.deleted_at IS NULL ";
+//     } else {
+//         $where = "av.created_at < '$from' AND avd.transaction_account_id = 25 AND av.bp_type = 'Vendors' AND av.bp_id = '$customer_id' AND av.deleted_at IS NULL ";
+//     }
+
+//     $sql = "SELECT ifnull(sum(avd.debit) - sum(avd.credit) ,0) as balance FROM account_voucher as av
+//     JOIN account_voucher_details as avd on avd.account_voucher_id = av.id_account_voucher where $where ";
+
+//     $res = DB::select($sql);
+//     if (!empty($res)) {
+//         $response = $res[0]->balance;
+//     } else {
+//         $response = 0;
+//     }
+//     return $response;
+// }
+// function getSingleCustomerBalance($customer_id)
+// {
+//     $transactionId = getTransactionAccountId('RECEIVABLES FROM CUSTOMER');
+//     $sql = "SELECT sum(avd.amount) - sum(avd.credit) as balance FROM vouchers_unique_number as av
+//             JOIN vouchers as avd on avd.vouchers_unique_number_id = av.id_vouchers_unique_number where avd.partner_name = '$customer_id' AND business_partner_type = 'customer'  AND  avd.account_no = $transactionId GROUP by avd.partner_name ";
+//     //
+//     $res =  DB::select($sql);
+//     if (!empty($res)) {
+
+//         $response = $res[0]->balance;
+//     } else {
+//         $response = 0;
+//     }
+//     return $response;
+// }
+
+function getCustomerBalance($customer_id, $from, $till, $type)
+{
+    $where = $till
+        ? "inv.created_at BETWEEN :from AND :till"
+        : "inv.created_at <= :from";
+
+    $sql = "
+        SELECT
+            SUM(inv.balance) AS balance,
+            SUM(inv.paid) AS paid,
+            IFNULL(SUM(inv.return_amount), 0) AS return_amount
+        FROM
+            sales AS inv
+        WHERE
+            $where AND inv.customer_id = :customer_id
+        GROUP BY
+            inv.customer_id
+    ";
+
+    try {
+        $res = DB::select($sql, [
+            'from' => $from,
+            'till' => $till,
+            'customer_id' => $customer_id,
+        ]);
+
+        return !empty($res) ? $res[0]->balance - $res[0]->return_amount - $res[0]->paid : 0;
+    } catch (\Exception $e) {
+        \Log::error("Error in getCustomerBalance: " . $e->getMessage());
+        return 0;
+    }
+}
+function getSupplierBalance($supplier_id, $from, $till, $type)
+{
+    $where = $till
+        ? "av.created_at BETWEEN :from AND :till"
+        : "av.created_at <= :from";
+
+    $sql = "
+        SELECT
+            IFNULL(SUM(avd.debit) - SUM(avd.credit), 0) AS balance
+        FROM
+            vouchers_unique_number AS av
+        JOIN
+            vouchers AS avd ON avd.vouchers_unique_number_id = av.id_vouchers_unique_number
+        WHERE
+            $where AND avd.business_partner_type = 'supplier' AND avd.partner_name = :supplier_id AND avd.account_no = 25
+    ";
+
+    try {
+        $res = DB::select($sql, [
+            'from' => $from,
+            'till' => $till,
+            'supplier_id' => $supplier_id,
+        ]);
+
+        return !empty($res) ? $res[0]->balance : 0;
+    } catch (\Exception $e) {
+        \Log::error("Error in getSupplierBalance: " . $e->getMessage());
+        return 0;
+    }
+}
+function getSingleCustomerBalance($customer_id)
+{
+    $transactionId = getTransactionAccountId('RECEIVABLES FROM CUSTOMER');
+
+    $sql = "
+        SELECT
+            SUM(avd.amount) - SUM(avd.credit) AS balance
+        FROM
+            vouchers_unique_number AS av
+        JOIN
+            vouchers AS avd ON avd.vouchers_unique_number_id = av.id_vouchers_unique_number
+        WHERE
+            avd.partner_name = :customer_id AND avd.account_no = :transaction_id AND av.business_partner_type = 'customer'
+        GROUP BY
+            avd.partner_name
+    ";
+
+    try {
+        $res = DB::select($sql, [
+            'customer_id' => $customer_id,
+            'transaction_id' => $transactionId,
+        ]);
+
+        return !empty($res) ? $res[0]->balance : 0;
+    } catch (\Exception $e) {
+        \Log::error("Error in getSingleCustomerBalance: " . $e->getMessage());
+        return 0;
+    }
+}
+
 
 
 function getTransactionAccountId($transaction_name)
 {
     $account_map = DB::table('transaction_account')->select()
         ->where(DB::raw('LOWER(transaction_account_name)'), strtolower($transaction_name))
-        ->where('business_id', auth()->user()->business_id)
+        // ->where('business_id', auth()->user()->business_id)
         ->first();
 
     return  empty($account_map) ? 0 : $account_map->id_transaction_account;
@@ -409,13 +601,13 @@ function check_payment($quote_id, $total_amount)
     // dd( $get_paid_amount);
     $get_value_percent = general_prefrence::where('type', 'initial_payment')->select('value')->first();
     // dd($get_value_percent);
-//    $get_initial_amount = ($get_value_percent->value * $total_amount) / 100;
+    //    $get_initial_amount = ($get_value_percent->value * $total_amount) / 100;
     // dd($get_initial_amount);
-//    if ($get_paid_amount >= $get_initial_amount) {
-//        return true;
-//    } else {
-        return true;
-//    }
+    //    if ($get_paid_amount >= $get_initial_amount) {
+    //        return true;
+    //    } else {
+    return true;
+    //    }
 }
 
 function get_total_quotation_amount($quote_details_id)
@@ -493,7 +685,7 @@ function get_need_follow_up_remarks($follow_id)
 }
 function get_customer($inq_id)
 {
-//     dd($inq_id);
+    //     dd($inq_id);
     $inq_details = inquiry::where('id_inquiry', $inq_id)->select('customer_id')->first();
 
     $customer_details = Customer::where('id_customers', $inq_details['customer_id'])->select('customer_name')->first();
@@ -516,7 +708,8 @@ function get_services_and_sub_services($inq_id)
     return $get_inq_details;
 }
 
-function get_hotel_issuance_details($q_id) {
+function get_hotel_issuance_details($q_id)
+{
     // dd($follow_id);
     $details = quotations_detail::where('quotation_id', $q_id)->where('services_type', "Hotel")->first();
 
@@ -550,20 +743,20 @@ function get_land_issuance_details($q_id)
     // dd($follow_id);
     $details = quotations_detail::where('quotation_id', $q_id)->where('services_type', "Land Services")->first();
     // dd($details);
-    if($details){
-    foreach (json_decode($details->all_entries) as $dec) {
-        // dd(json_decode($details->all_entries));
-        // dd($dec);
-        $get_land_services = Landservicestypes::where('id_land_and_services_types', $dec->land_service)->select()->first();
-        foreach (json_decode($get_land_services->total_entries) as $key => $land_dec) {
-            // dd($land_dec);
-            if ($dec->transport) {
-                $details = [
-                    'transport' => $land_dec->transport
-                ];
+    if ($details) {
+        foreach (json_decode($details->all_entries) as $dec) {
+            // dd(json_decode($details->all_entries));
+            // dd($dec);
+            $get_land_services = Landservicestypes::where('id_land_and_services_types', $dec->land_service)->select()->first();
+            foreach (json_decode($get_land_services->total_entries) as $key => $land_dec) {
+                // dd($land_dec);
+                if ($dec->transport) {
+                    $details = [
+                        'transport' => $land_dec->transport
+                    ];
+                }
             }
         }
-    }
     }
 
     return $details;
@@ -589,14 +782,464 @@ function get_flight_issuance_details($q_id)
     return $details_val;
 }
 
-function get_my_banks(){
+function get_my_banks()
+{
     $bank_accounts = \App\bank_accounts::get();
     return $bank_accounts;
 }
-function get_team_name($id){
-    if($id){
-        $team = \App\department_team::where('id_department_teams',$id)->select('team_name')->first();
+function get_team_name($id)
+{
+    if ($id) {
+        $team = \App\department_team::where('id_department_teams', $id)->select('team_name')->first();
         // dd($team);
         return $team->team_name;
+    }
+
+
+    function getAllStockvalue($from_date, $to_date)
+    {
+        // dd($from_date);
+        // exit;
+        $sql = "SELECT
+            a.brand_name,
+            a.average_price,
+            SUM(a.total_stock) AS total_stock,
+            SUM(batch_avg_price)/SUM(a.total_stock) as bat_avg_price,
+            SUM(
+                a.average_price * a.total_stock
+            ) AS total_value,
+            SUM(a.bf) AS bf,
+            a.id_brands,
+            purchase,
+            return_qty
+                FROM
+                    (
+                    SELECT
+                        brands.id_brands,
+                        brands.brand_name,
+                        products.product_name,
+                        ROUND(
+                            AVG(product_batch.average_price),
+                            2
+                        ) AS average_price,
+                        products.sku,
+                        products.barcode,
+                        producttypes.type_name,
+                        SUM(IFNULL(p.purchase, 0)) AS purchase,
+                        SUM(IFNULL(r.return_qty, 0)) AS return_qty,
+                        SUM(IFNULL(sr.sale_return_qty, 0)) AS sale_return_qty,
+                        SUM(IFNULL(tro.transfer_out, 0)) AS transfer_out,
+                        SUM(IFNULL(tri.transfer_in, 0)) AS transfer_in,
+                        SUM(IFNULL(damage.damage_qty, 0)) AS damage_qty,
+                        SUM(IFNULL(s.sold, 0)) AS sold,
+                        IFNULL(oldbatch.brought_forward, 0) AS bf,
+                        SUM(
+                            IFNULL(adjustment.adjust_stock, 0)
+                        ) AS qty,
+                        (
+                            SUM(
+                                IFNULL(adjustment.adjust_stock, 0)
+                            ) + SUM(IFNULL(tri.transfer_in, 0)) + SUM(IFNULL(sr.sale_return_qty, 0)) + IFNULL(oldbatch.brought_forward, 0) + SUM(IFNULL(p.purchase, 0))
+                        ) -(
+                            SUM(IFNULL(tro.transfer_out, 0)) + SUM(IFNULL(r.return_qty, 0)) + SUM(IFNULL(damage.damage_qty, 0)) + SUM(IFNULL(s.sold, 0))
+                        ) AS 'total_stock',
+                        (
+                            SUM(IFNULL( adjustment.adjust_stock, 0)*IFNULL( product_batch.average_price, 0) ) +
+                            SUM(IFNULL(tri.transfer_in, 0)*IFNULL( tri.average_price, 0)) +
+                            SUM(IFNULL(sr.sale_return_qty, 0)*IFNULL( sr.average_price, 0)) +
+                            SUM(IFNULL(oldbatch.brought_forward, 0)*IFNULL( oldbatch.average_price, 0))  +
+                            SUM(IFNULL(p.purchase, 0)*IFNULL( p.average_price, 0))
+                        ) -(
+                            SUM(IFNULL(tro.transfer_out, 0)*IFNULL(tro.average_price, 0)) +
+                            SUM(IFNULL(r.return_qty, 0)*IFNULL(r.average_price, 0)) +
+                            SUM(IFNULL(damage.damage_qty, 0)*IFNULL(damage.average_price, 0)) +
+                            SUM(IFNULL(s.sold, 0)*IFNULL(s.average_price, 0))
+                        ) AS 'batch_avg_price',
+
+                        AVG(product_batch.average_price ) *(
+                            SUM(
+                                IFNULL(adjustment.adjust_stock, 0)
+                            ) + SUM(IFNULL(tri.transfer_in, 0)) + SUM(IFNULL(sr.sale_return_qty, 0)) + IFNULL(oldbatch.brought_forward, 0) + SUM(IFNULL(p.purchase, 0))
+                        ) -(
+                            SUM(IFNULL(tro.transfer_out, 0)) + SUM(IFNULL(r.return_qty, 0)) + SUM(IFNULL(damage.damage_qty, 0)) + SUM(IFNULL(s.sold, 0))
+                        ) AS stock_value
+
+                    FROM
+                        products
+                    JOIN brands ON brands.id_brands = products.brand_id
+                    JOIN product_batch ON product_batch.product_id = products.id_products
+                    JOIN producttypes ON producttypes.type_id = products.category_id
+                    LEFT JOIN(
+                        SELECT
+                            products.product_name,
+                            products.id_products AS product_id,
+                            bfbatches.id_batch AS batch_id,
+                            bfbatches.store_id,
+                            bfbatches.average_price,
+                            SUM(IFNULL(p.purchase, 0)) AS purchase,
+                            SUM(IFNULL(r.return_qty, 0)) AS return_qty,
+                            SUM(IFNULL(sr.sale_return_qty, 0)) AS sale_return_qty,
+                            SUM(IFNULL(tro.transfer_out, 0)) AS transfer_out,
+                            SUM(IFNULL(tri.transfer_in, 0)) AS transfer_in,
+                            SUM(IFNULL(damage.damage_qty, 0)) AS damage,
+                            SUM(IFNULL(s.sold, 0)) AS sold,
+                            SUM(
+                                IFNULL(badjust.adjust_stock, 0)
+                            ) AS batch_qty,
+                            (
+                                SUM(
+                                    IFNULL(p.purchase, 0) + IFNULL(tri.transfer_in, 0) + IFNULL(sr.sale_return_qty, 0) + IFNULL(badjust.adjust_stock, 0)
+                                ) - SUM(
+                                    IFNULL(tro.transfer_out, 0) + IFNULL(r.return_qty, 0) + IFNULL(damage.damage_qty, 0) + IFNULL(s.sold, 0)
+                                )
+                            ) AS brought_forward
+                        FROM
+                            products
+                        JOIN brands ON brands.id_brands = products.brand_id
+                        JOIN product_batch AS bfbatches
+                        ON
+                            bfbatches.product_id = products.id_products
+                        LEFT JOIN(
+                            SELECT
+                                grn_details.grn_product_id AS product_id,
+                                grn_details.grn_batch_id AS batch_id,
+                                product_batch.average_price,
+                                SUM(
+                                    IFNULL(
+                                        grn_details.grn_qty_received,
+                                        0
+                                    )
+                                ) AS purchase
+                            FROM
+                                grn_details
+                            JOIN goods_received_note ON goods_received_note.id_grn = grn_details.grn_id
+                            JOIN purchase_order ON purchase_order.idpurchase_order = goods_received_note.purchase_order_id
+                            join product_batch on product_batch.id_batch = grn_details.grn_batch_id
+                            WHERE
+                                goods_received_note.created_at < '$from_date' AND purchase_order.status != 'Cancelled'
+                            GROUP BY
+                                grn_details.grn_batch_id
+                        ) AS p
+                    ON
+                        p.batch_id = bfbatches.id_batch
+                    LEFT JOIN(
+                        SELECT
+                            return_notes.product_id,
+                            return_notes.batch_id,
+                            product_batch.average_price,
+                            SUM(
+                                IFNULL(return_notes.return_qty, 0)
+                            ) AS return_qty
+                        FROM
+                            return_notes
+                        JOIN goods_received_note ON goods_received_note.id_grn = return_notes.grn_id
+                        JOIN purchase_order ON purchase_order.idpurchase_order = goods_received_note.purchase_order_id
+                        join product_batch on product_batch.id_batch = return_notes.batch_id
+                        WHERE
+                            purchase_order.status != 'Cancelled' AND return_notes.created_at < '$from_date'
+                        GROUP BY
+                            return_notes.batch_id
+                    ) AS r
+                ON
+                    r.batch_id = bfbatches.id_batch
+                LEFT JOIN(
+                    SELECT
+                        sale_return_notes.product_id,
+                        sale_return_notes.batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(
+                                sale_return_notes.return_qty,
+                                0
+                            )
+                        ) AS sale_return_qty
+                    FROM
+                        sale_return_notes
+                    JOIN goods_delivery_note ON goods_delivery_note.id_gdn = sale_return_notes.gdn_id
+                    JOIN sale_orders ON sale_orders.id_sale_orders = goods_delivery_note.sale_order_id
+                    join product_batch on product_batch.id_batch = sale_return_notes.batch_id
+                    WHERE
+                        sale_orders.status != 'Cancelled' AND sale_return_notes.created_at < '$from_date'
+                    GROUP BY
+                        sale_return_notes.batch_id
+                ) AS sr
+                ON
+                    sr.batch_id = bfbatches.id_batch
+                LEFT JOIN(
+                    SELECT
+                        good_transfer_note_detail.product_id,
+                        good_transfer_note_detail.previous_batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(
+                                good_transfer_note_detail.transfer_qty,
+                                0
+                            )
+                        ) AS transfer_out
+                    FROM
+                        good_transfer_note_detail
+                    JOIN good_transfer_note ON good_transfer_note.id_gtn = good_transfer_note_detail.gtn_id
+                    join product_batch on product_batch.id_batch = good_transfer_note_detail.previous_batch_id
+                    WHERE
+                        good_transfer_note.created_at < '$from_date'
+                    GROUP BY
+                        good_transfer_note_detail.previous_batch_id
+                ) AS tro
+                ON
+                    tro.product_id = products.id_products
+                LEFT JOIN(
+                    SELECT
+                        good_transfer_note_detail.product_id,
+                        good_transfer_note_detail.current_batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(
+                                good_transfer_note_detail.transfer_qty,
+                                0
+                            )
+                        ) AS transfer_in
+                    FROM
+                        good_transfer_note_detail
+                    JOIN good_transfer_note ON good_transfer_note.id_gtn = good_transfer_note_detail.gtn_id
+                    join product_batch on product_batch.id_batch = good_transfer_note_detail.current_batch_id
+                    WHERE
+                        good_transfer_note.created_at < '$from_date'
+                    GROUP BY
+                        good_transfer_note_detail.current_batch_id
+                ) AS tri
+                ON
+                    tri.product_id = products.id_products
+                LEFT JOIN(
+                    SELECT
+                        demage_products.product_id,
+                        demage_products.batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(demage_products.demage_qty, 0)
+                        ) AS damage_qty
+                    FROM
+                        demage_products
+                        join product_batch on product_batch.id_batch = demage_products.batch_id
+                    WHERE
+                        demage_products.demage_status = 'Active' AND demage_products.created_at < '$from_date'
+                    GROUP BY
+                        demage_products.batch_id
+                ) AS damage
+                ON
+                    damage.batch_id = bfbatches.id_batch
+                LEFT JOIN(
+                    SELECT
+                        gdn_product_id AS product_id,
+                        gdn_batch_id AS batch_id,
+                        product_batch.average_price,
+                        SUM(IFNULL(gdn_qty_delivered, 0)) AS sold
+                    FROM
+                        gdn_details
+                    JOIN goods_delivery_note ON goods_delivery_note.id_gdn = gdn_details.gdn_id
+                    join product_batch on product_batch.id_batch = gdn_batch_id
+                    WHERE
+                        goods_delivery_note.status != 'Cancelled' AND goods_delivery_note.created_at < '$from_date'
+                    GROUP BY
+                        gdn_details.gdn_batch_id
+                ) AS s
+                ON
+                    s.batch_id = bfbatches.id_batch
+                LEFT JOIN(
+                    SELECT
+                        inventory_adjustment.batch_id AS batch_id,
+                        product_batch.average_price AS average_price,
+                        SUM(
+                            IFNULL(
+                                inventory_adjustment.stock_qty,
+                                0
+                            )
+                        ) AS adjust_stock
+                    FROM
+                        inventory_adjustment
+                        join product_batch on product_batch.id_batch = inventory_adjustment.batch_id
+                    WHERE
+                        inventory_adjustment.created_at < '$from_date'
+                    GROUP BY
+                        inventory_adjustment.batch_id
+                ) AS badjust
+                ON
+                    badjust.batch_id = bfbatches.id_batch
+                GROUP BY
+                    products.id_products
+                    ) AS oldbatch
+                ON
+                    oldbatch.product_id = products.id_products
+                LEFT JOIN(
+                    SELECT
+                        grn_details.grn_product_id AS product_id,
+                        grn_details.grn_batch_id AS batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(
+                                grn_details.grn_qty_received,
+                                0
+                            )
+                        ) AS purchase
+                    FROM
+                        grn_details
+                    JOIN goods_received_note ON goods_received_note.id_grn = grn_details.grn_id
+                    JOIN purchase_order ON purchase_order.idpurchase_order = goods_received_note.purchase_order_id
+                    join product_batch on product_batch.id_batch = grn_details.grn_batch_id
+                    WHERE
+                        goods_received_note.created_at >= '$from_date' AND goods_received_note.created_at <= '$to_date' AND purchase_order.status != 'Cancelled'
+                    GROUP BY
+                        grn_details.grn_batch_id
+                ) AS p
+                ON
+                    p.batch_id = product_batch.id_batch
+                LEFT JOIN(
+                    SELECT
+                        return_notes.product_id,
+                        return_notes.batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(return_notes.return_qty, 0)
+                        ) AS return_qty
+                    FROM
+                        return_notes
+                    JOIN goods_received_note ON goods_received_note.id_grn = return_notes.grn_id
+                    JOIN purchase_order ON purchase_order.idpurchase_order = goods_received_note.purchase_order_id
+                    join product_batch on product_batch.id_batch = return_notes.batch_id
+                    WHERE
+                        purchase_order.status != 'Cancelled' AND return_notes.created_at >= '$from_date' AND return_notes.created_at <= '$to_date'
+                    GROUP BY
+                        return_notes.batch_id
+                ) AS r
+                ON
+                    r.batch_id = product_batch.id_batch
+                LEFT JOIN(
+                    SELECT
+                        sale_return_notes.product_id,
+                        sale_return_notes.batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(
+                                sale_return_notes.return_qty,
+                                0
+                            )
+                        ) AS sale_return_qty
+                    FROM
+                        sale_return_notes
+                    JOIN goods_delivery_note ON goods_delivery_note.id_gdn = sale_return_notes.gdn_id
+                    JOIN sale_orders ON sale_orders.id_sale_orders = goods_delivery_note.sale_order_id
+                    join product_batch on product_batch.id_batch = sale_return_notes.batch_id
+                    WHERE
+                        sale_orders.status != 'Cancelled' AND sale_return_notes.created_at >= '$from_date' AND sale_return_notes.created_at <= '$to_date'
+                    GROUP BY
+                        sale_return_notes.batch_id
+                ) AS sr
+                ON
+                    sr.batch_id = product_batch.id_batch
+                LEFT JOIN(
+                    SELECT
+                        good_transfer_note_detail.product_id,
+                        good_transfer_note_detail.previous_batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(
+                                good_transfer_note_detail.transfer_qty,
+                                0
+                            )
+                        ) AS transfer_out
+                    FROM
+                        good_transfer_note_detail
+                    JOIN good_transfer_note ON good_transfer_note.id_gtn = good_transfer_note_detail.gtn_id
+                    join product_batch on product_batch.id_batch = good_transfer_note_detail.previous_batch_id
+                    WHERE
+                        good_transfer_note.created_at >= '$from_date' AND good_transfer_note.created_at <= '$to_date'
+                    GROUP BY
+                        good_transfer_note_detail.previous_batch_id
+                ) AS tro
+                ON
+                    tro.previous_batch_id = product_batch.id_batch
+                LEFT JOIN(
+                    SELECT
+                        good_transfer_note_detail.product_id,
+                        good_transfer_note_detail.current_batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(
+                                good_transfer_note_detail.transfer_qty,
+                                0
+                            )
+                        ) AS transfer_in
+                    FROM
+                        good_transfer_note_detail
+                    JOIN good_transfer_note ON good_transfer_note.id_gtn = good_transfer_note_detail.gtn_id
+                    join product_batch on product_batch.id_batch = good_transfer_note_detail.current_batch_id
+                    WHERE
+                        good_transfer_note.created_at >= '$from_date' AND good_transfer_note.created_at <= '$to_date'
+                    GROUP BY
+                        good_transfer_note_detail.current_batch_id
+                ) AS tri
+                ON
+                    tri.current_batch_id = product_batch.id_batch
+                LEFT JOIN(
+                    SELECT
+                        demage_products.product_id,
+                        demage_products.batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(demage_products.demage_qty, 0)
+                        ) AS damage_qty
+                    FROM
+                        demage_products
+                        join product_batch on product_batch.id_batch = demage_products.batch_id
+                    WHERE
+                        demage_products.demage_status = 'Active' AND demage_products.created_at >= '$from_date' AND demage_products.created_at <= '$to_date'
+                    GROUP BY
+                        demage_products.batch_id
+                ) AS damage
+                ON
+                    damage.batch_id = product_batch.id_batch
+                LEFT JOIN(
+                    SELECT
+                        gdn_product_id AS product_id,
+                        gdn_batch_id AS batch_id,
+                        product_batch.average_price,
+                        SUM(IFNULL(gdn_qty_delivered, 0)) AS sold
+                    FROM
+                        gdn_details
+                    JOIN goods_delivery_note ON goods_delivery_note.id_gdn = gdn_details.gdn_id
+                    join product_batch on product_batch.id_batch = gdn_details.gdn_batch_id
+                    WHERE
+                        goods_delivery_note.status != 'Cancelled' AND goods_delivery_note.created_at >= '$from_date' AND goods_delivery_note.created_at <= '$to_date'
+                    GROUP BY
+                        gdn_details.gdn_batch_id
+                ) AS s
+                ON
+                    s.batch_id = product_batch.id_batch
+                LEFT JOIN(
+                    SELECT
+
+                        inventory_adjustment.batch_id AS batch_id,
+                        product_batch.average_price,
+                        SUM(
+                            IFNULL(
+                                inventory_adjustment.stock_qty,
+                                0
+                            )
+                        ) AS adjust_stock
+                    FROM
+                        inventory_adjustment
+                    join product_batch on product_batch.id_batch = inventory_adjustment.batch_id
+                    WHERE
+                        inventory_adjustment.created_at >= '$from_date' AND inventory_adjustment.created_at <= '$to_date'
+                    GROUP BY
+                        inventory_adjustment.batch_id
+                ) AS adjustment
+                ON
+                    adjustment.batch_id = product_batch.id_batch
+                GROUP BY
+                    products.id_products
+        ) AS a";
+
+        $res = DB::SELECT($sql);
+        return $res;
     }
 }
