@@ -169,13 +169,14 @@
         {{-- <span>Form Layouts</span> --}}
     </div>
     <h2 class="az-content-title" style="display: inline;text-decoration: none;color:gray; font-size:28px;">
-       <span class="mt-5"> INQUIRY#{{ $dec_inq_id }}
-        |
-        <a href="{{ url('customers') }}" style="text-decoration: none;color:gray; font-size:28px;">
-            {{ $get_customer->customer_name }}</a>
-        | <a href="{{ url('customers') }}"
-            style="text-decoration: none;color: gray;font-size:28px;">{{ $get_customer->customer_cell }}</a><span>
-            <a href="{{ url('inquiry/create') }}" class="btn bg-gradient-primary " style="float: right">ADD NEW INQUIRY</a></span>
+        <span class="mt-5"> INQUIRY#{{ $dec_inq_id }}
+            |
+            <a href="{{ url('customers') }}" style="text-decoration: none;color:gray; font-size:28px;">
+                {{ $get_customer->customer_name }}</a>
+            | <a href="{{ url('customers') }}"
+                style="text-decoration: none;color: gray;font-size:28px;">{{ $get_customer->customer_cell }}</a><span>
+                <a href="{{ url('inquiry/create') }}" class="btn bg-gradient-primary " style="float: right">ADD NEW
+                    INQUIRY</a></span>
         </span> <br>
         <!-- Print Button -->
         <button onclick="printInquiryDetails()" class="btn bg-gradient-primary mt-0">Print</button>
@@ -201,7 +202,7 @@
                             <ul class="list-unstyled">
                                 <li><strong>INQUIRY#:</strong> {{ $dec_inq_id }}</li>
                                 <li><strong>CUSTOMER:</strong>
-                                    <a href="{{ url('customers/view/' . Crypt::encrypt($get_customer->id_customers)) }}"
+                                    <a href="{{ url('customers/view/' . $get_customer->id_customers) }}"
                                         class="text-decoration-none text-secondary">
                                         {{ $get_customer->customer_name }}
                                     </a>
@@ -354,27 +355,27 @@
                                                         @endphp
                                                         <?php if ($remark->remarks_status == 0) {
                                                             $prog_status = '<span
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="badge badge-warning" style="font-size:14px !important;color:#000;">Open</span>';
+                                                                                                                    class="badge badge-warning" style="font-size:14px !important;color:#000;">Open</span>';
                                                         } elseif ($remark->remarks_status == 1) {
                                                             $prog_status = '<span
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="badge badge-warning" style="font-size:14px !important;color:#000;">In-Progress</span>';
+                                                                                                                    class="badge badge-warning" style="font-size:14px !important;color:#000;">In-Progress</span>';
                                                         } elseif ($remark->remarks_status == 2) {
                                                             $prog_status = '<span
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="badge badge-Info" style="font-size:14px !important;">Quotation Shared</span>';
+                                                                                                                    class="badge badge-Info" style="font-size:14px !important;">Quotation Shared</span>';
                                                         } elseif ($remark->remarks_status == 3) {
                                                             $prog_status = '<span
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="badge badge-success" style="font-size:14px !important;">Confirmed</span>';
+                                                                                                                    class="badge badge-success" style="font-size:14px !important;">Confirmed</span>';
                                                         } elseif ($remark->remarks_status == 4) {
                                                             $prog_status = '<span
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="badge badge-success" style="font-size:14px !important;">Completed</span>';
+                                                                                                                    class="badge badge-success" style="font-size:14px !important;">Completed</span>';
                                                         } elseif ($remark->remarks_status == 5) {
                                                             $prog_status = '<span
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        class="badge badge-danger" style="font-size:14px !important;">Canceled</span>';
+                                                                                                                    class="badge badge-danger" style="font-size:14px !important;">Canceled</span>';
                                                         } elseif ($remark->remarks_status == 5) {
                                                             $prog_status =
                                                                 '<span class="badge badge-danger" style="font-size:14px !important;"><span class="">Cancel Reason :
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ' .
+                                                                                                                                                                                        </span>
+                                                                                                                                                                                    ' .
                                                                 $remark->cancel_reason .
                                                                 '</span>';
                                                         } elseif ($remark->remarks_status == 10) {
@@ -441,8 +442,7 @@
                                             @endforeach
                                         @endif
                                         <form action="{{ url('add_inquiry_remarks') }}" id="submit_form" method="POST">
-                                            <!--                                            <div class="form-group">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 </div>-->
+
                                             <input type="hidden" name="inquiry_id" value="{{ $dec_inq_id }}"
                                                 id="">
                                             <div class="form-group">
@@ -492,11 +492,8 @@
 
                                                 </select>
                                             </div>
-                                            <div class="form-group" id="quotations">
+                                            {{-- <div class="form-group" id="quotations">
                                                 @csrf
-                                                <label for="" class="mt-2">Quotations <span
-                                                        style="color: red">*</span></label>
-                                                {{-- <small id="helpId" class="text-muted">Help text</small> --}}
                                                 <select class="select2 form-control" name="quotation"
                                                     id="quotations_input">
                                                     @foreach ($quotations_not_approved as $quote)
@@ -506,7 +503,7 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                            </div>
+                                            </div> --}}
                                             <div class="form-group">
                                                 <label for="" class="mt-2">Remarks<span
                                                         style="color: red">*</span></label>

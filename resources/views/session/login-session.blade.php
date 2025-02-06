@@ -12,8 +12,8 @@
                                     <h3 class="font-weight-bolder text-info text-gradient">Welcome back</h3>
                                     <p class="mb-0">Create a new acount<br></p>
                                     <p class="mb-0">OR Sign in with these credentials:</p>
-                                    <p class="mb-0">Email <b>admin@softui.com</b></p>
-                                    <p class="mb-0">Password <b>secret</b></p>
+                                    <p class="mb-0">Email <b>admin@fza.com</b></p>
+                                    <p class="mb-0">Password <b>admin123</b></p>
                                 </div>
                                 <div class="card-body">
                                     <form role="form" method="POST" action="{{ url('session') }}">
@@ -21,7 +21,7 @@
                                         <label>Email</label>
                                         <div class="mb-3">
                                             <input type="email" class="form-control" name="email" id="email"
-                                                placeholder="Email" value="admin@admin.com" aria-label="Email"
+                                                placeholder="Email" value="admin@fza.com" aria-label="Email"
                                                 aria-describedby="email-addon">
                                             @error('email')
                                                 <p class="text-danger text-xs mt-2">{{ $message }}</p>

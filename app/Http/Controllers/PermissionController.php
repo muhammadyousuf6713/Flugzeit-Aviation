@@ -124,54 +124,78 @@ class PermissionController extends Controller
 
         $assigned_permissions = $role_id ? Role::find($role_id)->permissions->pluck('id')->toArray() : [];
 
-        return view('Permission.index', compact('roles', 'role_id', 'permissions', 'assigned_permissions'));
+        return view('permission.index', compact('roles', 'role_id', 'permissions', 'assigned_permissions'));
     }
 
 
+    // public function assignPermissions(Request $request, $role_id)
+    // {
+    //     // Validate the request
+    //     $validated = $request->validate([
+    //         'permissions' => 'array',
+    //         'permission.*' => 'integer|exists:permissions,id',
+    //     ]);
+
+    //     // Find the role
+    //     $role = Role::find($role_id);
+    //     if (!$role) {
+    //         return redirect()->back()->with('alert', 'Role not found')->with('alert-class', 'danger');
+    //     }
+
+    //     // Filter permissions for the 'web' guard
+    //     $permissions = Permission::whereIn('id', $validated['permissions'] ?? [])
+    //         ->where('guard_name', 'web')
+    //         ->pluck('name') // Get the names of the permissions
+    //         ->toArray();
+
+    //     // Sync permissions to the role (adds and removes accordingly)
+    //     $role->syncPermissions($permissions);
+
+    //     // Sync permissions for the authenticated user
+    //     $user = auth()->user();
+
+    //     // Get all permissions assigned to the user
+    //     $userPermissions = $user->getPermissionNames()->toArray();
+
+    //     // Add new permissions to the user
+    //     foreach ($permissions as $permission) {
+    //         if (!in_array($permission, $userPermissions)) {
+    //             $user->givePermissionTo($permission);
+    //         }
+    //     }
+
+    //     // Remove permissions that are unchecked
+    //     foreach ($userPermissions as $permission) {
+    //         if (!in_array($permission, $permissions)) {
+    //             $user->revokePermissionTo($permission);
+    //         }
+    //     }
+
+    //     // Set success response
+    //     return redirect()->back()->with('alert', 'Permissions updated successfully')->with('alert-class', 'success');
+    // }
+
     public function assignPermissions(Request $request, $role_id)
     {
-        // Validate the request
         $validated = $request->validate([
             'permissions' => 'array',
-            'permission.*' => 'integer|exists:permissions,id',
+            'permissions.*' => 'integer|exists:permissions,id',
         ]);
 
-        // Find the role
         $role = Role::find($role_id);
         if (!$role) {
             return redirect()->back()->with('alert', 'Role not found')->with('alert-class', 'danger');
         }
 
-        // Filter permissions for the 'web' guard
+        // Retrieve permission names
         $permissions = Permission::whereIn('id', $validated['permissions'] ?? [])
             ->where('guard_name', 'web')
-            ->pluck('name') // Get the names of the permissions
+            ->pluck('name')
             ->toArray();
 
-        // Sync permissions to the role (adds and removes accordingly)
+        // Sync permissions with the role
         $role->syncPermissions($permissions);
 
-        // Sync permissions for the authenticated user
-        $user = auth()->user();
-
-        // Get all permissions assigned to the user
-        $userPermissions = $user->getPermissionNames()->toArray();
-
-        // Add new permissions to the user
-        foreach ($permissions as $permission) {
-            if (!in_array($permission, $userPermissions)) {
-                $user->givePermissionTo($permission);
-            }
-        }
-
-        // Remove permissions that are unchecked
-        foreach ($userPermissions as $permission) {
-            if (!in_array($permission, $permissions)) {
-                $user->revokePermissionTo($permission);
-            }
-        }
-
-        // Set success response
         return redirect()->back()->with('alert', 'Permissions updated successfully')->with('alert-class', 'success');
     }
 }

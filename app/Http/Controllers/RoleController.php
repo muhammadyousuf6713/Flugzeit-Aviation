@@ -41,7 +41,6 @@ class RoleController extends Controller
         $menu = 'role';
         $submenu = 'role';
         $page = 'add';
-        // dd($page);
 
         return view('Roles.create')->with(compact('title', 'menu', 'submenu', 'page'));
     }
@@ -58,7 +57,7 @@ class RoleController extends Controller
             'role' => 'required',
         ]);
         // dd($request);
-        DB::table('roles')->insert(['name' => $request->role, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
+        DB::table('roles')->insert(['guard_name' => 'web', 'name' => $request->role, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
 
         return redirect(url('roles'));
     }

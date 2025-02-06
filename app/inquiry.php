@@ -24,4 +24,5 @@ class inquiry extends Model
     {
         return $this->belongsTo(customer::class, 'customer_id', 'id_customers');
     }
+
 }

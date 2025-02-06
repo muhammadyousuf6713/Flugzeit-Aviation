@@ -13,7 +13,6 @@ use App\campaign;
 use App\hotels;
 use App\remarks;
 use App\cities;
-use App\currency_exchange_rate;
 use App\department_service;
 use App\department_sub_service;
 use App\departments;
@@ -32,8 +31,8 @@ use App\other_service;
 use App\payments_account;
 use App\quotation;
 use App\quotation_issuance;
+use App\Role;
 use App\role_permission;
-use App\service_vendor;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Session;
@@ -93,8 +92,8 @@ class InquiryController extends Controller
                     $status = 'Completed';
                     $status_color = 'green';
                     break;
-                case 'Canceled':
-                    $status = 'Canceled';
+                case 'Cancelled':
+                    $status = 'Cancelled';
                     $status_color = 'red';
                     break;
                 case 'Confirmed':
@@ -311,11 +310,8 @@ class InquiryController extends Controller
     {
 
         $inquiry_types = inquirytypes::all();
-        $packages = packages::all();
         $sales_reference = sales_reference::all();
-        $customers = Customer::all();
-        $airlines = airlines::all();
-        $hotels = hotels::all();
+        $customers = customer::all();
         $sales_person = User::get();
         $countries = countries::all();
         $campaigns = \App\campaign::all();
@@ -329,7 +325,8 @@ class InquiryController extends Controller
             'unassign_inquiry' => $get_per_of_unassign_inquiry ? 'true' : 'false',
         ];
         // dd($get_permission_data);
-        // $sale_persons = \App\User::select('users.name', 'users.id')->where('role_id', '=', 6)->get()->toArray();
+        $sale_persons = \App\user::select('users.name', 'users.id')->get()->toArray();
+        // dd( $sale_persons);
         $users = User::all();
         foreach ($users as $key => $value) {
             $user_role_id = $value->role_id;
@@ -346,16 +343,16 @@ class InquiryController extends Controller
             }
         }
         // dd($final_user_ids);
-        $sale_persons = [];
-        $uniq_user_id = array_unique($final_user_ids);
-        if ($get_permission_data['assign_others'] == 'true') {
-            $sale_persons = User::whereIn('id', $uniq_user_id)->get();
-        } else {
-            $sale_persons = User::where('id', auth()->user()->id)->get();
-        }
+        // $sale_persons = [];
+        // $uniq_user_id = array_unique($final_user_ids);
+        // if ($get_permission_data['assign_others'] == 'true') {
+        //     $sale_persons = User::whereIn('id', $uniq_user_id)->get();
+        // } else {
+        //     $sale_persons = User::where('id', auth()->user()->id)->get();
+        // }
 
         // dd($sale_persons);
-        return view('inquiry.create', compact('inquiry_types', 'get_permission_data', 'sales_person', 'sales_reference', 'customers', 'countries', 'packages', 'services', 'airlines', 'hotels', 'sale_persons', 'campaigns'));
+        return view('inquiry.create', compact('inquiry_types', 'get_permission_data', 'sales_person', 'sales_reference', 'customers', 'countries', 'services', 'sale_persons', 'campaigns'));
 
         //    dd($sale_persons);
 
@@ -775,21 +772,42 @@ class InquiryController extends Controller
 
     public function edit($id)
     {
-        $edit_inquiry = inquiry::select('*', 'inquiry.inquiry_type as inq_type', 'inquiry.created_at as create_date', 'users.name as remarks_by', 'inquiry.sales_reference as ref_name', 'inquiry.status as inquiry_status', 'inquiry.email as customer_email', 'inquiry.cancel_reason as cancel_reason')
-            ->join('users', 'users.id', '=', 'inquiry.created_by', 'left')
-            ->where('id_inquiry', $id)
-            ->first();
-
-        $saved_remarks = remarks::select('*', 'users.name as remarks_by', 'remarks.created_at as created_on')
-            ->join('users', 'users.id', '=', 'remarks.created_by', 'left')
-            ->where('inquiry_id', $id)
-            ->get()->toArray();
-        //                 echo '<pre>'; print_r($saved_remarks);exit;
+        $inquiry = Inquiry::findOrFail($id);
         $inquiry_types = inquirytypes::all();
         $sales_reference = sales_reference::all();
-        $sales_person = User::all();
-        //        $sales_person = User::where('rule_id',6)->get();
-        return view('/inventory.customers.edit', compact('edit_inquiry', 'inquiry_types', 'sales_person', 'saved_remarks', 'sales_reference'));
+        $customers = customer::all();
+        $sales_person = User::get();
+        $countries = countries::all();
+        $campaigns = \App\campaign::all();
+        $services = other_service::where('parent_id', null)->where('status', 'Active')->get();
+        $sale_persons = \App\user::select('users.name', 'users.id')->get()->toArray();
+
+        $get_role_id = auth()->user()->role_id;
+
+        $users = User::all();
+        foreach ($users as $key => $value) {
+            $user_role_id = $value->role_id;
+            $all_roles_id[] = array($user_role_id, $value->id);
+        }
+
+        $final_user_ids = [];
+        foreach ($all_roles_id as $key => $value) {
+            $get_roles_permission = role_permission::where('role_id', $value[0])->where("menu_id", 96)->first();
+            if ($get_roles_permission) {
+                $final_permission[] = $get_roles_permission;
+                $final_user_ids[] = $value[1];
+            }
+        }
+
+        // $sale_persons = [];
+        // $uniq_user_id = array_unique($final_user_ids);
+        // if ($get_permission_data['assign_others'] == 'true') {
+        //     $sale_persons = User::whereIn('id', $uniq_user_id)->get();
+        // } else {
+        //     $sale_persons = User::where('id', auth()->user()->id)->get();
+        // }
+
+        return view('inquiry.edit', compact('inquiry', 'inquiry_types', 'sales_person', 'sales_reference', 'customers', 'countries', 'services', 'sale_persons', 'campaigns'));
     }
 
     /**
@@ -874,6 +892,18 @@ class InquiryController extends Controller
 
     public function get_inquiry_list()
     {
+        // $user = Auth::user();
+        // dd($user->getRoleNames(), $user->getPermissionNames());
+
+        // $user = Auth::user();
+        // dd($user->roles()->pluck('name'));
+
+        // $role = Role::find(8);
+
+        // dd($role->permissions()->pluck('name'));
+
+        // dd(Auth::user()->getRoleNames(), Auth::user()->getPermissionNames());
+
         $data['inquiry_type'] = inquirytypes::all();
         $query = inquiry::select(
             'inquiry.*',
@@ -1156,6 +1186,7 @@ class InquiryController extends Controller
             $followupRemark->followup_status = "Open";
             $followupRemark->followup_type = 1;
             $followupRemark->created_by = auth()->user()->id;
+            $followupRemark->created_at = now();
             $followupRemark->save();
 
             $store = new remarks();
@@ -1166,6 +1197,7 @@ class InquiryController extends Controller
             $store->cancel_reason = $request->reason;
             $store->followup_date = $holdDate;
             $store->created_by = auth()->user()->id;
+            $store->created_at = now();
             $store->save();
         } else {
             $store = new remarks();
@@ -1176,6 +1208,7 @@ class InquiryController extends Controller
             $store->cancel_reason = $request->reason;
             $store->followup_date = $request->followup_date ? Carbon::createFromFormat('d/m/Y', $request->followup_date)->format('Y-m-d') : null;
             $store->created_by = auth()->user()->id;
+            $store->created_at = now();
             $store->save();
         }
 
@@ -1383,14 +1416,14 @@ class InquiryController extends Controller
         $sales_person = User::get();
         $campaigns = \App\campaign::all();
         $services = other_service::where('parent_id', null)->get();
-        $quotations = quotation::where('inquiry_id', $dec_inq_id)->orderBy('id_quotations', 'desc')->with('get_issuance')->get();
-        $approve_quo = quotation::where('status', 3)->first();
+        // $quotations = quotation::where('inquiry_id', $dec_inq_id)->orderBy('id_quotations', 'desc')->with('get_issuance')->get();
+        // $approve_quo = quotation::where('status', 3)->first();
         //         dd($quotations);
 
         // $payments = payments_account::with('get_quotation', 'get_quotation.get_inquiry', 'get_quotation_details',)->where('quotation_id', $approve_quo?->id_quotations)->orderby('status', 'asc')->groupBy('payment_id')->get();
 
 
-        $quotations_not_approved = quotation::where('inquiry_id', $dec_inq_id)->get();
+        // $quotations_not_approved = quotation::where('inquiry_id', $dec_inq_id)->get();
         $remarks_count = remarks::where('inquiry_id', $dec_inq_id)->where('type', null)->count();
 
 
@@ -1414,8 +1447,8 @@ class InquiryController extends Controller
             }
         }
 
-        $uniq_user_id = array_unique($final_user_ids);
-        $sale_persons = User::whereIn('id', $uniq_user_id)->get();
+        // $uniq_user_id = array_unique($final_user_ids);
+        // $sale_persons = User::whereIn('id', $uniq_user_id)->get();
 
         $get_inquiry = inquiry::where('id_inquiry', $dec_inq_id)->first();
 
@@ -1438,8 +1471,7 @@ class InquiryController extends Controller
         // dd($services);
         $get_customer = Customer::where('id_customers', $get_inquiry->customer_id)->first();
         $get_campaign = campaign::where('id_campaigns', $get_inquiry->campaign_id)->first();
-        $currency_rates = currency_exchange_rate::all();
-        // dd($get_inquiry);
+         // dd($get_inquiry);
         $all_remarks = remarks::where('inquiry_id', $dec_inq_id)->where('followup_remarks', null)->where('type', Null)->orderBy('id_remarks', 'desc')->get();
         $quotation_remarks = remarks::where('inquiry_id', $dec_inq_id)->where('followup_remarks', null)->where('type', "quotation")->orderBy('id_remarks', 'desc')->get();
 
@@ -1457,29 +1489,21 @@ class InquiryController extends Controller
         $followup_types = follow_up_type::get();
         $get_latest_remarks_count = remarks::where('inquiry_id', $dec_inq_id)->max('id_remarks');
         $get_latest_remarks = remarks::where('id_remarks', $get_latest_remarks_count)->first();
-        $get_issuance = quotation_issuance::where('inquiry_id', $dec_inq_id)->get();
+        // $get_issuance = quotation_issuance::where('inquiry_id', $dec_inq_id)->get();
         $get_reject_status = remarks::where('inquiry_id', $dec_inq_id)->where('type', "quotation")->latest()->where('remarks_status', "Quotation Rejected")->first();
         //        $get_payment_status = payments_account::where('inquiry_id', $dec_inq_id)->groupBy('inquiry_id')->first();
-        $vendors = service_vendor::where('vendor_status', 1)->get();
-        $documents = document::where('inquiry_id', $dec_inq_id)->where('customer_id', $get_inquiry->customer_id)->first();
 
 
-        return view(
-            'inquiry.follow_up',
+
+        return view('inquiry.follow_up',
             compact(
                 'get_reject_status',
                 'remarks_count',
                 'dec_inq_id',
                 'need_further_follow_ups',
                 'closed_follow_ups',
-                'documents',
-                'vendors',
                 'sales_person',
-                'get_issuance',
                 'quotation_remarks',
-                'currency_rates',
-                'quotations_not_approved',
-                'quotations',
                 'all_remarks',
                 'get_latest_remarks',
                 'get_inquiry',
@@ -1487,7 +1511,6 @@ class InquiryController extends Controller
                 'get_campaign',
                 'campaigns',
                 'services_inq',
-                'sale_persons',
                 'echo_services_data',
                 'open_follow_ups',
                 'followup_types'

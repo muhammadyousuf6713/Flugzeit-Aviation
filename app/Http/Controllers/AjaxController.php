@@ -232,7 +232,7 @@ class AjaxController extends Controller
         </div>
                 <hr>
                 ';
-                    return response()->json([
+            return response()->json([
                 "data" => $data,
                 "name" => $id
             ]);

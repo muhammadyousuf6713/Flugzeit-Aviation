@@ -34,11 +34,11 @@
 
 
             <li class="nav-item pb-2">
-                <a class="nav-link {{ Request::is('') ? 'active' : '' }}" href="#">
+                <a class="nav-link {{ Request::is('customers') ? 'active' : '' }}" href="{{ url('customers') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                            style="color: {{ Request::is('') ? '#fff' : '#00beda' }};" aria-hidden="true"></i>
+                            style="color: {{ Request::is('customers') ? '#fff' : '#00beda' }};" aria-hidden="true"></i>
                     </div>
                     <span class="nav-link-text ms-1">Customers</span>
                 </a>
@@ -61,31 +61,35 @@
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Preferrences</h6>
             </li>
             <li class="nav-item pb-2">
-                <a class="nav-link {{ Request::is('') ? 'active' : '' }}" href="#">
+                <a class="nav-link {{ Request::is('inquiry-type') ? 'active' : '' }}"
+                    href="{{ url('inquiry-type') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                            style="color: {{ Request::is('') ? '#fff' : '#00beda' }};" aria-hidden="true"></i>
+                            style="color: {{ Request::is('inquiry-type') ? '#fff' : '#00beda' }};"
+                            aria-hidden="true"></i>
                     </div>
                     <span class="nav-link-text ms-1">Inquiry Types</span>
                 </a>
             </li>
             <li class="nav-item pb-2">
-                <a class="nav-link {{ Request::is('') ? 'active' : '' }}" href="#">
+                <a class="nav-link {{ Request::is('services') ? 'active' : '' }}" href="{{ url('services') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                            style="color: {{ Request::is('') ? '#fff' : '#00beda' }};" aria-hidden="true"></i>
+                            style="color: {{ Request::is('services') ? '#fff' : '#00beda' }};" aria-hidden="true"></i>
                     </div>
                     <span class="nav-link-text ms-1">Services</span>
                 </a>
             </li>
             <li class="nav-item pb-2">
-                <a class="nav-link {{ Request::is('') ? 'active' : '' }}" href="#">
+                <a class="nav-link {{ Request::is('sales-reference') ? 'active' : '' }}"
+                    href="{{ url('sales-reference') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                            style="color: {{ Request::is('') ? '#fff' : '#00beda' }};" aria-hidden="true"></i>
+                            style="color: {{ Request::is('sales-reference') ? '#fff' : '#00beda' }};"
+                            aria-hidden="true"></i>
                     </div>
                     <span class="nav-link-text ms-1">Sales References</span>
                 </a>

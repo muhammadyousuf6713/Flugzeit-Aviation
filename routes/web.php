@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\InquiryController;
+use App\Http\Controllers\InquirytypesController;
 use App\Http\Controllers\PermissionAssignmentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\QuotationController;
@@ -13,6 +14,8 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\SalesReferenceController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsersController;
@@ -36,6 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/', [HomeController::class, 'home']);
     Route::get('dashboard', function () {
+
         return view('dashboard');
     })->name('dashboard');
 
@@ -78,7 +82,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 
-    Route::get('customers', [CustomerController::class, 'index']);
+    Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::get('customers/create', [CustomerController::class, 'create']);
     Route::post('customers/store', [CustomerController::class, 'store']);
     Route::get('get-data', [AjaxController::class, 'getData']);
@@ -86,9 +90,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('check_customer_number/{cell}', [AjaxController::class, 'check_customer_number']);
     Route::get('customer_list/{query?}', [AjaxController::class, 'customer_search']);
     Route::get('customers/destroy/{id}', [CustomerController::class, 'destroy']);
-    Route::get('customers/edit/{id}', [CustomerController::class, 'edit']);
+    // Route::get('customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
+    Route::get('customers/edit/{id}', [CustomerController::class, 'edit'])->name('customers.edit');
+    Route::put('customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
+    // Route::get('customers/update/{id}', [CustomerController::class, 'update']);
     Route::get('customers/view/{id}', [CustomerController::class, 'view']);
-    Route::get('customers/update/{id}', [CustomerController::class, 'update']);
     Route::get('get_customer_data', 'AjaxController@getCustomerData')->name('get_customer_data');
 
 
@@ -150,6 +156,39 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/{permission}', [PermissionController::class, 'update'])->name('permission.update'); // Update permission
         Route::delete('/{permission}', [PermissionController::class, 'destroy'])->name('permission.destroy'); // Delete permission
     });
+
+
+
+    // Aslam Work
+
+
+    // Inquiry Type
+    Route::get('/inquiry-type', [InquirytypesController::class, 'index']);
+    Route::get('inquiry-type/create', [InquirytypesController::class, 'create']);
+    Route::post('inquiry-type/store', [InquirytypesController::class, 'store']);
+    Route::get('inquiry-type/edit/{id}', [InquirytypesController::class, 'edit']);
+    Route::post('inquiry-type/update/{id}', [InquirytypesController::class, 'update']);
+    // Route::post('inquiry-type/delete/{id}', [InquirytypesController::class, 'destroy']);
+    Route::delete('/inquiry-type/delete/{id}', [InquirytypesController::class, 'destroy'])->name('inquiry-type.destroy');
+
+
+    // SalesReference
+    Route::get('/sales-reference', [SalesReferenceController::class, 'index']);
+    Route::get('sales-reference/create', [SalesReferenceController::class, 'create']);
+    Route::post('sales-reference/store', [SalesReferenceController::class, 'store']);
+    Route::get('sales-reference/edit/{id}', [SalesReferenceController::class, 'edit']);
+    Route::post('sales-reference/update/{id}', [SalesReferenceController::class, 'update']);
+    // Route::post('sales-reference/delete/{id}', [SalesReferenceController::class, 'destroy']);
+    Route::delete('/sales-reference/delete/{id}', [SalesReferenceController::class, 'destroy'])->name('sales-reference.destroy');
+
+    // Services
+    Route::get('/services', [ServiceController::class, 'index']);
+    Route::get('services/create', [ServiceController::class, 'create']);
+    Route::post('services/store', [ServiceController::class, 'store']);
+    Route::get('services/edit/{id}', [ServiceController::class, 'edit']);
+    Route::post('sercices/update/{id}', [ServiceController::class, 'update']);
+    Route::delete('services/delete/{id}', [ServiceController::class, 'destroy'])->name('services.destroy');
+
 
     //asign permission to role
     Route::get('roles/permission/{id?}', [PermissionController::class, 'permission_index']);

@@ -12,38 +12,7 @@ use Illuminate\Support\Facades\Crypt;
 
 class InquirytypesController extends Controller
 {
-    protected $role_id;
-    public function __construct()
-    {
-        $this->middleware('auth');
-               $this->middleware(function ($request, $next) {
-                   $this->role_id = Auth::user()->role_id;
-                //    $slug_filter = preg_replace('/[0-9]+/', '', $request->path());
-                //    $slug_filter = preg_replace('/[0-9]+/', '', $request->path());
-                $ex = explode('/',$request->path());
-                if(count($ex)>=3){
-                    $sliced = array_slice($ex, 0, -1);
 
-                }else{
-                    $sliced = $ex;
-                }
-
-                $string = implode("/", $sliced);
-//                 dd($string);
-                   if (checkConstructor($this->role_id, count($ex)>=3 ? $string.'/': $string) == 1) {
-                       return $next($request);
-                   }else if(strpos($request->path(), 'store') !== false){
-                       return $next($request);
-                   }else if(strpos($request->path(), 'update') !== false){
-                       return $next($request);
-                   } else {
-                       abort(404);
-                   }
-               });
-    }
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $inquiry_types = inquirytypes::all();
@@ -64,27 +33,21 @@ class InquirytypesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'inquiry_type' => 'required'
+            'type_name' => 'required'
         ]);
-        try {
-            $vendor = new inquirytypes();
-            $vendor->type_name = $request->inquiry_type;
-            $vendor->save();
-            session()->flash('success', "Inquiry Type Added Successfully");
-            return redirect()->back();
-        } catch (\Throwable $th) {
-            session()->flash('error', $th->getMessage());
-            return redirect()->back();
-        }
+        $vendor = new inquirytypes();
+        $vendor->type_name = $request->type_name;
+        $vendor->type_desc = $request->type_desc;
+        $vendor->business_id = '1';
+        $vendor->save();
+        session()->flash('success', "Inquiry Type Added Successfully");
+        // dd($vendor);
+        return redirect()->back();
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(inquiry_types $inquiry_types)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -100,23 +63,20 @@ class InquirytypesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request , $id)
+    public function update(Request $request, $id)
     {
+        dd($request);
         $request->validate([
-            'inquiry_type' => 'required',
+            'type_name' => 'required',
         ]);
         // dd($request);
-        try {
-            $dec_id = \Crypt::decrypt($id);
-            $inquiry_type = inquirytypes::where('type_id', $dec_id)->first();
-            $inquiry_type->type_name = $request->inquiry_type;
-            $inquiry_type->save();
-            session()->flash('success', "Inquiry Type Updated Successfully");
-            return redirect()->back();
-        } catch (\Throwable $th) {
-            session()->flash('error', $th->getMessage());
-            return redirect()->back();
-        }
+        $dec_id = \Crypt::decrypt($id);
+        dd($dec_id);
+        $inquiry_type = inquirytypes::where('type_id', $dec_id)->first();
+        $inquiry_type->type_name = $request->type_name;
+        $inquiry_type->save();
+        session()->flash('success', "Inquiry Type Updated Successfully");
+        return redirect()->back();
     }
 
     /**
@@ -126,5 +86,4 @@ class InquirytypesController extends Controller
     {
         //
     }
-
 }

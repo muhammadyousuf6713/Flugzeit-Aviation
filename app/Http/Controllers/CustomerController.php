@@ -7,44 +7,15 @@ use App\City;
 use App\Customer;
 use App\countries;
 use App\inquiry;
+use App\Models\User;
 use App\quotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
-    protected $role_id;
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    //     $this->middleware(function ($request, $next) {
-    //         $this->role_id = Auth::user()->role_id;
-    //         //    $slug_filter = preg_replace('/[0-9]+/', '', $request->path());
-    //         //    $slug_filter = preg_replace('/[0-9]+/', '', $request->path());
-    //         $ex = explode('/', $request->path());
-    //         if (count($ex) >= 3) {
-    //             $sliced = array_slice($ex, 0, -1);
-    //         } else {
-    //             $sliced = $ex;
-    //         }
-
-    //         $string = implode("/", $sliced);
-    //         //                 dd($string);
-    //         if (checkConstructor($this->role_id, count($ex) >= 3 ? $string . '/' : $string) == 1) {
-    //             return $next($request);
-    //         } else if (strpos($request->path(), 'store') !== false) {
-    //             return $next($request);
-    //         } else if (strpos($request->path(), 'update') !== false) {
-    //             return $next($request);
-    //         } else {
-    //             abort(404);
-    //         }
-    //     });
-    // }
-    /**
-     * Display a listing of the resource.
-     */
 
     public function customer_search(Request $request, $query = null)
     {
@@ -68,13 +39,50 @@ class CustomerController extends Controller
             return $artilces;
         }
     }
-
-    public function index()
+    public function index(Request $request)
     {
-        $customers = Customer::all();
-        // dd($customers);
-        return view('customers.index', compact('customers'));
+
+        // $user = Auth::user();
+        // $user->assignRole('Admin');
+        // dd($user->getRoleNames());
+        // exit;
+        if ($request->ajax()) {
+            $customers = Customer::with(['salePerson', 'city'])->select('customers.*');
+
+            return DataTables::of($customers)
+                ->addIndexColumn()
+                ->addColumn('image', function ($customer) {
+                    return $customer->customer_image
+                        ? '<img src="' . asset('uploads/customer_images/' . $customer->customer_image) . '" style="height:40px;width:40px;border-radius:50%"/>'
+                        : '<img src="' . asset('img/default_user.png') . '" style="height:40px;width:40px;border-radius:50%"/>';
+                })
+                ->addColumn('sale_person_name', function ($customer) {
+                    return $customer->salePerson->name ?? '';
+                })
+                ->addColumn('whatsapp_enabled', function ($customer) {
+                    return $customer->whatsapp_check == 1
+                        ? '<img src="' . asset('img/whatsapp.png') . '" style="height:20px;width:20px;border-radius:50%"/>'
+                        : '';
+                })
+                ->addColumn('customer_mobile', function ($customer) {
+                    return $customer->customer_cell; // Not customer_cell
+                })
+                ->addColumn('customer_phone1', function ($customer) {
+                    return $customer->customer_phone1; // Not customer_cell
+                })
+                ->addColumn('customer_phone2', function ($customer) {
+                    return $customer->customer_phone2; // Not customer_cell
+                })
+                ->addColumn('action', function ($customer) {
+                    return '<a href="' . route('customers.edit', $customer->id_customers) . '" class="btn btn-primary btn-sm">Edit</a>';
+                })
+                ->rawColumns(['image', 'whatsapp_enabled', 'action'])
+                ->make(true);
+        }
+
+        return view('customers.index');
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -211,9 +219,7 @@ class CustomerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(service_vendor $service_vendor)
-    {
-    }
+    public function show(service_vendor $service_vendor) {}
 
     public function check_customer_number($cell)
     {
@@ -237,39 +243,31 @@ class CustomerController extends Controller
      */
     public function edit($id)
     {
-        $dec_id = \Crypt::decrypt($id);
-        $customers = customer::where('id_customers', $dec_id)->first();
+        $customer = Customer::findOrFail($id);
+
         $countries = countries::all();
-        return view('customers.edit', compact('customers', 'countries'));
+        $sale_persons = User::where('role_id', 6)
+            ->select('id', 'name')
+            ->get();
+
+        return view('customers.edit', compact('customer', 'countries', 'sale_persons'));
     }
 
     public function view($id)
     {
-        $dec_id = Crypt::decrypt($id);
-        $view = Customer::where('id_customers', $dec_id)->first();
+        $view = Customer::where('id_customers', $id)->first();
         // $inquiry1 = inquiry::where('customer_id', $view->id_customers)->get();
-        $quotations = [];
+
         $inquiry = inquiry::select('inquiry.*', 'inquirytypes.type_id', 'inquirytypes.type_name')
             ->join('inquirytypes', 'inquirytypes.type_id', 'inquiry.id_inquiry')
             // ->join('users' ,'users.id' , 'inquiry.saleperson' )
             ->where('customer_id', $view->id_customers)->get();
 
-            foreach ($inquiry as $in) {
-                $quotation = quotation::where('inquiry_id', $in->id_inquiry)->get();
-            if ($quotation) {
-                $quotations[] = $quotation;
-            }
-                }
-
-            // dd($quotations);
-
-
 
         $customers = Customer::all();
-        $dec_id = Crypt::decrypt($id);
-        $view = Customer::where('id_customers', $dec_id)->first();
+        $view = Customer::where('id_customers', $id)->first();
         // dd($view);
-        return view('customers.view', compact('customers', 'view', 'inquiry', 'quotations'));
+        return view('customers.view', compact('customers', 'view', 'inquiry'));
     }
 
     /**

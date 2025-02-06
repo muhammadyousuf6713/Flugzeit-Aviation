@@ -114,8 +114,6 @@
                     <div class="az-content-body d-flex flex-column">
                         <form action="{{ url('inquiry/store') }}" method="post" id="submit_inquiry">
                             <div id="wizard2" class="col-md-12">
-
-
                                 <div class="tabs">
                                     <span id="tab1" class="tab-btn">
                                         <div class="btn-az-primary active">
@@ -130,20 +128,13 @@
                                         </div>
                                     </span>
                                 </div>
-
-
-
                                 <div id="section1" style="padding: 20px; border: 1px solid lightgrey">
                                     <h3>Add Customer Details</h3>
-
                                     <section>
                                         <div class="row row-lg">
                                             <div class="col-lg-4">
-
                                                 <label class="az-content-label tx-11 tx-medium tx-gray-600">Start typing by
-                                                    name
-                                                    /
-                                                    contact number:</label>
+                                                    name/contact number:</label>
                                                 <input class="form-control" id="contact_search" type="search"
                                                     placeholder="Search">
                                                 <hr>
@@ -151,13 +142,10 @@
                                                     id="clear_customer_information">Clear</button>
                                                 <a href="#customer_div" class="btn btn-success d-none text-white "
                                                     id="add_new_customer_btn">Add New Customer</a>
-
                                             </div>
                                             <div style="height:180px;overflow-y:scroll;border-left:1px solid #e3e7ed;"
                                                 class='col-lg-4' id="search_result">
-
                                             </div>
-
                                             <div class="col-lg-3" id="customer_details"
                                                 style="border-left:1px solid #e3e7ed;">
                                                 <p class="az-content-label tx-11 tx-medium tx-gray-600"
@@ -202,7 +190,6 @@
                                                         class="form-control" data-parsley-id="7" required
                                                         name="customer_name" placeholder="Full Name" type="text">
                                                 </div>
-
                                             </div>
                                             <div class="col-md-4 mg-t-20 mg-md-t-0">
                                                 <div class="form-group">
@@ -217,31 +204,6 @@
                                                     <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
-
-                                            {{-- <div class="col-md-4 mg-t-20 mg-md-t-0">
-                                                <div class="form-group">
-                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600"><span>
-                                                            Customer
-                                                            Cell </span> <span style="color:red;">*</span> Whats-App <input
-                                                            type="checkbox" name="whatsapp_check">
-                                                    </label>
-
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <div class="input-group-text">
-                                                                Phone:
-                                                            </div>
-                                                        </div>
-                                                        <input type="text" id="customer_cell"
-                                                            placeholder="(123) 456-7890" maxlength="14"
-                                                            class="form-control phone" name="customer_cell"
-                                                            style="width: 80% !important" onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9]/g, '')" required />
-                                                    </div>
-
-                                                    <div class="invalid-feedback0"></div>
-                                                </div>
-                                            </div> --}}
-
                                             <div class="col-md-4 mg-t-20 mg-md-t-0">
                                                 <div class="form-group">
                                                     <label class="az-content-label tx-11 tx-medium tx-gray-600">
@@ -260,8 +222,6 @@
                                                     <div class="invalid-feedback0"></div>
                                                 </div>
                                             </div>
-
-
                                             <div class="row row-sm">
                                                 <div class="col-md-6">
                                                     <div class="form-group ml-2 mt-2">
@@ -310,8 +270,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="form-group ml-2 mt-2">
@@ -324,20 +282,15 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-
                                     </section>
                                 </div>
                                 <div id="section2" style="display: none; padding: 20px; border: 1px solid lightgrey">
                                     <h3>Travel & Services Information</h3>
                                     <section>
                                         <div class="row row-sm">
-
                                             <div class="row mt-2">
-
                                                 <div class=" rmv_service col-lg-6 mg-t-20 mg-lg-t-0">
                                                     <div class="form-group">
-
                                                         <label
                                                             class="az-content-label tx-11 tx-medium tx-gray-600">Services:
                                                             <span style="color:red;">*</span></label>
@@ -354,10 +307,8 @@
                                                         </select>
                                                     </div>
                                                 </div>
-
                                                 <div class="rmv_service col-lg-6 mg-t-20 mg-lg-t-0">
                                                     <div class="form-group">
-
                                                         <label class="az-content-label tx-11 tx-medium tx-gray-600">Sub
                                                             Services:</label>
                                                         <select style="width: 100%" name="sub_services[]"
@@ -365,20 +316,15 @@
                                                             class="js-example-basic-multiple service_dis"
                                                             multiple="multiple">
                                                             <option>Select Sub Service</option>
-
                                                         </select>
                                                     </div>
                                                 </div>
-
-
                                             </div>
                                             <div class="row" id="append_services">
-
                                             </div>
                                             <div class="row ">
                                                 <div class="col-lg-3 mg-t-20 mg-lg-t-0 mt-2">
                                                     <div class="form-group">
-
                                                         <label class="az-content-label tx-11 tx-medium tx-gray-600">Inquiry
                                                             Type: <span style="color:red;">*</span></label>
                                                         <select name="inquiry_type" id="inquiry_type"
@@ -435,7 +381,6 @@
                                                     </select>
                                                 </div>
                                             </div>
-
                                             <div class="row ">
                                                 <div class="col-lg-4 mg-t-20 mg-lg-t-0 mt-2">
                                                     <div class="form-group">
@@ -466,98 +411,93 @@
                                                             class="form-control" name="no_of_infants">
                                                     </div>
                                                 </div>
-                                            </div
-
-
-                                        </div>
-
-                                        <div class="row row-sm">
-                                            <div class="col-lg-6 mg-t-20 mg-md-t-0 mt-2">
-                                                <label class="az-content-label tx-11 tx-medium tx-gray-600">Travel Date:
-                                                    <span style="color:red;">*</span></label>
-                                                <input type="text" readonly name="travel_date"
-                                                    class="form-control fc-datepicker2" placeholder="MM/DD/YYYY" required
-                                                    readonly />
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group ml-2 mt-2">
-                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Sales
-                                                        Person
+                                            </div </div>
+                                            <div class="row row-sm">
+                                                <div class="col-lg-6 mg-t-20 mg-md-t-0 mt-2">
+                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Travel
+                                                        Date:
                                                         <span style="color:red;">*</span></label>
-                                                    @csrf
-                                                    @if ($get_permission_data['assign_others'] == 'true')
-                                                        <select name="sale_person" class="form-control" id="sale_person">
-                                                            <option>Select</option>
-                                                            @forelse ($sale_persons as $sp)
-                                                                <option @if ($sp['id'] == auth()->user()->id) selected @endif
-                                                                    value="{{ $sp['id'] }}">{{ $sp['name'] }}
-                                                                </option>
-                                                            @empty
-                                                                No Results Found
-                                                            @endforelse
-                                                        </select>
-                                                    @elseif($get_permission_data['assign_others'] == 'false')
-                                                        <select name="sale_person" class="form-control" id="sale_person">
-                                                            <option>Select</option>
-                                                            @forelse ($sale_persons as $sp)
-                                                                <option @if ($sp['id'] == auth()->user()->id) selected @endif
-                                                                    value="{{ $sp['id'] }}">{{ $sp['name'] }}
-                                                                </option>
-                                                            @empty
-                                                                No Results Found
-                                                            @endforelse
-                                                        </select>
-                                                    @endif
-                                                    <div class="invalid-feedback"></div>
+                                                    <input type="text" readonly name="travel_date"
+                                                        class="form-control fc-datepicker2" placeholder="MM/DD/YYYY"
+                                                        required readonly />
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-12 mg-t-20 mg-md-t-0 mt-2">
-                                                <label class="az-content-label tx-11 tx-medium tx-gray-600">Remarks: <span
-                                                        class="text-danger">*</span></label>
-                                                <div style="width: 100% ; margin-top: 10px"
-                                                    class="col-md-12 ql-wrapper ql-wrapper-demo">
-                                                    {{-- <div id="editor"></div> --}}
-                                                    {{-- <textarea name="remarks" id="editorTextarea" style="display: none;"></textarea> --}}
-                                                    {{-- <div id="editor" style="height: 300px;"></div> --}}
-                                                    <div id="toolbar-container">
-                                                        <span class="ql-formats">
-                                                            <select class="ql-header">
-                                                                <option value="1"></option>
-                                                                <option value="2"></option>
-                                                                <option value="3"></option>
-                                                                <option value="4"></option>
-                                                                <option value="5"></option>
-                                                                <option value="6"></option>
-                                                                <option selected></option>
+                                                <div class="col-md-6">
+                                                    <div class="form-group ml-2 mt-2">
+                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Sales
+                                                            Person
+                                                            <span style="color:red;">*</span></label>
+                                                        @csrf
+                                                        @if ($get_permission_data['assign_others'] == 'true')
+                                                            <select name="sale_person" class="form-control"
+                                                                id="sale_person">
+                                                                <option>Select</option>
+                                                                @forelse ($sale_persons as $sp)
+                                                                    <option
+                                                                        @if ($sp['id'] == auth()->user()->id) selected @endif
+                                                                        value="{{ $sp['id'] }}">{{ $sp['name'] }}
+                                                                    </option>
+                                                                @empty
+                                                                    No Results Found
+                                                                @endforelse
                                                             </select>
-                                                            <button class="ql-bold"></button>
-                                                            <button class="ql-italic"></button>
-                                                            <button class="ql-underline"></button>
-                                                            <button class="ql-strike"></button>
-                                                        </span>
-                                                        <span class="ql-formats">
-                                                            <button class="ql-list" value="ordered"></button>
-                                                            <button class="ql-list" value="bullet"></button>
-                                                        </span>
-                                                        <span class="ql-formats">
-                                                            <button class="ql-link"></button>
-                                                            <button class="ql-image"></button>
-                                                            <button class="ql-video"></button>
-                                                        </span>
+                                                        @elseif($get_permission_data['assign_others'] == 'false')
+                                                            <select name="sale_person" class="form-control"
+                                                                id="sale_person">
+                                                                <option>Select</option>
+                                                                @forelse ($sale_persons as $sp)
+                                                                    <option
+                                                                        @if ($sp['id'] == auth()->user()->id) selected @endif
+                                                                        value="{{ $sp['id'] }}">{{ $sp['name'] }}
+                                                                    </option>
+                                                                @empty
+                                                                    No Results Found
+                                                                @endforelse
+                                                            </select>
+                                                        @endif
+                                                        <div class="invalid-feedback"></div>
                                                     </div>
-                                                    <div id="editor-container" onkeyup="saveQuillContent()"></div>
-                                                    <textarea name="remarks" id="editorTextarea" style="display: none;"></textarea>
+                                                </div>
+                                                <div class="col-lg-12 mg-t-20 mg-md-t-0 mt-2">
+                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Remarks:
+                                                        <span class="text-danger">*</span></label>
+                                                    <div style="width: 100% ; margin-top: 10px"
+                                                        class="col-md-12 ql-wrapper ql-wrapper-demo">
+                                                        <div id="toolbar-container">
+                                                            <span class="ql-formats">
+                                                                <select class="ql-header">
+                                                                    <option value="1"></option>
+                                                                    <option value="2"></option>
+                                                                    <option value="3"></option>
+                                                                    <option value="4"></option>
+                                                                    <option value="5"></option>
+                                                                    <option value="6"></option>
+                                                                    <option selected></option>
+                                                                </select>
+                                                                <button class="ql-bold"></button>
+                                                                <button class="ql-italic"></button>
+                                                                <button class="ql-underline"></button>
+                                                                <button class="ql-strike"></button>
+                                                            </span>
+                                                            <span class="ql-formats">
+                                                                <button class="ql-list" value="ordered"></button>
+                                                                <button class="ql-list" value="bullet"></button>
+                                                            </span>
+                                                            <span class="ql-formats">
+                                                                <button class="ql-link"></button>
+                                                                <button class="ql-image"></button>
+                                                                <button class="ql-video"></button>
+                                                            </span>
+                                                        </div>
+                                                        <div id="editor-container" onkeyup="saveQuillContent()"></div>
+                                                        <textarea name="remarks" id="editorTextarea" style="display: none;"></textarea>
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                        </div>
-
                                     </section>
                                 </div>
                                 <br>
                                 <input type="hidden" name="" id="count_id">
                             </div>
-
                             <div class="wizard-buttons" style="padding: 20px; border: 1px solid lightgrey">
                                 <span id="prev" class="btn btn-secondary" style="cursor: not-allowed;"
                                     disabled>Previous</span>
@@ -565,7 +505,6 @@
                                 <button id="submit" class="btn btn-az-primary"
                                     style="float: right; margin-right: 20px; display: none;">Submit</button>
                             </div>
-
                         </form>
                         <!--</div> az-content-body -->
                     </div><!-- container -->

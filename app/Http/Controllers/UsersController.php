@@ -86,7 +86,7 @@
 //         } else {
 //             session()->flash('danger', 'User has not been added');
 //         }
-//         return redirect(url('users'));
+//         return redirect(url('user-management'));
 //     }
 
 
@@ -135,7 +135,7 @@
 //         } else {
 //             session()->flash('danger', 'User has not been updated');
 //         }
-//         return redirect(url('users'));
+//         return redirect(url('user-management'));
 //     }
 
 //     public function profile_index()
@@ -154,7 +154,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Notifications;
-use App\User;
+use App\Models\User;
 use App\roles;
 use App\role_user;
 use Illuminate\Support\Facades\Hash;
@@ -214,7 +214,7 @@ class UsersController extends Controller
         //     ->join('roles', 'roles.id', 'users.role_id', 'left')->get()->toArray();
         //        echo '<pre>'; print_r($users);exit;
         $users = User::where('id', '!=', auth()->user()->id)->get();
-        return view('Users.index')->with(compact('users'));
+        return view('users.index')->with(compact('users'));
     }
 
 
@@ -226,7 +226,7 @@ class UsersController extends Controller
 
         $roles = roles::all();
         //        echo '<pre>'; print_r($roles);exit;
-        return view('Users.create', compact('roles', 'title', 'menu', 'submenu'));
+        return view('users.create', compact('roles', 'title', 'menu', 'submenu'));
     }
 
     // public function store(Request $request)
@@ -267,14 +267,15 @@ class UsersController extends Controller
     //     } else {
     //         session()->flash('danger', 'User has not been added');
     //     }
-    //     return redirect(url('users'));
+    //     return redirect(url('user-management'));
     // }
     public function store(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed'
+            'password' => 'required|string|min:8|confirmed',
+            'role_id' => 'required',
         ]);
 
         $user = new User();
@@ -283,16 +284,20 @@ class UsersController extends Controller
         $user->business_id = 1;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
+        // $user->save();
+        // session()->flash('success', 'User has been added with the assigned role.');
 
+        // dd($user);
         if ($user->save()) {
             // Assign role using Spatie
-            $user->assignRole($request->role_id);
+            $role = roles::find($request->role_id);
+            $user->assignRole($role->name);
             session()->flash('success', 'User has been added with the assigned role.');
         } else {
             session()->flash('danger', 'User has not been added.');
         }
 
-        return redirect(url('users'));
+        return redirect(url('user-management'));
     }
 
 
@@ -305,7 +310,7 @@ class UsersController extends Controller
         $roles = roles::all();
 
         //print_r($plot); exit;
-        return view('Users.edit')->with(compact('users', 'roles'));
+        return view('users.edit')->with(compact('users', 'roles'));
     }
 
     public function update(Request $request)
@@ -339,11 +344,11 @@ class UsersController extends Controller
         } else {
             session()->flash('danger', 'User has not been updated');
         }
-        return redirect(url('users'));
+        return redirect(url('user-management'));
     }
 
     public function profile_index()
     {
-        return view('Users.profile');
+        return view('users.profile');
     }
 }

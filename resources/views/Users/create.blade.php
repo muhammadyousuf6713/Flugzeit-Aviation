@@ -6,7 +6,7 @@
         <div class="container-fluid py-4">
             <div class="card">
                 <div class="card-header pb-0 px-3">
-                    <h3 class="az-content-title" style="display: inline">Add New User <span><a href="{{ url('users') }}"
+                    <h3 class="az-content-title" style="display: inline">Add New User <span><a href="{{ url('user-management') }}"
                                 class="btn bg-gradient-primary" style="float: right">Users List</a></span></h3>
                 </div>
                 <div class="card-body pt-4 p-3">
@@ -50,8 +50,8 @@
                                 <div class="form-group">
                                     <label for="user-name" class="form-control-label">{{ __('Full Name') }}</label>
                                     <div class="@error('user.name')border border-danger rounded-3 @enderror">
-                                        <input class="form-control" value="" type="text"
-                                            placeholder="Name" id="user-name" name="name">
+                                        <input class="form-control" value="" type="text" placeholder="Name"
+                                            id="user-name" name="name">
                                         @error('name')
                                             <p class="text-danger text-xs mt-2">{{ $message }}</p>
                                         @enderror
@@ -62,8 +62,8 @@
                                 <div class="form-group">
                                     <label for="user-email" class="form-control-label">{{ __('Email') }}</label>
                                     <div class="@error('email')border border-danger rounded-3 @enderror">
-                                        <input class="form-control" value="" type="email"
-                                            placeholder="@fza.com" id="user-email" name="email">
+                                        <input class="form-control" value="" type="email" placeholder="@fza.com"
+                                            id="user-email" name="email">
                                         @error('email')
                                             <p class="text-danger text-xs mt-2">{{ $message }}</p>
                                         @enderror
@@ -78,14 +78,14 @@
                                         <select id="role_id" name="role_id" class="form-control">
                                             <option value="0">Select</optoin>
                                                 @foreach ($roles as $role)
-                                            <option {{ old('role_id') == $role['id_roles'] ? 'selected' : '' }}
-                                                value="{{ $role['id_roles'] }}">{{ $role['name'] }}</option>
+                                            <option {{ old('role_id') == $role['id'] ? 'selected' : '' }}
+                                                value="{{ $role['id'] }}">{{ $role['name'] }}</option>
                                             @endforeach
                                         </select>
 
                                         @error('role_id')
                                             <span class="form-text text-muted">
-                                                <strong>{{ $role_id }}</strong>
+                                                {{-- <strong>{{ $role_id }}</strong> --}}
                                             </span>
                                         @enderror
                                     </div>

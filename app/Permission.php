@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Traits\HasPermissions;
 
 class Permission extends Model
 {
+    use HasPermissions;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -29,12 +32,11 @@ class Permission extends Model
 
     public static function permissionList($menu)
     {
-        $permissionsList = Permission::where('name','LIKE','%'.str_slug($menu))->get();
-        $permissions['add'] = $permissionsList->where('name','=','add-'.str_slug($menu))->pluck('id')->first();
-        $permissions['edit'] = $permissionsList->where('name','=','edit-'.str_slug($menu))->pluck('id')->first();
-        $permissions['view'] = $permissionsList->where('name','=','view-'.str_slug($menu))->pluck('id')->first();
-        $permissions['delete'] = $permissionsList->where('name','=','delete-'.str_slug($menu))->pluck('id')->first();
+        $permissionsList = Permission::where('name', 'LIKE', '%' . str_slug($menu))->get();
+        $permissions['add'] = $permissionsList->where('name', '=', 'add-' . str_slug($menu))->pluck('id')->first();
+        $permissions['edit'] = $permissionsList->where('name', '=', 'edit-' . str_slug($menu))->pluck('id')->first();
+        $permissions['view'] = $permissionsList->where('name', '=', 'view-' . str_slug($menu))->pluck('id')->first();
+        $permissions['delete'] = $permissionsList->where('name', '=', 'delete-' . str_slug($menu))->pluck('id')->first();
         return  $permissions;
     }
-    
 }
