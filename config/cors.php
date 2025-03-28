@@ -15,20 +15,13 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
-
-    'allowed_methods' => ['*'],
-
-    'allowed_origins' => ['*'],
-
-    'allowed_origins_patterns' => [],
-
-    'allowed_headers' => ['*'],
-
-    'exposed_headers' => [],
-
-    'max_age' => 0,
-
-    'supports_credentials' => false,
+    'paths' => ['api/*'], // Allow CORS on API routes
+    'allowed_methods' => ['*'], // Allow all HTTP methods (GET, POST, etc.)
+    'allowed_origins' => ['http://localhost:3000'], // Frontend origin
+    'allowed_origins_patterns' => [], // Regex patterns for origins (optional)
+    'allowed_headers' => ['*'], // Allow all headers
+    'exposed_headers' => [], // Expose headers to the client (optional)
+    'max_age' => 0, // Cache duration (optional)
+    'supports_credentials' => false, // Set to true if using cookies/auth
 
 ];
