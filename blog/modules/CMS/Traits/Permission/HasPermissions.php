@@ -466,7 +466,7 @@ trait HasPermissions
 
             return $permissionClass
                 ->whereIn('name', $permissions)
-                ->whereIn(' ', $this->getGuardNames())
+                ->whereIn('guard_name', $this->getGuardNames())
                 ->get();
         }
 

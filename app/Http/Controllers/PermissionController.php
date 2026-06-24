@@ -70,27 +70,52 @@ class PermissionController extends Controller
 
 
     // Show edit form
-    public function edit(Permission $permission)
+    public function edit($id)
     {
-        $modules = Permission::where('parent_id', 0)->get();
-        return view('permission.per_create.edit', compact('permission', 'modules'));
+        $permission = Permission::findOrFail($id);
+        $modules = Permission::where('parent_id', 0)->get(); // Parent modules
+        $subModules = Permission::where('parent_id', '!=', 0)->get(); // Sub-modules
+
+        return view('permission.per_create.edit', compact('permission', 'modules', 'subModules'));
     }
 
     // Update permission
-    public function update(Request $request, Permission $permission)
+    public function update(Request $request, $id)
     {
+        // Validate the input
         $request->validate([
-            'name' => 'required|string|max:255|unique:permissions,name,' . $permission->id,
+            'name' => 'required|string|max:255',
             'parent_id' => 'nullable|integer|exists:permissions,id',
+            'sub_module_id' => 'nullable|integer|exists:permissions,id',
         ]);
 
-        $permission->update([
-            'name' => $request->name,
-            'parent_id' => $request->parent_id ?? 0,
-        ]);
+        // Find the permission by its ID
+        $permission = Permission::findOrFail($id);
 
+        // Update the permission's details
+        $permission->name = $request->name;
+
+        // If a parent module is selected, update the parent_id
+        if ($request->has('parent_id')) {
+            $permission->parent_id = $request->parent_id;
+        } else {
+            $permission->parent_id = 0; // Set to 0 if no parent is selected
+        }
+
+        // If a sub-module is selected, update the sub_module_id
+        if ($request->has('sub_module_id')) {
+            $permission->sub_module_id = $request->sub_module_id;
+        } else {
+            $permission->sub_module_id = null; // Set to null if no sub-module is selected
+        }
+
+        // Save the updated permission
+        $permission->save();
+
+        // Redirect to the permission list with a success message
         return redirect()->route('permission.index')->with('success', 'Permission updated successfully.');
     }
+
 
     // Delete permission
     public function destroy(Permission $permission)
@@ -124,78 +149,54 @@ class PermissionController extends Controller
 
         $assigned_permissions = $role_id ? Role::find($role_id)->permissions->pluck('id')->toArray() : [];
 
-        return view('permission.index', compact('roles', 'role_id', 'permissions', 'assigned_permissions'));
+        return view('Permission.index', compact('roles', 'role_id', 'permissions', 'assigned_permissions'));
     }
 
 
-    // public function assignPermissions(Request $request, $role_id)
-    // {
-    //     // Validate the request
-    //     $validated = $request->validate([
-    //         'permissions' => 'array',
-    //         'permission.*' => 'integer|exists:permissions,id',
-    //     ]);
-
-    //     // Find the role
-    //     $role = Role::find($role_id);
-    //     if (!$role) {
-    //         return redirect()->back()->with('alert', 'Role not found')->with('alert-class', 'danger');
-    //     }
-
-    //     // Filter permissions for the 'web' guard
-    //     $permissions = Permission::whereIn('id', $validated['permissions'] ?? [])
-    //         ->where('guard_name', 'web')
-    //         ->pluck('name') // Get the names of the permissions
-    //         ->toArray();
-
-    //     // Sync permissions to the role (adds and removes accordingly)
-    //     $role->syncPermissions($permissions);
-
-    //     // Sync permissions for the authenticated user
-    //     $user = auth()->user();
-
-    //     // Get all permissions assigned to the user
-    //     $userPermissions = $user->getPermissionNames()->toArray();
-
-    //     // Add new permissions to the user
-    //     foreach ($permissions as $permission) {
-    //         if (!in_array($permission, $userPermissions)) {
-    //             $user->givePermissionTo($permission);
-    //         }
-    //     }
-
-    //     // Remove permissions that are unchecked
-    //     foreach ($userPermissions as $permission) {
-    //         if (!in_array($permission, $permissions)) {
-    //             $user->revokePermissionTo($permission);
-    //         }
-    //     }
-
-    //     // Set success response
-    //     return redirect()->back()->with('alert', 'Permissions updated successfully')->with('alert-class', 'success');
-    // }
-
     public function assignPermissions(Request $request, $role_id)
     {
+        // Validate the request
         $validated = $request->validate([
             'permissions' => 'array',
-            'permissions.*' => 'integer|exists:permissions,id',
+            'permission.*' => 'integer|exists:permissions,id',
         ]);
 
+        // Find the role
         $role = Role::find($role_id);
         if (!$role) {
             return redirect()->back()->with('alert', 'Role not found')->with('alert-class', 'danger');
         }
 
-        // Retrieve permission names
+        // Filter permissions for the 'web' guard
         $permissions = Permission::whereIn('id', $validated['permissions'] ?? [])
             ->where('guard_name', 'web')
-            ->pluck('name')
+            ->pluck('name') // Get the names of the permissions
             ->toArray();
 
-        // Sync permissions with the role
+        // Sync permissions to the role (adds and removes accordingly)
         $role->syncPermissions($permissions);
 
+        // Sync permissions for the authenticated user
+        $user = auth()->user();
+
+        // Get all permissions assigned to the user
+        $userPermissions = $user->getPermissionNames()->toArray();
+
+        // Add new permissions to the user
+        foreach ($permissions as $permission) {
+            if (!in_array($permission, $userPermissions)) {
+                $user->givePermissionTo($permission);
+            }
+        }
+
+        // Remove permissions that are unchecked
+        foreach ($userPermissions as $permission) {
+            if (!in_array($permission, $permissions)) {
+                $user->revokePermissionTo($permission);
+            }
+        }
+
+        // Set success response
         return redirect()->back()->with('alert', 'Permissions updated successfully')->with('alert-class', 'success');
     }
 }

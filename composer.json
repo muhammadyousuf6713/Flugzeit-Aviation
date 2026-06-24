@@ -13,16 +13,18 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.6",
+        "livewire/livewire": "^3.5",
         "spatie/laravel-permission": "^6.10",
-        "yajra/laravel-datatables-oracle": "^11.1"
+        "fruitcake/laravel-cors": "^3.0"
     },
     "require-dev": {
-        "spatie/laravel-ignition": "^2.0",
+        "appzcoder/crud-generator": "^4.0",
         "fakerphp/faker": "^1.17",
         "laravel/sail": "^1.12",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^10.0",
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
         "psr-4": {

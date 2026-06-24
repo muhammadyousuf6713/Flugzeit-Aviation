@@ -1,13 +1,11 @@
 <?php
-
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class user extends Authenticatable
+class User extends Authenticatable
 {
     use HasRoles;
     use Notifiable;
@@ -18,9 +16,7 @@ class user extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'role_id', 'name', 'email', 'password',
     ];
 
     /**
@@ -29,9 +25,6 @@ class user extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
-
-    protected $guard_name = 'web';
 }

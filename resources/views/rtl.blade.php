@@ -623,7 +623,7 @@
 
 @endsection
 
-@push('rtl')  
+@push('rtl')
   <script>
     window.onload = function() {
       var ctx = document.getElementById("chart-bars").getContext("2d");
@@ -716,7 +716,7 @@
               tension: 0.4,
               borderWidth: 0,
               pointRadius: 0,
-              borderColor: "#cb0c9f",
+              borderColor: "#2b2e81",
               borderWidth: 3,
               backgroundColor: gradientStroke1,
               fill: true,

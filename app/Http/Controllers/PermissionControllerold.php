@@ -4,76 +4,71 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-use App\Models\User;
 
 class PermissionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    // Display a list of all permissions
     public function index()
     {
+        
         $permissions = Permission::all();
         return view('permissions.index', compact('permissions'));
     }
 
+    // Show the form to create a new permission
     public function create()
     {
+
         return view('permissions.create');
     }
 
+    // Store a newly created permission in the database
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:permissions',
+            'name' => 'required|unique:permissions,name|max:255',
         ]);
 
-        Permission::create(['name' => $request->name]);
-        return redirect()->route('permissions.index')->with('success', 'Permission created successfully!');
+        $permission = Permission::create([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('permissions.index')->with('success', 'Permission created successfully.');
     }
 
-    public function edit(Permission $permission)
+    // Show the form to edit an existing permission
+    public function edit($id)
     {
+        $permission = Permission::findOrFail($id);
         return view('permissions.edit', compact('permission'));
     }
 
-    public function update(Request $request, Permission $permission)
+    // Update the specified permission in the database
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|unique:permissions,name,' . $permission->id,
+            'name' => 'required|unique:permissions,name,' . $id . '|max:255',
         ]);
 
-        $permission->update(['name' => $request->name]);
-        return redirect()->route('permissions.index')->with('success', 'Permission updated successfully!');
+        $permission = Permission::findOrFail($id);
+        $permission->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('permissions.index')->with('success', 'Permission updated successfully.');
     }
 
-    public function destroy(Permission $permission)
+    // Delete the specified permission
+    public function destroy($id)
     {
+        $permission = Permission::findOrFail($id);
         $permission->delete();
-        return redirect()->route('permissions.index')->with('success', 'Permission deleted successfully!');
-    }
 
-    public function assignPermissionsForm()
-    {
-        $roles = Role::all();
-        $permissions = Permission::all();
-        $users = User::all();
-        return view('permissions.assign', compact('roles', 'permissions', 'users'));
-    }
-
-    public function assignPermissions(Request $request)
-    {
-        $request->validate([
-            'type' => 'required|in:role,user',
-            'id' => 'required',
-            'permissions' => 'array',
-        ]);
-
-        $entity = $request->type === 'role' ? Role::find($request->id) : User::find($request->id);
-
-        if (!$entity) {
-            return redirect()->back()->with('error', ucfirst($request->type) . ' not found.');
-        }
-
-        $entity->syncPermissions($request->permissions);
-        return redirect()->back()->with('success', 'Permissions assigned successfully!');
+        return redirect()->route('permissions.index')->with('success', 'Permission deleted successfully.');
     }
 }

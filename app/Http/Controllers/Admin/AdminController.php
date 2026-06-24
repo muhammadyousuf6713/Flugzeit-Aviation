@@ -167,67 +167,64 @@ class AdminController extends Controller
 
 
         // Main modules and their sub-modules with actions
-        // $modules = [
-        //     'Dashboard' => [
-        //         'Admin Dashboard' => ['list', 'view'],
-        //         'Sales Dashboard' => ['list', 'view'],
-        //     ],
-        //     'Operations' => [
-        //         'Customers' => ['list', 'add', 'edit', 'view', 'delete'],
-        //         'Inquiry' => ['list', 'add', 'edit', 'view', 'delete'],
-        //     ],
-        //     'Administerator' => [
-        //         'Users Management' => ['list', 'add', 'edit', 'view', 'delete'],
-        //         'Roles Management' => ['list', 'add', 'edit', 'view', 'delete'],
-        //         'Roles Permissions' => ['list', 'add', 'edit', 'view', 'delete'],
-        //     ],
-        //     'Preferences' => [
-        //         'Inquiry Types' => ['list', 'add', 'edit', 'view', 'delete'],
-        //         'Services' => ['list', 'add', 'edit', 'view', 'delete'],
-        //         'Sales References' => ['list', 'add', 'edit', 'view', 'delete'],
+        $modules = [
+            'Dashboard' => [
+                'Admin Dashboard' => ['list', 'view'],
+                'Author Dashboard' => ['list', 'view'],
+            ],
+            'Operations' => [
+                'Academic Programmes' => ['list', 'add', 'edit', 'view', 'delete'],
+                'Admissions' => ['list', 'add', 'edit', 'view', 'delete'],
+                'Administration' => ['list', 'add', 'edit', 'view', 'delete'],
+                'Campus Life' => ['list', 'add', 'edit', 'view', 'delete'],
+            ],
+            'Administerator' => [
+                'Users Management' => ['list', 'add', 'edit', 'view', 'delete'],
+                'Roles Management' => ['list', 'add', 'edit', 'view', 'delete'],
+                'Roles Permissions' => ['list', 'add', 'edit', 'view', 'delete'],
+            ],
+            'Profile' => ['list', 'add', 'edit', 'view', 'delete'],
+            'Super-Admin' => ['list', 'add', 'edit', 'view', 'delete']
+        ];
+        try {
+            foreach ($modules as $moduleName => $subModules) {
+                $mainModule = Permission::firstOrCreate([
+                    'name' => $moduleName,
+                    'guard_name' => 'web'
+                ], [
+                    'parent_id' => 0
+                ]);
 
-        //     ],
-        //     'Profile' => ['list', 'add', 'edit', 'view', 'delete']
-        // ];
-        // try {
-        //     foreach ($modules as $moduleName => $subModules) {
-        //         $mainModule = Permission::firstOrCreate([
-        //             'name' => $moduleName,
-        //             'guard_name' => 'web'
-        //         ], [
-        //             'parent_id' => 0
-        //         ]);
+                foreach ($subModules as $subModuleName => $actions) {
+                    if (!is_array($actions)) {
+                        continue;
+                    }
 
-        //         foreach ($subModules as $subModuleName => $actions) {
-        //             if (!is_array($actions)) {
-        //                 continue;
-        //             }
+                    $subModule = Permission::firstOrCreate([
+                        'name' => $subModuleName,
+                        'guard_name' => 'web',
+                        'parent_id' => $mainModule->id
+                    ]);
 
-        //             $subModule = Permission::firstOrCreate([
-        //                 'name' => $subModuleName,
-        //                 'guard_name' => 'web',
-        //                 'parent_id' => $mainModule->id
-        //             ]);
+                    foreach ($actions as $action) {
+                        Permission::firstOrCreate([
+                            'name' => $subModuleName . ' ' . $action,
+                            'guard_name' => 'web',
+                            'parent_id' => $subModule->id
+                        ]);
+                    }
+                }
+            }
 
-        //             foreach ($actions as $action) {
-        //                 Permission::firstOrCreate([
-        //                     'name' => $subModuleName . ' ' . $action,
-        //                     'guard_name' => 'web',
-        //                     'parent_id' => $subModule->id
-        //                 ]);
-        //             }
-        //         }
-        //     }
+            $roleName = 'Super-Admin';
+            $role = Role::firstOrCreate(['name' => $roleName]);
+            $permissions = Permission::all();
+            $role->givePermissionTo($permissions);
 
-        //     $roleName = 'Super-Admin';
-        //     $role = Role::firstOrCreate(['name' => $roleName]);
-        //     $permissions = Permission::all();
-        //     $role->givePermissionTo($permissions);
-
-        //     Log::info("Permissions successfully assigned to the role {$roleName}");
-        // } catch (\Exception $e) {
-        //     Log::error('Error creating permissions: ' . $e->getMessage());
-        // }
+            Log::info("Permissions successfully assigned to the role {$roleName}");
+        } catch (\Exception $e) {
+            Log::error('Error creating permissions: ' . $e->getMessage());
+        }
 
 
 

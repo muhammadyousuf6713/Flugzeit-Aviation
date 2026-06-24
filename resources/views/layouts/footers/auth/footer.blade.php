@@ -7,8 +7,8 @@
                     <script>
                         document.write(new Date().getFullYear())
                     </script>, made with <i class="fa fa-heart"></i> by
-                    <a style="color: #252f40;" href="#" class="font-weight-bold ml-1"
-                        target="_blank">Flugzeit Aviation</a>
+                    <a style="color: #252f40;" href="https://alkawthar.edu.pk" class="font-weight-bold ml-1"
+                        target="_blank">AL-KAWTHAR UNIVESITY</a>
                     for a better web.
                 </div>
             </div>
@@ -16,10 +16,11 @@
                 <ul class="nav nav-footer justify-content-center justify-content-lg-end">
 
                     <li class="nav-item">
-                        <a href="#" class="nav-link text-muted" target="_blank">Flugzeit Aviation</a>
+                        <a href="https://alkawthar.edu.pk" class="nav-link text-muted" target="_blank">AL-KAWTHAR
+                            UNIVESITY</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link text-muted" target="_blank">About
+                        <a href="https://alkawthar.edu.pk/about-us" class="nav-link text-muted" target="_blank">About
                             Us</a>
                     </li>
 

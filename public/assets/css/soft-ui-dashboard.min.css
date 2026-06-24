@@ -28,7 +28,7 @@
     --bs-gray-700: #495057;
     --bs-gray-800: #343a40;
     --bs-gray-900: #212529;
-    --bs-primary: #0ba7d0;
+    --bs-primary: #2b2e81;
     --bs-secondary: #8392ab;
     --bs-success: #82d616;
     --bs-info: #17c1e8;
@@ -250,7 +250,7 @@ sup {
 }
 
 a {
-    color: #0ba7d0
+    color: #2b2e81
 }
 
 a,
@@ -2972,8 +2972,8 @@ textarea.form-control-sm {
 }
 
 .form-check-input[type=checkbox]:indeterminate {
-    background-color: #0ba7d0;
-    border-color: #0ba7d0;
+    background-color: #2b2e81;
+    border-color: #2b2e81;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3E%3C/svg%3E")
 }
 
@@ -3062,7 +3062,7 @@ textarea.form-control-sm {
     width: 1rem;
     height: 1rem;
     margin-top: -.25rem;
-    background-color: #0ba7d0;
+    background-color: #2b2e81;
     border: 0;
     border-radius: 1rem;
     transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
@@ -3092,7 +3092,7 @@ textarea.form-control-sm {
 .form-range::-moz-range-thumb {
     width: 1rem;
     height: 1rem;
-    background-color: #0ba7d0;
+    background-color: #2b2e81;
     border: 0;
     border-radius: 1rem;
     transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
@@ -3508,7 +3508,7 @@ textarea.form-control.is-invalid {
     user-select: none;
     background-color: transparent;
     border: 1px solid transparent;
-    padding: .75rem 1.5rem;
+    padding: .5rem .7rem;
     font-size: .75rem;
     border-radius: .5rem;
     transition: all .15s ease-in
@@ -3539,8 +3539,8 @@ fieldset:disabled .btn {
 
 .btn-primary {
     color: #fff;
-    background-color: #0ba7d0;
-    border-color: #0ba7d0
+    background-color: #2b2e81;
+    border-color: #2b2e81
 }
 
 .btn-check:focus+.btn-primary,
@@ -3577,8 +3577,8 @@ fieldset:disabled .btn {
 .btn-primary.disabled,
 .btn-primary:disabled {
     color: #fff;
-    background-color: #0ba7d0;
-    border-color: #0ba7d0
+    background-color: #2b2e81;
+    border-color: #2b2e81
 }
 
 .btn-secondary {
@@ -3929,14 +3929,14 @@ fieldset:disabled .btn {
 }
 
 .btn-outline-primary {
-    color: #0ba7d0;
-    border-color: #0ba7d0
+    color: #2b2e81;
+    border-color: #2b2e81
 }
 
 .btn-outline-primary:hover {
     color: #fff;
-    background-color: #0ba7d0;
-    border-color: #0ba7d0
+    background-color: #2b2e81;
+    border-color: #2b2e81
 }
 
 .btn-check:focus+.btn-outline-primary,
@@ -3950,8 +3950,8 @@ fieldset:disabled .btn {
 .btn-outline-primary.dropdown-toggle.show,
 .btn-outline-primary:active {
     color: #fff;
-    background-color: #0ba7d0;
-    border-color: #0ba7d0
+    background-color: #2b2e81;
+    border-color: #2b2e81
 }
 
 .btn-check:active+.btn-outline-primary:focus,
@@ -3964,7 +3964,7 @@ fieldset:disabled .btn {
 
 .btn-outline-primary.disabled,
 .btn-outline-primary:disabled {
-    color: #0ba7d0;
+    color: #2b2e81;
     background-color: transparent
 }
 
@@ -4290,7 +4290,7 @@ fieldset:disabled .btn {
 
 .btn-link {
     font-weight: 400;
-    color: #0ba7d0;
+    color: #2b2e81;
     text-decoration: none
 }
 
@@ -4834,7 +4834,7 @@ fieldset:disabled .btn {
 .nav-link {
     display: block;
     padding: .5rem 1rem;
-    color: #0ba7d0;
+    color: #2b2e81;
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out
 }
 
@@ -5799,7 +5799,7 @@ fieldset:disabled .btn {
 .page-link {
     position: relative;
     display: block;
-    color: #0ba7d0;
+    color: #2b2e81;
     background-color: #fff;
     border: 1px solid #dee2e6;
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out
@@ -5835,8 +5835,8 @@ fieldset:disabled .btn {
 .page-item.active .page-link {
     z-index: 3;
     color: #fff;
-    background-color: #0ba7d0;
-    border-color: #0ba7d0
+    background-color: #2b2e81;
+    border-color: #2b2e81
 }
 
 .page-item.disabled .page-link {
@@ -5861,7 +5861,7 @@ fieldset:disabled .btn {
 }
 
 .pagination-lg .page-link {
-    padding: .75rem 1.5rem;
+    padding: .5rem .7rem;
     font-size: 1.125rem
 }
 
@@ -6055,7 +6055,7 @@ fieldset:disabled .btn {
     color: #fff;
     text-align: center;
     white-space: nowrap;
-    background-color: #0ba7d0;
+    background-color: #2b2e81;
     transition: width .6s ease
 }
 
@@ -6146,8 +6146,8 @@ fieldset:disabled .btn {
 .list-group-item.active {
     z-index: 2;
     color: #fff;
-    background-color: #0ba7d0;
-    border-color: #0ba7d0
+    background-color: #2b2e81;
+    border-color: #2b2e81
 }
 
 .list-group-item+.list-group-item {
@@ -7620,7 +7620,7 @@ fieldset:disabled .btn {
 }
 
 .link-primary {
-    color: #0ba7d0
+    color: #2b2e81
 }
 
 .link-primary:focus,
@@ -8275,7 +8275,7 @@ fieldset:disabled .btn {
 }
 
 .border-primary {
-    border-color: #0ba7d0 !important
+    border-color: #2b2e81 !important
 }
 
 .border-secondary {
@@ -10049,7 +10049,7 @@ fieldset:disabled .btn {
 }
 
 .text-primary {
-    color: #0ba7d0 !important
+    color: #2b2e81 !important
 }
 
 .text-secondary {
@@ -10109,7 +10109,7 @@ fieldset:disabled .btn {
 }
 
 .bg-primary {
-    background-color: #0ba7d0 !important
+    background-color: #2b2e81 !important
 }
 
 .bg-secondary {
@@ -19004,7 +19004,7 @@ fieldset:disabled .btn {
 }
 
 .badge.bg-primary {
-    background: #0ba7d0
+    background: #2b2e81
 }
 
 .badge.bg-secondary {
@@ -19151,13 +19151,13 @@ fieldset:disabled .btn {
 
 .btn-primary:hover,
 .btn.bg-gradient-primary:hover {
-    background-color: #0ba7d0;
-    border-color: #0ba7d0
+    background-color: #2b2e81;
+    border-color: #2b2e81
 }
 
 .btn-primary .btn.bg-outline-primary,
 .btn.bg-gradient-primary .btn.bg-outline-primary {
-    border: 1px solid #0ba7d0
+    border: 1px solid #2b2e81
 }
 
 .btn-primary:not(:disabled):not(.disabled).active,
@@ -19166,8 +19166,8 @@ fieldset:disabled .btn {
 .btn.bg-gradient-primary:not(:disabled):not(.disabled):active,
 .show>.btn-primary.dropdown-toggle,
 .show>.btn.bg-gradient-primary.dropdown-toggle {
-    color: color-yiq(#0ba7d0);
-    background-color: #0ba7d0
+    color: color-yiq(#2b2e81);
+    background-color: #2b2e81
 }
 
 .btn-primary.focus,
@@ -19185,7 +19185,7 @@ fieldset:disabled .btn {
     background-color: transparent;
     opacity: .75;
     box-shadow: none;
-    color: #0ba7d0
+    color: #2b2e81
 }
 
 .btn-secondary:hover,
@@ -19666,7 +19666,7 @@ fieldset:disabled .btn {
 }
 
 .card.card-background.card-background-mask-primary:after {
-    background-image: linear-gradient(310deg, #7928ca, #0ba7d0);;
+    background-image: linear-gradient(310deg, #7928ca, #2b2e81);;
     opacity: .85
 }
 
@@ -20103,8 +20103,8 @@ fieldset:disabled .btn {
 .fixed-plugin .btn.bg-gradient-primary:not(:disabled):not(.disabled):not(.active) {
     background-color: transparent;
     background-image: none;
-    border: 1px solid #0ba7d0;
-    color: #0ba7d0
+    border: 1px solid #2b2e81;
+    color: #2b2e81
 }
 
 .fixed-plugin.show .card {
@@ -20286,7 +20286,7 @@ label {
 }
 
 .bg-gradient-primary {
-    background-image: linear-gradient(310deg, #7928ca, #0ba7d0);
+    background-image: linear-gradient(310deg, #7928ca, #2b2e81);
 }
 
 .bg-gradient-secondary {
@@ -20354,7 +20354,7 @@ label {
 }
 
 .bg-gradient-faded-primary-vertical {
-    background-image: radial-gradient(200px circle at 50% 70%, rgba(203, 12, 159, .3) 0, #0ba7d0 100%)
+    background-image: radial-gradient(200px circle at 50% 70%, rgba(203, 12, 159, .3) 0, #2b2e81 100%)
 }
 
 .bg-gradient-faded-secondary-vertical {
@@ -21034,7 +21034,7 @@ hr.horizontal.gray-light {
 .navbar-vertical .navbar-brand-img,
 .navbar-vertical .navbar-brand>img {
     max-width: 100%;
-    max-height: 5rem
+    max-height: 2rem
 }
 
 .navbar-vertical .navbar-nav .nav-link {
@@ -21158,7 +21158,7 @@ hr.horizontal.gray-light {
 .navbar-vertical.navbar-expand-xs .lavalamp-object {
     width: calc(100% - 1rem) !important;
     background: theme-color("primary");
-    color: color-yiq(#0ba7d0);
+    color: color-yiq(#2b2e81);
     margin-right: .5rem;
     margin-left: .5rem;
     padding-left: 1rem;
@@ -21257,7 +21257,7 @@ hr.horizontal.gray-light {
     .navbar-vertical.navbar-expand-sm .lavalamp-object {
         width: calc(100% - 1rem) !important;
         background: theme-color("primary");
-        color: color-yiq(#0ba7d0);
+        color: color-yiq(#2b2e81);
         margin-right: .5rem;
         margin-left: .5rem;
         padding-left: 1rem;
@@ -21357,7 +21357,7 @@ hr.horizontal.gray-light {
     .navbar-vertical.navbar-expand-md .lavalamp-object {
         width: calc(100% - 1rem) !important;
         background: theme-color("primary");
-        color: color-yiq(#0ba7d0);
+        color: color-yiq(#2b2e81);
         margin-right: .5rem;
         margin-left: .5rem;
         padding-left: 1rem;
@@ -21457,7 +21457,7 @@ hr.horizontal.gray-light {
     .navbar-vertical.navbar-expand-lg .lavalamp-object {
         width: calc(100% - 1rem) !important;
         background: theme-color("primary");
-        color: color-yiq(#0ba7d0);
+        color: color-yiq(#2b2e81);
         margin-right: .5rem;
         margin-left: .5rem;
         padding-left: 1rem;
@@ -21557,7 +21557,7 @@ hr.horizontal.gray-light {
     .navbar-vertical.navbar-expand-xl .lavalamp-object {
         width: calc(100% - 1rem) !important;
         background: theme-color("primary");
-        color: color-yiq(#0ba7d0);
+        color: color-yiq(#2b2e81);
         margin-right: .5rem;
         margin-left: .5rem;
         padding-left: 1rem;
@@ -21657,7 +21657,7 @@ hr.horizontal.gray-light {
     .navbar-vertical.navbar-expand-xxl .lavalamp-object {
         width: calc(100% - 1rem) !important;
         background: theme-color("primary");
-        color: color-yiq(#0ba7d0);
+        color: color-yiq(#2b2e81);
         margin-right: .5rem;
         margin-left: .5rem;
         padding-left: 1rem;
@@ -21677,7 +21677,7 @@ hr.horizontal.gray-light {
 }
 
 .sidenav[data-color=primary] .navbar-nav>.nav-item>.nav-link.active .icon {
-    background-image: linear-gradient(310deg, #0ba7d0, #0ba7d0)
+    background-image: linear-gradient(310deg, #2b2e81, #2b2e81)
 }
 
 .sidenav[data-color=secondary] .navbar-nav>.nav-item>.nav-link.active .icon {
@@ -21752,13 +21752,13 @@ hr.horizontal.gray-light {
     transition: all .1s ease
 }
 
-/* .sidenav .navbar-brand {
+.sidenav .navbar-brand {
     padding: 1.5rem 2rem
-} */
+}
 
-/* .sidenav-header {
+.sidenav-header {
     height: 4.875rem
-} */
+}
 
 .sidenav-footer .card.card-background:after {
     opacity: .65
@@ -21822,7 +21822,7 @@ hr.horizontal.gray-light {
 }
 
 .navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon {
-    background-image: linear-gradient(310deg, #0ba7d0, #0ba7d0)
+    background-image: linear-gradient(310deg, #2b2e81, #2b2e81)
 }
 
 .navbar-vertical .navbar-nav>.nav-item .nav-link.active .icon svg .color-background,
@@ -22274,7 +22274,7 @@ hr.horizontal.gray-light {
 .pagination.pagination-primary .page-item.active>.page-link,
 .pagination.pagination-primary .page-item.active>.page-link:focus,
 .pagination.pagination-primary .page-item.active>.page-link:hover {
-    background-image: linear-gradient(310deg, #7928ca, #0ba7d0);;
+    background-image: linear-gradient(310deg, #7928ca, #2b2e81);;
     border: none
 }
 
@@ -23032,7 +23032,7 @@ hr.horizontal.gray-light {
 }
 
 .table thead th {
-    padding: .75rem 1.5rem;
+    padding: .5rem .7rem;
     text-transform: capitalize;
     letter-spacing: 0;
     border-bottom: 1px solid #e9ecef
@@ -23423,7 +23423,7 @@ p {
 }
 
 .text-gradient.text-primary {
-    background-image: linear-gradient(310deg, #7928ca, #0ba7d0);
+    background-image: linear-gradient(310deg, #7928ca, #2b2e81);
 }
 
 .text-gradient.text-info {
@@ -23654,7 +23654,7 @@ p {
 }
 
 .card.card-profile .card-before.mask-primary:before {
-    background: linear-gradient(180deg, hsla(0, 0%, 6%, 0), #0ba7d0)
+    background: linear-gradient(180deg, hsla(0, 0%, 6%, 0), #2b2e81)
 }
 
 .card.card-profile .card-before.mask-info:before {
@@ -23769,7 +23769,7 @@ p {
 
 .badge-primary[href]:focus,
 .badge-primary[href]:hover {
-    color: color-yiq(#0ba7d0);
+    color: color-yiq(#2b2e81);
     text-decoration: none;
     background-color: #910972
 }
@@ -24050,7 +24050,7 @@ p {
 
 .checklist-item-primary:before,
 .checklist-item:before {
-    background-color: #0ba7d0
+    background-color: #2b2e81
 }
 
 .checklist-item-secondary:before {
@@ -25173,7 +25173,7 @@ span.flatpickr-weekday {
 .flatpickr-calendar .flatpickr-day.selected,
 .flatpickr-calendar .flatpickr-day.startRange,
 .flatpickr-calendar .flatpickr-day.today {
-    background: #0ba7d0 !important;
+    background: #2b2e81 !important;
     color: #fff;
     border: none
 }
@@ -25203,7 +25203,7 @@ span.flatpickr-weekday {
 .flatpickr-day.endRange.startRange+.endRange:not(:nth-child(7n+1)),
 .flatpickr-day.selected.startRange+.endRange:not(:nth-child(7n+1)),
 .flatpickr-day.startRange.startRange+.endRange:not(:nth-child(7n+1)) {
-    box-shadow: -10px 0 0 #0ba7d0
+    box-shadow: -10px 0 0 #2b2e81
 }
 
 /*! nouislider - 14.6.3 - 11/19/2020 */
@@ -25338,7 +25338,7 @@ span.flatpickr-weekday {
 }
 
 .noUi-connect {
-    background-image: linear-gradient(310deg, #7928ca, #0ba7d0);
+    background-image: linear-gradient(310deg, #7928ca, #2b2e81);
 }
 
 .noUi-draggable {
@@ -27583,7 +27583,7 @@ Github: https://github.com/fiduswriter/Simple-DataTables
 }
 
 .dataTable-wrapper .dataTable-container .table thead tr th {
-    padding: .75rem 1.5rem;
+    padding: .5rem .7rem;
     opacity: .7;
     font-weight: bolder;
     color: #8392ab;
@@ -27626,7 +27626,7 @@ Github: https://github.com/fiduswriter/Simple-DataTables
 
 .dataTable-wrapper .dataTable-bottom .dataTable-pagination .dataTable-pagination-list .active a {
     background: transparent;
-    background-image: linear-gradient(310deg, #7928ca, #0ba7d0);;
+    background-image: linear-gradient(310deg, #7928ca, #2b2e81);;
     box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .09), 0 2px 3px -1px rgba(0, 0, 0, .07);
     color: #fff;
     border: none;
@@ -27634,7 +27634,7 @@ Github: https://github.com/fiduswriter/Simple-DataTables
 }
 
 .dataTable-wrapper .dataTable-bottom .dataTable-pagination .dataTable-pagination-list .active a:hover {
-    background-image: linear-gradient(310deg, #7928ca, #0ba7d0);
+    background-image: linear-gradient(310deg, #7928ca, #2b2e81);
 }
 
 .dataTable-wrapper.no-footer .dataTable-container {
@@ -29136,7 +29136,7 @@ body.swal2-toast-shown .swal2-container.swal2-bottom-right {
 .swal2-styled.swal2-confirm {
     background-image: linear-gradient(310deg, #2152ff, #21d4fd);
     background-color: transparent;
-    padding: .75rem 1.5rem;
+    padding: .5rem .7rem;
     font-size: .75rem;
     border-radius: .5rem
 }
@@ -31178,7 +31178,7 @@ body.swal2-toast-shown .swal2-container.swal2-bottom-right {
 }
 
 .choices-primary {
-    background-color: #0ba7d0
+    background-color: #2b2e81
 }
 
 .choices-secondary {
