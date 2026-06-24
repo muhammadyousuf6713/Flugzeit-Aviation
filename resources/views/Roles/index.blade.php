@@ -1,80 +1,78 @@
 @extends('layouts.user_type.auth')
 @section('content')
-    <div class="az-content-breadcrumb">
-        <span>Roles Management</span>
-    </div>
-    <h2 class="az-content-title" style="display: inline"> Roles List <span>
-            @can('Roles add')
-                <a href="{{ url('roles/add') }}" class="btn btn-az-primary" style="float: right">
-                    <i class="fa-solid fa-plus"></i> Add Role</a>
-            @endcan
-        </span></h2>
+ <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/v/dt/dt-1.13.6/b-2.4.2/b-html5-2.4.2/r-2.5.0/datatables.min.css" />
+
+    
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-12">
             @if (Session('alert'))
-                <div class="alert alert-card alert-<?php echo Session('alert-class'); ?>" role="alert">
-                    <?php echo Session('alert'); ?>
-                    <button class="close" type="button" data-dismiss="alert" aria-label="Close">
+                <div class="alert alert-{{ Session('alert-class') }} alert-dismissible fade show" role="alert">
+                    <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-text"><strong>{{ Session('alert') }}</strong></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
             @endif
-        </div>
-    </div>
 
-    <div class="separator-breadcrumb border-top"></div>
+            <div class="card mb-4 mx-4 shadow-sm border-0">
+                <div class="card-header pb-0 bg-white">
+                    <div class="d-flex flex-row justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0 fw-bold">Roles List</h5>
+                        </div>
+                        {{-- @can('Roles add') --}}
+                            <a href="{{ url('roles/add') }}" class="btn bg-gradient-primary btn-sm mb-0 text-uppercase">
+                                <i class="fa fa-plus me-1"></i> Add Role
+                            </a>
+                        {{-- @endcan --}}
+                    </div>
+                </div>
 
-    <div class="row">
-        <div class="col-md-12 col-lg-12 col-xl-12">
-            <div class="card card-body pd-20">
-
-                <div>
-                    <table id="example2" class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Role</th>
-                                <th scope="col">Action </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if ($roles)
-                                @foreach ($roles as $key => $row)
-                                    <tr>
-                                        <th scope="row">{{ $key + 1 }}</th>
-                                        <td>{{ $row->name }}</td>
-
-                                        <td>
-                                            <span>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-3">
+                            <table id="example23" class="table table-striped table-bordered align-middle w-100">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="wd-5p">S.No</th>
+                                    <th class="wd-20p">Role Name</th>
+                                    <th class="wd-10p text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if ($roles)
+                                    @foreach ($roles as $key => $row)
+                                        <tr>
+                                            <td class="fw-bold text-secondary text-xs">{{ $key + 1 }}</td>
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">{{ $row->name }}</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
                                                 @can('Roles Permissions')
-                                                    <a class="btn rounded shadow-base text-info" title = "Permission"
+                                                    <a class="btn bg-gradient-secondary btn-sm mb-0 me-2"
                                                         href="{{ url('roles/permission', [$row->id]) }}">
-                                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                                        Permission
+                                                        <i class="fa fa-lock me-1"></i> Permissions
                                                     </a>
                                                 @endcan
-                                            </span>
-                                            &nbsp; <a class="text-success mr-2"
-                                                href="{{ url('roles/edit', [$row->id]) }}"><i
-                                                    class="fas fa-pen font-weight-bold"></i></a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Role</th>
-                                <th scope="col">Action </th>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                                <a class="btn bg-gradient-info btn-sm mb-0"
+                                                    href="{{ url('roles/edit', [$row->id]) }}">
+                                                    <i class="fa fa-pen-to-square me-1"></i> Edit
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <!-- card -->
         </div>
-        <!-- col -->
     </div>
 @endsection
 
@@ -82,17 +80,28 @@
     <script>
         $(document).ready(function() {
 
-            $('#example2 tfoot th').each(function() {
+            $('#example23 tfoot th').each(function() {
                 var title = $(this).text();
                 $(this).html('<input type="text" class="form-control" placeholder="' + title + '" />');
             });
 
-            $('#example2').DataTable({
+            $('#example23').DataTable({
                 "ordering": true,
                 "dom": 'Blfrtip',
                 "buttons": [
                     'excel', 'pdf', 'print'
                 ],
+                "lengthMenu": [
+                    [10, 25, 50 , 100],
+                    [10, 25, 50 , 100],
+                ],
+                "language": {
+                    "processing": '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span>',
+                    "paginate": {
+                        "next": '<i class="fa fa-angle-right"></i>',
+                        "previous": '<i class="fa fa-angle-left"></i>'
+                    }
+                },
                 responsive: !0,
                 columnDefs: [{
                     className: 'control'

@@ -19774,7 +19774,8 @@ fieldset:disabled .btn {
 }
 
 .fixed-plugin .fixed-plugin-button {
-    background: #fff;
+    /* bg dark if darkmode on  */
+    background: var(--dark-mode-bg);
     border-radius: 50%;
     bottom: 30px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .16);
@@ -19962,7 +19963,7 @@ fieldset:disabled .btn {
     top: 1px;
     transform: translateX(1px);
     transition: transform .25s ease-in-out, background-color .25s ease-in-out;
-    width: 1rem
+    /* width: 1rem */
 }
 
 .form-switch .form-check-input:checked:after {
@@ -20837,7 +20838,7 @@ hr.horizontal.gray-light {
 
 .navbar-vertical.navbar-expand-xs .navbar-collapse {
     display: block;
-    height: calc(100vh - 360px);
+    /* height: calc(100vh - 360px); */
     /* overflow: auto */
 }
 

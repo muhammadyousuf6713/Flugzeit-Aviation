@@ -1,306 +1,194 @@
 @extends('layouts.user_type.auth')
+
 @section('content')
     <style>
         .iti.iti--allow-dropdown.iti--show-flags {
             width: 100%;
         }
     </style>
-    <div class="az-content pd-y-20 pd-lg-y-30 pd-xl-y-40">
-        <div class="container">
-            <div class="az-content-body pd-lg-l-40 d-flex flex-column">
-
-                <div class="az-content-breadcrumb">
-                    <span>Customer list</span>
-                    <span>Add Customer</span>
-                    {{-- <span>Forms</span> --}}
-                    {{-- <span>Form Layouts</span> --}}
-                </div>
-                <h2 class="az-content-title" style="display: inline">Add Customer <span><a href="{{ url('customers') }}"
-                            class="btn btn-az-primary" style="float: right">Customer List</a></span></h2>
-                {{-- <h2 style="float: right" class="az-content-title"></h2> --}}
-
-                {{-- @php
-            getCount('deactive',1)
-            @endphp --}}
-                {{-- <div class="az-content-body pd-lg-l-40 d-flex flex-column"> --}}
-                <div class="row">
-                    <div class="col-md-12 col-lg-12 col-xl-12">
-                        <div class="card card-body pd-40">
-                            <h5 class="card-title mg-b-20">Add Customer Details</h5>
-                            <form method="post" enctype="multipart/form-data" action="{{url('customers/store')}}">
-                                @if (count($errors) > 0)
-                                    <div class="p-1">
-                                        @foreach ($errors->all() as $error)
-                                            <div class="alert alert-warning alert-danger fade show" role="alert">
-                                                {{ $error }}
-                                                <button type="button" class="close" data-dismiss="alert"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endif
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                Name <span style="color:red;">*</span></label>
-                                            <input type="text" name="customer_name" class="form-control" required />
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                Type</label>
-                                            <select name="customer_type" id="" class="form-control" required="required">
-                                                <option value="Individual">Individual</option>
-                                                <option value="Group">Group</option>
-                                                <option value="Corporate">Corporate </option>
-                                            </select>
-
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group" style="margin-top:-10px;">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">WhatsApp <input type="checkbox" name="whatsapp_check"><span><br>Customer Cell</span><span style="color:red;">*</span>
-                                            </label>
-                                            <input type="tel" id="phone0" class="form-control" required="required"
-                                                name="customer_cell">
-
-                                            <div class="invalid-feedback0"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Contact - WhatsApp</label>
-                                            <input type="text" id="whatsapp_number" class="form-control"
-                                                name="customer_whatsapp">
-                                            <div class="invalid-feedback1"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Contact - Other / PTCL</label>
-                                            <input type="text" class="form-control"
-                                                name="customer_phone_2">
-                                            <div class="invalid-feedback2"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="form-group ml-2 mt-2">
-                                            <div class="form-group">
-                                                <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                    Address</label>
-                                                <input type="text" name="customer_address" class="form-control"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group ml-2 mt-2">
-                                            <div class="form-group">
-                                                <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                    Email</label>
-                                                <input type="text" name="customer_email" class="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                Reference</label>
-                                            <input type="text" class="form-control" name="customer_reference">
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Remarks</label>
-                                            <input type="text" class="form-control" name="customer_remarks">
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Sales Person <span style="color:red;">*</span></label>
-                                            <select name="sale_person" class="form-control">
-                                                <option>Select</option>
-                                                @forelse ($sale_persons as $sp)
-                                                    <option
-                                                        value="{{ $sp['id'] }}">{{ $sp['name'] }}</option>
-                                                @empty
-                                                    No Results Found
-                                                @endforelse
-                                            </select>
-
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Status</label>
-                                            <select name="status" class="form-control" required="required">
-                                                <option value=""></option>
-                                                <option value="Verified">Verified</option>
-                                                <option value="UnVerified">Un-verified</option>
-                                            </select>
-
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Accounts Customer Rating</label>
-                                            <input type="text" class="form-control" name="accounts_customer_rating">
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                </div>
-                                <br>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Country</label>
-                                            <select name="country" class="form-control" id="country-dropdown">
-                                                <option>Select Country</option>
-                                                @forelse ($countries as $con)
-                                                    <option
-                                                        value="{{ $con->name }}">{{ $con->name }}</option>
-                                                @empty
-                                                    No Results Found
-                                                @endforelse
-                                                <option value=""></option>
-                                            </select>
-
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">City</label>
-                                            <select name="city" class="form-control" id="city-dropdown">
-                                                <option value=""></option>
-                                            </select>
-
-                                            <div class="invalid-feedback"></div>
-                                        </div>
-                                        <!-- form-group -->
-                                    </div>
-                                </div>
-
-
-                                    <div class="form-group">
-                                        <div class="form-group ml-2 mt-2">
-                                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                Image</label>
-                                            <input type="file" class="form-control" name="customer_image" />
-                                        </div>
-                                    </div>
-                                    {{-- <h3 class="text-center mt-3">Add Care Of</h3> --}}
-<!--                                    <div class="col-md-4">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600"
-                                            style="display: block;position: absolute;margin-top: 7px;
-                                        }">Add
-                                            Care Of</label>
-                                        <button class="extra-fields-customer btn btn-az-primary mt-4 mb-4">Add
-                                            More </button>
-                                    </div>-->
-                                    <div class="customer_records d-none">
-
-<!--                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label class="az-content-label tx-11 tx-medium tx-gray-600">Name</label>
-                                                <input name="care_of_name[]" type="text" class="form-control">
-
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label
-                                                    class="az-content-label tx-11 tx-medium tx-gray-600">Relation</label>
-                                                <input name="care_of_relation[]" type="text" class="form-control">
-
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label class="az-content-label tx-11 tx-medium tx-gray-600">Cell</label>
-                                                <input name="care_of_cell[]" type="tel" class="form-control">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label class="az-content-label tx-11 tx-medium tx-gray-600">Email</label>
-                                                <input name="care_of_email[]" type="email" class="form-control">
-                                            </div>
-
-                                            {{-- <div class="col-md-4">
-                                                <label class="az-content-label tx-11 tx-medium tx-gray-600"
-                                                    style="display: block;position: absolute;margin-top: 7px;
-                                                }">Add
-                                                    Care Of</label>
-                                                <a href="#" class="extra-fields-customer btn btn-az-primary mt-4">Add More </a>
-                                            </div> --}}
-                                            <hr class="mt-4">
-
-                                        </div>-->
-                                    </div>
-
-                                    <div class="customer_records_dynamic"></div>
-
-                                </div>
-                                @csrf
-
-                                <!-- form-group -->
-
-
-                                <!-- form-group -->
-
-
-
-                                <button onclick="history.back()" class="btn btn-danger btn-block mt-2">
-                                    Back
-                                </button>
-                                <button type="submit" class="btn btn-az-primary btn-block mt-2" style="float: right">
-                                    Submit
-                                </button>
-                            </form>
-                        </div>
-                        <!-- card -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4 mx-4 shadow-sm border-0">
+                <div class="card-header pb-0 bg-white">
+                    <div class="d-flex flex-row justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Add New Customer</h5>
+                        <a href="{{ url('customers') }}" class="btn bg-gradient-secondary btn-sm mb-0 text-uppercase">
+                            <i class="fa fa-arrow-left me-1"></i> Customer List
+                        </a>
                     </div>
-                    <!-- col -->
                 </div>
-                {{-- </div><!-- az-content-body --> --}}
-            </div>
-        </div><!-- container -->
-    </div><!-- az-content -->
+                <div class="card-body px-4 pt-4 pb-2">
+                    <form method="post" enctype="multipart/form-data" action="{{ url('customers/store') }}">
+                        @csrf
+                        @if (count($errors) > 0)
+                            <div class="alert alert-danger text-white alert-dismissible fade show" role="alert">
+                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                <span class="alert-text"><strong>Error!</strong>
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
 
+                        <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Customer Details</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">Customer Name <span class="text-danger">*</span></label>
+                                    <input type="text" name="customer_name" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">Customer Type</label>
+                                    <select name="customer_type" class="form-control" required>
+                                        <option value="Individual">Individual</option>
+                                        <option value="Group">Group</option>
+                                        <option value="Corporate">Corporate </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">
+                                        WhatsApp <input type="checkbox" name="whatsapp_check" class="ms-1"> <br>
+                                        Customer Cell <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="tel" id="phone0" class="form-control" required name="customer_cell">
+                                    <div class="invalid-feedback0"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Contact - WhatsApp</label>
+                                    <input type="text" id="whatsapp_number" class="form-control" name="customer_whatsapp">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Contact - Other / PTCL</label>
+                                    <input type="text" class="form-control" name="customer_phone_2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label class="form-control-label">Customer Address</label>
+                                    <input type="text" name="customer_address" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">Customer Email</label>
+                                    <input type="text" name="customer_email" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Customer Reference</label>
+                                    <input type="text" class="form-control" name="customer_reference">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Remarks</label>
+                                    <input type="text" class="form-control" name="customer_remarks">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">Sales Person <span class="text-danger">*</span></label>
+                                    <select name="sale_person" class="form-control" required>
+                                        <option value="">Select</option>
+                                        @forelse ($sale_persons as $sp)
+                                            <option value="{{ $sp['id'] }}">{{ $sp['name'] }}</option>
+                                        @empty
+                                            <option value="">No Results Found</option>
+                                        @endforelse
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">Status</label>
+                                    <select name="status" class="form-control" required>
+                                        <option value="Verified">Verified</option>
+                                        <option value="UnVerified">Un-verified</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">Accounts Customer Rating</label>
+                                    <input type="text" class="form-control" name="accounts_customer_rating">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="horizontal dark">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Country</label>
+                                    <select name="country" class="form-control" id="country-dropdown">
+                                        <option value="">Select Country</option>
+                                        @forelse ($countries as $con)
+                                            <option value="{{ $con->name }}">{{ $con->name }}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">City</label>
+                                    <select name="city" class="form-control" id="city-dropdown">
+                                        <option value="">Select City</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-control-label">Customer Image</label>
+                            <input type="file" class="form-control" name="customer_image" />
+                        </div>
+
+                        <!-- Dynamic Fields Container -->
+                        <div class="customer_records d-none"></div>
+                        <div class="customer_records_dynamic"></div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn bg-gradient-primary btn-md">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
     <script>
-
-
         $('.extra-fields-customer').click(function() {
             $('.customer_records').clone().appendTo('.customer_records_dynamic');
             $('.customer_records_dynamic .customer_records').addClass('single remove');
@@ -324,12 +212,8 @@
         });
         // Ajax to get City
         $(document).ready(function() {
-
-
-
             $('#country-dropdown').on('change', function() {
                 var country_id = this.value;
-                // alert(country_id)
                 $("#city-dropdown").html('');
                 $.ajax({
                     url: "{{ url('get-cities-by-country') }}",

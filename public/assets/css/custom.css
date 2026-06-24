@@ -1,0 +1,357 @@
+/* Global Dark Mode Styles */
+:root {
+    --bg-blur: blur(10px);
+}
+
+/* Global Custom Scrollbar */
+/* Hide the default browser/system scrollbar on the main window */
+html,
+body {
+    overflow: hidden !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Make the main content area the scrollable element */
+.main-content {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    position: relative;
+    /* Ensure scrolling is smooth */
+    /* scroll-behavior: smooth; */
+}
+
+/* Custom Scrollbar Styling (Webkit) */
+::-webkit-scrollbar {
+    width: 14px !important; /* Visible width */
+    height: 14px !important;
+}
+
+::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-left: 1px solid #e9ecef;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 10px;
+    border: 3px solid transparent; /* Transparent border creates padding effect */
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #a8a8a8;
+}
+
+/* Firefox Scrollbar Support */
+html,
+body {
+    scrollbar-width: none; /* Hide scrollbar on Firefox window */
+}
+.main-content,
+.sidenav,
+.table-responsive,
+.modal-body {
+    scrollbar-width: thin !important;
+    scrollbar-color: #c1c1c1 #f8f9fa;
+}
+
+body.dark-mode {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .card {
+    background-color: #2d2d2d !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .card-header,
+body.dark-mode .card-body,
+body.dark-mode .card-footer {
+    background-color: transparent !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode .h1,
+body.dark-mode .h2,
+body.dark-mode .h3,
+body.dark-mode .h4,
+body.dark-mode .h5,
+body.dark-mode .h6 {
+    color: #ffffff !important;
+}
+
+body.dark-mode p,
+body.dark-mode span:not(.badge),
+body.dark-mode li,
+body.dark-mode label {
+    color: #cccccc !important;
+}
+
+body.dark-mode .navbar-main {
+    background-color: rgba(26, 26, 26, 0.8) !important;
+    backdrop-filter: var(--bg-blur);
+}
+
+body.dark-mode .breadcrumb-item,
+body.dark-mode .breadcrumb-item a {
+    color: #aaa !important;
+}
+
+body.dark-mode .breadcrumb-item.active {
+    color: #fff !important;
+}
+
+body.dark-mode .nav-link {
+    color: #ccc !important;
+}
+
+body.dark-mode .nav-link.active {
+    color: #fff !important;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #333 !important;
+    border-color: #444 !important;
+    color: #fff !important;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+    background-color: #3d3d3d !important;
+    border-color: #0ba7d0 !important;
+}
+
+/* Tables Refinements */
+body.dark-mode .table {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .table thead th,
+body.dark-mode .table-light,
+body.dark-mode .thead-light th,
+body.dark-mode #example23 thead th {
+    background-color: #3d3d3d !important;
+    color: #ffffff !important;
+    border-color: #555 !important;
+}
+
+body.dark-mode .table td {
+    border-color: #333 !important;
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* ID Column Specific */
+body.dark-mode .table td.dtr-control,
+body.dark-mode .table td:first-child,
+body.dark-mode .table td:nth-child(2) {
+    color: #0ba7d0 !important;
+    font-weight: bold;
+}
+
+/* Specific Highlighted Rows */
+body.dark-mode .row-today {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    color: #fff !important;
+}
+body.dark-mode .row-overdue {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #fff !important;
+}
+body.dark-mode .row-upcoming {
+    background-color: rgba(40, 167, 69, 0.1) !important;
+    color: #fff !important;
+}
+
+/* Dashboard Fixes */
+body.dark-mode .bg-white,
+body.dark-mode .bg-light,
+body.dark-mode .card-header.bg-white,
+body.dark-mode .card-header.bg-light {
+    background-color: #2d2d2d !important;
+    color: #fff !important;
+}
+
+body.dark-mode .list-group-item {
+    background-color: transparent !important;
+    color: #ccc !important;
+}
+
+body.dark-mode .text-dark {
+    color: #ffffff !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode .text-secondary {
+    color: #aaaaaa !important;
+}
+
+/* Fixed Plugin Settings */
+body.dark-mode .fixed-plugin .card {
+    background-color: #2d2d2d !important;
+    color: #fff !important;
+}
+
+body.dark-mode hr.horizontal.dark {
+    background-image: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    ) !important;
+}
+
+/* Sidenav fixes */
+body.dark-mode .sidenav {
+    background-color: #212121 !important;
+}
+
+body.dark-mode .sidenav .nav-link-text {
+    color: #ccc !important;
+}
+
+body.dark-mode .sidenav .nav-link.active .nav-link-text {
+    color: #fff !important;
+}
+
+/* Force full width for child row details */
+table.dataTable > tbody > tr.child td.child {
+    padding: 20px !important;
+    width: 100% !important;
+}
+table.dataTable > tbody > tr.child ul.dtr-details {
+    width: 90% !important;
+    display: block !important;
+    padding: 0;
+    margin: 0;
+}
+table.dataTable > tbody > tr.child ul.dtr-details > li {
+    border-bottom: 2px solid #f8f9fa;
+    padding: 15px 0;
+    display: block !important;
+    width: 100% !important;
+    clear: both;
+}
+table.dataTable > tbody > tr.child ul.dtr-details > li:last-child {
+    border-bottom: none;
+}
+table.dataTable > tbody > tr.child span.dtr-title {
+    display: block !important;
+    width: 100% !important;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #252f40;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    float: none !important;
+    min-width: unset !important;
+}
+table.dataTable > tbody > tr.child span.dtr-data {
+    display: block !important;
+    width: 100% !important;
+    white-space: normal !important;
+    padding-left: 0 !important;
+    float: none !important;
+    font-size: 13px;
+    color: #4e5e7a;
+    line-height: 1.6;
+}
+
+/* Specific Remarks Content Styling for full width */
+.remarks-content {
+    white-space: normal;
+    font-size: 12px;
+    /* Max-width removed to allow full width in expanded view */
+}
+
+/* Row highlighting with subtle tints */
+.row-today {
+    background-color: #fffdf5 !important;
+    /* border-left: 4px solid #ffc107 !important; */
+}
+.row-overdue {
+    background-color: #fff9f9 !important;
+    /* border-left: 4px solid #dc3545 !important; */
+}
+.row-upcoming {
+    background-color: #f8fff8 !important;
+    /* border-left: 4px solid #28a745 !important; */
+}
+.row-no-followup {
+    /* border-left: 4px solid #e9ecef !important; */
+}
+
+/* Disable DataTables default sorting and zebra background highlight */
+table.dataTable tbody tr > .sorting_1,
+table.dataTable tbody tr > .sorting_2,
+table.dataTable tbody tr > .sorting_3,
+table.dataTable.display tbody tr.odd,
+table.dataTable.display tbody tr.even,
+table.dataTable.stripe tbody tr.odd,
+table.dataTable.stripe tbody tr.even,
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Table header styling */
+#example23 thead th {
+    background-color: #ffffff;
+    color: #444;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+    border-top: 1px solid #eee !important;
+}
+
+/* Soften sorting icons */
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc:after {
+    opacity: 0.3 !important;
+}
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_desc:after {
+    opacity: 0.8 !important;
+    color: #5e72e4 !important; /* Theme color */
+}
+
+/* Search input styling */
+.dataTables_filter input {
+    padding: 5px 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+/* Better scrollbars */
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #444;
+}
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

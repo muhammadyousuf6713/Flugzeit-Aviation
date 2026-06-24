@@ -9,7 +9,7 @@
                  <span>Assigned to</span>
                  <img class="assignee-avatar" src="{{asset('img/default_user.png')}}" alt="profile image">
                  @php
-                     $user = App\User::where('id', $inc->created_by)->first();
+                     $user = App\Models\User::where('id', $inc->created_by)->first();
                  @endphp
                  <span>{{ $user?->name }}</span>
                  <span><i class="typcn icon typcn-time"></i></span>

@@ -1,69 +1,57 @@
 @extends('layouts.user_type.auth')
+
 @section('content')
-<div class="az-content-breadcrumb">
-    <span>Roles Management</span>
-    <span>Add New Role</span>
-    {{-- <span>Forms</span> --}}
-    {{-- <span>Form Layouts</span> --}}
-</div>
-<h2 class="az-content-title" style="display: inline">Add New Role <span>
-
-    <a href="{{ url('roles') }}" class="btn border" style="float: right"><i
-        class="fa-solid fa-bars-staggered"></i>
-        Back to Roles
-</a>
-</span></h2>
-<div class="separator-breadcrumb border-top"></div>
-<div class="row">
-    <div class="col-md-12 col-lg-12 col-xl-12">
-        <div class="card card-body pd-40">
-            <h5 class="card-title mg-b-20">Add New Role</h5>
-            @if(Session('alert'))
-            <div class="alert alert-card alert-<?php echo Session('alert-class'); ?>" role="alert">
-                <?php echo Session('alert'); ?>
-                <button class="close" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            @endif
-
-
-
-            <form action="{{ url('roles/store') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                @if (count($errors) > 0)
-                <div class="p-1">
-                    @foreach ($errors->all() as $error)
-                    <div class="alert alert-warning alert-danger fade show" role="alert">{{ $error }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4 mx-4 shadow-sm border-0">
+                <div class="card-header pb-0 bg-white">
+                    <div class="d-flex flex-row justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Add New Role</h5>
+                        <a href="{{ url('roles') }}" class="btn bg-gradient-secondary btn-sm mb-0 text-uppercase">
+                            <i class="fa fa-arrow-left me-1"></i> Back to Roles
+                        </a>
                     </div>
-                    @endforeach
                 </div>
-                @endif
-                <div class="row row-sm mg-b-20">
-                    <div class="col-md-12">
+                <div class="card-body px-4 pt-4 pb-2">
+                    <form action="{{ url('roles/store') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        @if (count($errors) > 0)
+                            <div class="alert alert-danger text-white alert-dismissible fade show" role="alert">
+                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                <span class="alert-text"><strong>Error!</strong>
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
 
-                        <div class="form-group">
-                            <label class="az-content-label tx-11 tx-medium tx-gray-600">Role Name <span style="color:red;">*</span></label>
-                            <input type="text" class="form-control" name="role" />
+                        <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Role Details</h6>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-control-label">Role Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="role" value="{{ old('role') }}" required />
+                                    @error('role')
+                                        <span class="text-danger text-xs">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
-                    </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{{ url('roles') }}" class="btn btn-light m-0 me-2">Cancel</a>
+                            <button type="submit" class="btn bg-gradient-primary m-0">Submit</button>
+                        </div>
+                    </form>
                 </div>
-
-               <button type="submit" onclick="history.back()" class="btn btn-danger btn-block mt-2">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-az-primary btn-block mt-2" style="float: right">
-                        Submit
-                    </button>
-            </form>
-
-
+            </div>
         </div>
     </div>
-</div><!-- end of main-content -->
-<script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
-<script>
-
-</script>
 @endsection

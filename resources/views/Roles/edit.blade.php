@@ -1,51 +1,51 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4 mx-4 shadow-sm border-0">
+                <div class="card-header pb-0 bg-white">
+                    <div class="d-flex flex-row justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Edit Role</h5>
+                        <a href="{{ url('roles') }}" class="btn bg-gradient-secondary btn-sm mb-0 text-uppercase">
+                            <i class="fa fa-arrow-left me-1"></i> Back to Roles
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body px-4 pt-4 pb-2">
+                    <form action="{{ url('roles/edit/' . $role->id) }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        @if (Session('alert'))
+                            <div class="alert alert-{{ Session('alert-class') }} text-white alert-dismissible fade show" role="alert">
+                                <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                <span class="alert-text"><strong>{{ Session('alert') }}</strong></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
 
-<div class="separator-breadcrumb border-top"></div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="col-md-6 text-right">
-            <button onclick="location.href = '<?php echo url('roles'); ?>';" type="button" class="btn btn-primary">Role List</button>
-        </div>
-        @if(Session('alert'))
-        <div class="alert alert-card alert-<?php echo Session('alert-class'); ?>" role="alert">
-            <?php echo Session('alert'); ?>
-            <button class="close" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
-        @endif
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="card-title mb-3">Form Inputs</div>
-                <form action="{{ url('roles/store') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="row">
-                        <div class="col-md-4 form-group mb-3">
-                            <label for="name">Role</label>
-                            <input name="role" id="role" class="form-control" value="{{ old('role') ?: $role->name }}" />
-                            @error('name')
-                            <span class="form-text text-muted" >
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
+                        <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Role Details</h6>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-control-label">Role Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="role" value="{{ old('role') ?: $role->name }}" required />
+                                    @error('role')
+                                        <span class="text-danger text-xs">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
 
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary">Update</button>
-                            <button onclick="location.href = '<?php echo url('roles'); ?>';" type="button" class="btn btn-danger">Cancel</button>
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{{ url('roles') }}" class="btn btn-light m-0 me-2">Cancel</a>
+                            <button type="submit" class="btn bg-gradient-primary m-0">Update Role</button>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div><!-- end of main-content -->
-
-<script>
-
-</script>
 @endsection

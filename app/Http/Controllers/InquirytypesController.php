@@ -3,16 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\inquirytypes;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
-
-
 class InquirytypesController extends Controller
 {
-
     public function index()
     {
         $inquiry_types = inquirytypes::all();
@@ -40,22 +36,20 @@ class InquirytypesController extends Controller
         $vendor->type_desc = $request->type_desc;
         $vendor->business_id = '1';
         $vendor->save();
-        session()->flash('success', "Inquiry Type Added Successfully");
+        session()->flash('success', 'Inquiry Type Added Successfully');
         // dd($vendor);
         return redirect()->back();
     }
 
-    /**
-     * Display the specified resource.
-     */
+    /** Display the specified resource. */
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($id)
     {
-        $dec_id = \Crypt::decrypt($id);
-        $edit_vendor = inquirytypes::where('type_id', $dec_id)->first();
+        // $dec_id = \Crypt::decrypt($id);
+        $edit_vendor = inquirytypes::where('type_id', $id)->first();
         // dd($edit_vendor);
         return view('inquiry_types.edit', compact('edit_vendor'));
     }
@@ -65,17 +59,17 @@ class InquirytypesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($request);
+        // dd($request);
         $request->validate([
             'type_name' => 'required',
         ]);
         // dd($request);
-        $dec_id = \Crypt::decrypt($id);
-        dd($dec_id);
-        $inquiry_type = inquirytypes::where('type_id', $dec_id)->first();
+        // $dec_id = \Crypt::decrypt($id);
+        // dd($dec_id);
+        $inquiry_type = inquirytypes::where('type_id', $id)->first();
         $inquiry_type->type_name = $request->type_name;
         $inquiry_type->save();
-        session()->flash('success', "Inquiry Type Updated Successfully");
+        session()->flash('success', 'Inquiry Type Updated Successfully');
         return redirect()->back();
     }
 

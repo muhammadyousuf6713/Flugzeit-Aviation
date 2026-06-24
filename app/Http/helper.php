@@ -9,8 +9,8 @@ use App\account_voucher_details;
 use App\sale_invoice;
 use App\brands;
 use App\cost_price_of_sales_person;
-use App\Customer;
-use App\Customers;
+use App\customer;
+use App\customers;
 use App\document;
 use App\sale_orders;
 use App\Store;
@@ -36,7 +36,7 @@ use App\quotation;
 use App\quotation_issuance;
 use App\quotations_detail;
 use App\room_type;
-use App\User;
+use App\Models\User;
 use App\City;
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\ActivityLogStatus;
@@ -688,7 +688,7 @@ function get_customer($inq_id)
     //     dd($inq_id);
     $inq_details = inquiry::where('id_inquiry', $inq_id)->select('customer_id')->first();
 
-    $customer_details = Customer::where('id_customers', $inq_details['customer_id'])->select('customer_name')->first();
+    $customer_details = customer::where('id_customers', $inq_details['customer_id'])->select('customer_name')->first();
     return $customer_details;
 }
 function get_inquiry($inq_id)
@@ -1242,4 +1242,7 @@ function get_team_name($id)
         $res = DB::SELECT($sql);
         return $res;
     }
+
+
+    
 }

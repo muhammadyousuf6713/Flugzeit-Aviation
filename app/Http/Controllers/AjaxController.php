@@ -2,60 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\addon;
-use App\quotations_detail;
-use App\Route;
-use DB;
 use App\airline_inventory;
 use App\airline_inventory_temp;
 use App\airline_rate;
-use App\department_team;
-use App\payments_account;
-use App\main_menu;
 use App\airlines;
-use App\followup_remark;
 use App\approval_group;
 use App\assign_department_user;
-use App\payment;
 use App\campaign;
 use App\cities;
 use App\countries;
 use App\currency_exchange_rate;
-use App\Customer;
+use App\customer;
+use App\department_team;
 use App\escallation;
+use App\followup_remark;
 use App\hotel_details;
 use App\hotel_inventory;
 use App\hotel_inventory_temp;
 use App\hotel_rate;
 use App\hotels;
-use App\role_permission;
-use App\Http\Controllers\Controller;
 use App\inquiry;
 use App\land_services_type;
 use App\Landservicestypes;
+use App\main_menu;
 use App\Notification;
 use App\other_service;
 use App\packages;
+use App\payment;
+use App\payments_account;
 use App\quotation;
-use App\room_type;
-use App\service_vendor;
 use App\quotation_approval;
 use App\quotation_issuance;
+use App\quotations_detail;
 use App\remarks;
-use App\User;
+use App\role_permission;
+use App\room_type;
+use App\Route;
+use App\service_vendor;
 use App\Visa_rates;
 use Carbon\Carbon;
 use Facade\Ignition\Support\Packagist\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-
+use DB;
 
 class AjaxController extends Controller
 {
     //  Inventory Controller
     public function save_inventory(Request $request)
     {
-
         $airline_id = \Crypt::decrypt($request->h_id);
         $store = new airline_inventory_temp();
         $store->airline_id = $airline_id;
@@ -66,7 +64,7 @@ class AjaxController extends Controller
         $store->save();
         return response()->json([
             'success' => true,
-            'message' => "Hotel inventory saved",
+            'message' => 'Hotel inventory saved',
         ]);
     }
 
@@ -76,7 +74,7 @@ class AjaxController extends Controller
 
         $airline = airlines::select()->where('id_airlines', $airline_id)->first();
         $airline_inventory = airline_inventory::select()->where('airline_id', $airline_id)->get();
-        $all_data = "";
+        $all_data = '';
         if ($request->ajax()) {
             $airline_inventory = airline_inventory_temp::select()->where('airline_id', $airline_id)->get();
             foreach ($airline_inventory as $key => $airline_inv) {
@@ -105,7 +103,7 @@ class AjaxController extends Controller
                 <td>
                     Super Admin
                 </td>
-                <td>' . date("d-m-Y", strtotime($airline_inv->created_at)) . '</td>
+                <td>' . date('d-m-Y', strtotime($airline_inv->created_at)) . '</td>
 
                 <td><button type="button"
                         onClick="delete_btn(' . $airline_inv->id_airline_inventory_temp . ',' . $airline_inv->airline_id . ')"
@@ -125,10 +123,10 @@ class AjaxController extends Controller
     public function get_room_type($id)
     {
         // dd("sds");
-        if (request()->edit == "edit") {
+        if (request()->edit == 'edit') {
             $hotel_id = \Crypt::decrypt(request()->h_id);
             // dd($hotel_id);
-            $hotel_inventory = hotel_inventory::where(['hotel_id' => $hotel_id, "inventory_type" => "room", 'inventory_type_id' => $id])->first();
+            $hotel_inventory = hotel_inventory::where(['hotel_id' => $hotel_id, 'inventory_type' => 'room', 'inventory_type_id' => $id])->first();
             $room_types = room_type::where('id_room_types', $id)->first();
             echo '<div class="col-md-3">
 
@@ -176,8 +174,6 @@ class AjaxController extends Controller
         </div>
         <hr>';
         } else {
-
-
             $data = '<h3 class="mt-4"> Select Inventory Of ' . $id . '</h3><div class="col-md-3">
             <div class="form-group">
                 <label class="az-content-label tx-11 tx-medium tx-gray-600">No Of Tickets</label>
@@ -195,7 +191,7 @@ class AjaxController extends Controller
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">' . $id  . ' Cost Price</label>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">' . $id . ' Cost Price</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">AMOUNT</span>
@@ -210,7 +206,7 @@ class AjaxController extends Controller
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">' . $id  . ' Selling Price</label>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">' . $id . ' Selling Price</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">AMOUNT</span>
@@ -233,14 +229,14 @@ class AjaxController extends Controller
                 <hr>
                 ';
             return response()->json([
-                "data" => $data,
-                "name" => $id
+                'data' => $data,
+                'name' => $id
             ]);
         }
 
         // dd($hotel_inventory);
-
     }
+
     public function inventory_delete($id, $id_airline)
     {
         // dd($id .'/'. $id_airline);
@@ -253,6 +249,7 @@ class AjaxController extends Controller
         ]);
         return back();
     }
+
     public function inventory_destroy($id, $id_airline)
     {
         // dd($id .'/'. $id_airline);
@@ -268,13 +265,12 @@ class AjaxController extends Controller
 
     public function autocomplete(Request $request)
     {
-
         $data = [];
 
         if ($request->has('q')) {
             $search = $request->q;
             // dd($search);
-            $data = Countries::join('cities', 'countries.id_countries', '=', 'cities.country_id')->orwhere("countries.country_name", 'LIKE', '%' . $search . '%')->orwhere("cities.name", 'LIKE', '%' . $search)->select('countries.country_name', 'cities.name')->get();
+            $data = Countries::join('cities', 'countries.id_countries', '=', 'cities.country_id')->orwhere('countries.country_name', 'LIKE', '%' . $search . '%')->orwhere('cities.name', 'LIKE', '%' . $search)->select('countries.country_name', 'cities.name')->get();
             // dd($data);
         }
         return response()->json($data);
@@ -288,15 +284,15 @@ class AjaxController extends Controller
         // //     ->get();
         // return response()->json($data);
     }
+
     public function autocomplete_city(Request $request)
     {
-
         $data = [];
 
         if ($request->has('q')) {
             $search = $request->q;
             // dd($search);
-            $data = DB::table('cities')->where("name", 'LIKE', '%' . $search . '%')->select('cities.name')->get();
+            $data = DB::table('cities')->where('name', 'LIKE', '%' . $search . '%')->select('cities.name')->get();
             // dd($data);
         }
         return response()->json($data);
@@ -316,68 +312,65 @@ class AjaxController extends Controller
     {
         if ($request->ajax()) {
             $bilal = $request->page;
-            $artilces = " ";
+            $artilces = ' ';
 
-            if ($query != null && $query != "") {
-
+            if ($query != null && $query != '') {
                 if (is_numeric($query)) {
                     //                     dd($query);
-                    $customers = Customer::orderBy('id_customers')->where('customer_cell', 'LIKE', "%" . $query . "%")->paginate(20);
+                    $customers = customer::orderBy('id_customers')->where('customer_cell', 'LIKE', '%' . $query . '%')->paginate(20);
                 } else {
-                    $customers = Customer::orderBy('id_customers')->where('customer_name', 'LIKE', "%" . $query . "%")->paginate(20);
+                    $customers = customer::orderBy('id_customers')->where('customer_name', 'LIKE', '%' . $query . '%')->paginate(20);
                 }
                 // $artilces = '';
 
                 // dd($customers);
             } else {
-                $artilces = " ";
+                $artilces = ' ';
             }
 
             if (isset($customers)) {
                 foreach ($customers as $result) {
                     //                    $artilces .= '<div class="card bg-light rounded-2"><div class="card-body"><div id="get_cus_details" data-id="' . $result->id_customers . '" onClick="CusDetails()" class="az-contact-item mt-3 clickable-data"><div class="az-img-user"><img src="' . asset('img/default_user_2.png') . '" alt=""></div><div class="az-contact-body"><h6>' . $result->customer_name . '</h6><span class="phone">' . $result->customer_cell . '</span></div></div></div></div><br>';
-                    $artilces .= '<div class="card bg-gradient rounded-10" style="border:1px solid green;height:auto;">
-                                        <div class="card-body">
-                                            <h6 style="float:right;color:green"><i class="fa fa-user-alt"></i></h6>
-                                            <div id="get_cus_details" data-id="' . $result->id_customers . '" onClick="CusDetails()" class="az-contact-item clickable-data">
-                                                <div class="az-img-user">
-                                                    <img src="' . asset('img/default_user_2.png') . '" alt="">
-                                                </div>
-                                                <div class="az-contact-body">
-                                                <h6>' . $result->customer_name . '</h6>
-                                                <span class="phone">' . $result->customer_cell . '</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div><br>';
+                    $artilces .= '
+    <div class="card shadow-sm border-0 mb-2 clickable-data" style="cursor:pointer;" id="get_cus_details" data-id="' . $result->id_customers . '" onClick="CusDetails()">
+        <div class="d-flex align-items-center p-2">
+            <img src="' . asset('img/default_user_2.png') . '" class="rounded-circle border me-2" style="width:40px;height:40px;" alt="User">
+            <div class="flex-grow-1">
+                <div class="fw-semibold text-dark">' . htmlspecialchars($result->customer_name) . '</div>
+                <div class="small text-muted">' . htmlspecialchars($result->customer_cell) . '</div>
+            </div>
+            <i class="fa fa-chevron-right text-secondary"></i>
+        </div>
+    </div>';
                 }
             }
             return $artilces;
         }
     }
+
     public function getData(Request $request)
     {
+        // Retrieve all data
+        // Use DataTables if available or return strict JSON for client-side processing
+        // Since the view uses standard ajax: url, we normally need { data: [...] } if dataSrc is default
+        // But let's check what it expects. The view columns map directly.
+        // Returning simple array might work if dataSrc is empty string.
+        // Let's safe-guard by returning { data: ... } standard format.
 
-        // Define the number of records to load
-        $perPage = 1;
+        $data = customer::with(['salePerson', 'city'])->orderBy('id_customers', 'desc')->get();
 
-        // Retrieve data based on the scroll position
-        $data = Customer::skip($perPage)
-            ->take($perPage)
-            ->get();
-        // Return the data as JSON response
-        return response()->json($data);
+        return response()->json(['data' => $data]);
     }
+
     public function getCity(Request $request)
     {
         if (is_numeric($request->country_id)) {
             $countries = countries::where('id_countries', $request->country_id)->first();
-            $data['cities'] = \App\cities::where("country_id", $countries->id_countries)->get();
+            $data['cities'] = \App\cities::where('country_id', $countries->id_countries)->get();
         } else {
             $countries = countries::where('name', $request->country_id)->first();
-            $data['cities'] = \App\cities::where("country_id", $countries->id_countries)->get();
+            $data['cities'] = \App\cities::where('country_id', $countries->id_countries)->get();
         }
-
 
         return response()->json($data);
         // $cities = "";
@@ -386,34 +379,60 @@ class AjaxController extends Controller
         // }
         // return $cities;
     }
+
     public function get_customer_details(Request $request)
     {
         // Get customer data
-        $data = Customer::where('id_customers', $request->id)->first();
+        $data = customer::where('id_customers', $request->id)->first();
 
         // Get the latest inquiry details for the customer
         $inquiry_details = inquiry::where('customer_id', $request->id)->orderBy('id_inquiry', 'desc')->first();
 
         // Prepare the output
-        $output = '<input type="hidden" value="' . $data->id_customers . '" name="searched_customer_id"/>
-                   <p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Customer:
-                   <badge class="badge badge-rounded badge-info"><span style="font-size:12px;">' . $data->customer_name . '</span></badge></p>
-                   <p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Contact#
-                   <badge class="badge badge-rounded badge-warning"><span style="font-size:12px;">' . $data->customer_cell . '</span></badge></p>
-                   <p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Email:
-                   <badge class="badge badge-rounded badge-warning"><span style="font-size:12px;">' . $data->customer_email . '</span></badge></p>';
+        $output = '
+        <div class="small text-secondary mb-2 fw-semibold"> 
+                <i class="fa fa-id-card me-1 text-info"></i> Selected Customer Info:
+                </div>
+<input type="hidden" value="' . htmlspecialchars($data->id_customers) . '" name="searched_customer_id"/>
+<ul class="list-unstyled mb-0 small" style="font-size: 0.95rem;">
+    <li class="mb-2">
+        <i class="fa fa-user text-primary me-1"></i>
+        <span class="fw-semibold">Customer:</span>
+        <span class="badge rounded-pill bg-info text-white px-3 py-1 fs-6">' . htmlspecialchars($data->customer_name) . '</span>
+    </li>
+    <li class="mb-2">
+        <i class="fa fa-phone text-success me-1"></i>
+        <span class="fw-semibold">Contact#:</span>
+        <span class="badge rounded-pill bg-warning text-dark px-3 py-1 fs-6">' . htmlspecialchars($data->customer_cell) . '</span>
+    </li>
+    <li class="mb-2">
+        <i class="fa fa-envelope text-danger me-1"></i>
+        <span class="fw-semibold">Email:</span>
+        <span class="badge rounded-pill bg-secondary px-3 py-1 fs-6">' . htmlspecialchars($data->customer_email ?: 'N/A') . '</span>
+    </li>';
 
-        // Only show inquiry details if they exist
         if ($inquiry_details) {
-            $output .= '<p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Last Inquiry:
-                        <badge class="badge badge-rounded badge-warning"><span style="font-size:12px;">#' . $inquiry_details->id_inquiry . '</span></badge></p>
-                        <p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Status:
-                        <badge class="badge badge-rounded badge-warning"><span style="font-size:12px;">' . $inquiry_details->status . '</span></badge></p>';
+            $output .= '
+    <li class="mb-2">
+        <i class="fa fa-file-alt text-info me-1"></i>
+        <span class="fw-semibold">Last Inquiry:</span>
+        <span class="badge rounded-pill bg-primary px-3 py-1 fs-6">#' . htmlspecialchars($inquiry_details->id_inquiry) . '</span>
+    </li>
+    <li class="mb-2">
+        <i class="fa fa-info-circle text-warning me-1"></i>
+        <span class="fw-semibold">Status:</span>
+        <span class="badge rounded-pill bg-success px-3 py-1 fs-6">' . htmlspecialchars($inquiry_details->status) . '</span>
+    </li>';
         } else {
-            // If no inquiry details found
-            $output .= '<p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Last Inquiry:
-                        <badge class="badge badge-rounded badge-danger"><span style="font-size:12px;">No inquiries available</span></badge></p>';
+            $output .= '
+    <li class="mb-2">
+        <i class="fa fa-file-alt text-info me-1"></i>
+        <span class="fw-semibold">Last Inquiry:</span>
+        <span class="badge rounded-pill bg-danger px-3 py-1 fs-6">No inquiries available</span>
+    </li>';
         }
+
+        $output .= '</ul>';
 
         // Return the output
         echo $output;
@@ -421,7 +440,7 @@ class AjaxController extends Controller
 
     public function check_customer_number($cell)
     {
-        $get_customer = Customer::where('customer_cell', $cell)->first();
+        $get_customer = customer::where('customer_cell', $cell)->first();
 
         // dd($cell);
 
@@ -457,21 +476,19 @@ class AjaxController extends Controller
     // InquiryController
     function fetch_data(Request $request)
     {
-
         if ($request->ajax()) {
-
             // where('customer_name','LIKE', $request->q."%")
             $inquiry = inquiry::query();
             if ($request->city != null) {
-                $inquiry = $inquiry->where("city", $request->city);
+                $inquiry = $inquiry->where('city', $request->city);
             }
             if ($request->status != null && $request->status != 0) {
-                $inquiry = $inquiry->where("status", $request->status);
+                $inquiry = $inquiry->where('status', $request->status);
             }
             if ($request->inquiry_type != null && $request->inquiry_type != 0) {
-                $inquiry = $inquiry->where("inquiry_type", $request->inquiry_type);
+                $inquiry = $inquiry->where('inquiry_type', $request->inquiry_type);
             }
-            $inquiry = $inquiry->where('customer_name', 'LIKE', $request->q . "%")->paginate(10);
+            $inquiry = $inquiry->where('customer_name', 'LIKE', $request->q . '%')->paginate(10);
             // dd($inquiry);
             return view('inquiry.pagination', compact('inquiry'))->render();
         }
@@ -533,7 +550,7 @@ class AjaxController extends Controller
                             <h5><b>Inquiry#:</b><u>' . $inquiry->id_inquiry . '</u></h5>
                             <h5><b>Customer</b>: <u>' . $inquiry->customer_name . '</u></h5>
                             <h5><b>Contact</b>: <u>' . $inquiry->contact_1 . '</u></h5>
-                            <h5><b>Inquiry Type</b>: <u>' . $inquiry->inquiry_type . '</u></h5>
+                            <h5><b>Inquiry Type</b>: <u>' . ($inquiry->inquiryType->type_name ?? '-') . '</u></h5>
                             <h5><b>Travel Date</b>: <u> ' . $inquiry->created_at->format('D d M Y') . '</u></h5>
                             <h5><b>City</b>:<u>' . $inquiry->city . '</u></h5>
                             <h5><b>Sale Reference</b>: <u> ' . $inquiry->sales_reference . '</u></h5>
@@ -596,21 +613,17 @@ class AjaxController extends Controller
         // dd($main_services);
         // dd($explode_sub_services);
 
-        $echo_services_data = "";
-        $echo_sub_services_data = "";
+        $echo_services_data = '';
+        $echo_sub_services_data = '';
         // foreach ($services as $key => $service) {
         foreach ($decode_services as $key_main => $value) {
-
-            $echo_sub_services_data = "";
+            $echo_sub_services_data = '';
 
             $main_service = other_service::where('id_other_services', $value->service)->first();
             // dd($get_sub_services_name);
             $echo_main_services_data = '<option selected value="' . $main_service->id_other_services . '">
                                 ' . $main_service->service_name . '
                             </option>';
-
-
-
 
             $get_sub_services = other_service::where('parent_id', $value->service)->get();
             // dd($get_sub_services);
@@ -621,12 +634,10 @@ class AjaxController extends Controller
             }
 
             if ($key_main == 0) {
-                $key_name = "";
+                $key_name = '';
             } else {
                 $key_name = $key_main;
             }
-
-
 
             $echo_services_data .= '<div class="col-lg-5 mg-t-20 mg-lg-t-0 rmv' . $key_main . '">
                 <div class="form-group">
@@ -653,12 +664,12 @@ class AjaxController extends Controller
         // }
         // dd($services_option);
 
-
         return response()->json([
             'inquiry_id' => $campaigns->inquiry_type,
             'echo_services_data' => $echo_services_data,
         ]);
     }
+
     function get_sub_services($id)
     {
         // dd($id);
@@ -669,6 +680,7 @@ class AjaxController extends Controller
         }
         echo $data;
     }
+
     function get_sub_services_id($id, $inq_id)
     {
         // dd($inq_id);
@@ -701,9 +713,8 @@ class AjaxController extends Controller
 
     public function add_more_services($count)
     {
-
         $services = other_service::where('parent_id', null)->get();
-        $services_option = "<option>Select Services</option>";
+        $services_option = '<option>Select Services</option>';
         // dd($services);
         foreach ($services as $key => $value) {
             if ($value->id_other_services != null) {
@@ -758,11 +769,11 @@ class AjaxController extends Controller
             'count' => $count
         ]);
     }
+
     public function add_more_services_users($count)
     {
-
         $services = other_service::where('parent_id', null)->get();
-        $services_option = "";
+        $services_option = '';
         foreach ($services as $key => $value) {
             $services_option .= '<option value="' . $value->id_other_services . '">' . $value->service_name . '</option>';
         }
@@ -841,16 +852,11 @@ class AjaxController extends Controller
         }
 
         // dd($get_sub_service_name_data);
-        $get_service_name_data = "";
+        $get_service_name_data = '';
         foreach ($services_ids as $key => $value) {
             $get_service_name = other_service::where('id_other_services', $value)->first();
             $get_service_name_data .= '<span class="badge badge-pill badge-success">' . $get_service_name->service_name . '</span>';
         }
-
-
-
-
-
 
         // foreach ($sub_services_id_decode as $key => $value) {
         //     $get_service_name = other_service::where('id_other_services', $value)->first();
@@ -868,13 +874,12 @@ class AjaxController extends Controller
 
     public function get_quotations_services(Request $request)
     {
-
         $data = [];
 
         if ($request->has('q')) {
             $search = $request->q;
             // dd($search);
-            $data = Countries::join('cities', 'countries.id_countries', '=', 'cities.country_id')->orwhere("countries.country_name", 'LIKE', '%' . $search)->orwhere("cities.name", 'LIKE', '%' . $search)->select('countries.country_name', 'cities.name')->get();
+            $data = Countries::join('cities', 'countries.id_countries', '=', 'cities.country_id')->orwhere('countries.country_name', 'LIKE', '%' . $search)->orwhere('cities.name', 'LIKE', '%' . $search)->select('countries.country_name', 'cities.name')->get();
             // dd($data);
         }
         return response()->json($data);
@@ -888,7 +893,8 @@ class AjaxController extends Controller
         // //     ->get();
         // return response()->json($data);
     }
-    public  function get_package_from_sub_services($services_id, $inquiry_id, $count)
+
+    public function get_package_from_sub_services($services_id, $inquiry_id, $count)
     {
         $packages = packages::where('package_status', 1)->get();
 
@@ -904,7 +910,6 @@ class AjaxController extends Controller
             }
         }
         $get_package_id_unique = array_unique($get_package_id);
-
 
         $get_inquiry = inquiry::where('id_inquiry', $inquiry_id)->first();
         $no_of_persons = $get_inquiry->no_of_infants + $get_inquiry->no_of_childrens + $get_inquiry->no_of_adults;
@@ -929,41 +934,42 @@ class AjaxController extends Controller
         <td><button type="button" class="btn btn-danger" onclick="remove_row(' . $count . ')">X</button></td></tr>';
 
         return response()->json([
-            "table_details" => $package_details_data,
+            'table_details' => $package_details_data,
         ]);
         // foreach ($decode as $key => $value2) {
         //     $explode = explode('/', $value2);
         // }
-
     }
-    public  function get_quotations_sub_services($sub_services_id, $services_id, $inquiry_id, $count)
+
+    public function get_quotations_sub_services($sub_services_id, $services_id, $inquiry_id, $count)
     {
         $get_services_name = other_service::where('id_other_services', $sub_services_id)->first();
         //    dd($get_services_name);
-        if ($get_services_name->service_name == "VISA") {
-            $services_name = "VISA";
+        if ($get_services_name->service_name == 'VISA') {
+            $services_name = 'VISA';
         }
-        if ($get_services_name->service_name == "Hotel") {
-            $services_name = "Hotel";
+        if ($get_services_name->service_name == 'Hotel') {
+            $services_name = 'Hotel';
         }
-        if ($get_services_name->service_name == "Air Ticket") {
-            $services_name = "Air-Ticket";
+        if ($get_services_name->service_name == 'Air Ticket') {
+            $services_name = 'Air-Ticket';
         }
         return response()->json([
             'services_name' => $services_name,
         ]);
     }
-    public  function get_room_types_hotel_inv($hotel_inv_id)
+
+    public function get_room_types_hotel_inv($hotel_inv_id)
     {
         $get_hotel_inventory = hotel_inventory::where('id_hotel_inventory', $hotel_inv_id)->first();
         $decode = json_decode($get_hotel_inventory->total_entries);
-        $data = "";
+        $data = '';
         foreach ($decode as $key => $value) {
             $get_room_name = room_type::where('id_room_types', $value->room_type)->first();
             $data .= '<option value="' . $value->room_type . '">' . $get_room_name->name . '</option>';
         }
         $get_all_currency = currency_exchange_rate::where('status', 1)->get();
-        $currency_data = "";
+        $currency_data = '';
         foreach ($get_all_currency as $key => $value) {
             $currency_data .= '<option value="' . $value->currency_rate . '">' . $value->currency_name . '</option>';
         }
@@ -972,7 +978,8 @@ class AjaxController extends Controller
             'currency' => $currency_data,
         ]);
     }
-    public  function get_hotel_inv_details($hotel_inv_id, $room_type_id)
+
+    public function get_hotel_inv_details($hotel_inv_id, $room_type_id)
     {
         $get_hotel_inventory = hotel_inventory::where('id_hotel_inventory', $hotel_inv_id)->first();
         $decode = json_decode($get_hotel_inventory->total_entries);
@@ -985,10 +992,11 @@ class AjaxController extends Controller
             'room_type' => $final_value
         ]);
     }
-    public  function get_all_currency()
+
+    public function get_all_currency()
     {
         $get_all_currency = currency_exchange_rate::where('status', 1)->get();
-        $data = "";
+        $data = '';
         foreach ($get_all_currency as $key => $value) {
             $data .= '<option value="' . $value->currency_rate . '">' . $value->currency_name . '</option>';
         }
@@ -997,11 +1005,12 @@ class AjaxController extends Controller
             'currency' => $data
         ]);
     }
-    public  function change_flight_class($airline_inv_id, $flight_class)
+
+    public function change_flight_class($airline_inv_id, $flight_class)
     {
         $get_airline_data = airline_inventory::where('id_airline_inventory', $airline_inv_id)->first();
         $decode = json_decode($get_airline_data->all_entries);
-        $data = "";
+        $data = '';
         // dd('sdsdkj');
         foreach ($decode as $key => $value) {
             $value->flight_class == $flight_class;
@@ -1065,6 +1074,7 @@ class AjaxController extends Controller
             'dep_users' => $dep_users_options
         ]);
     }
+
     public function parsing_details(request $request, $append_count)
     {
         $count_of_rows = count($request->data);
@@ -1087,14 +1097,14 @@ class AjaxController extends Controller
         // dd($implode_data);
         // dd($implode_data);
         $airlines = airlines::all();
-        $all_types_rate = room_type::where('status', "Active")->get();
+        $all_types_rate = room_type::where('status', 'Active')->get();
         $currency_rates = currency_exchange_rate::all();
         $addon = addon::where('status', 1)->get();
         // dd($addon);
 
-        $selected_airline = "";
-        $airline_options = "";
-        foreach ($implode_data as  $lg) {
+        $selected_airline = '';
+        $airline_options = '';
+        foreach ($implode_data as $lg) {
             // echo $lg[5];
             $select_airline[] = $lg[0];
             $get_arrival_val = $lg[4];
@@ -1107,35 +1117,33 @@ class AjaxController extends Controller
             $get_departure_time[] = $hour_d . ':' . $minute_d;
         }
         // exit();
-        $room_type_options = "";
-        $currency_rate_options = "";
+        $room_type_options = '';
+        $currency_rate_options = '';
         $selected_airline_count = 0;
-        $addon_options = "";
-
-
+        $addon_options = '';
 
         // exit();
         foreach ($all_types_rate as $key => $value) {
-            $room_type_options .= "<option value='" . $value->id_room_types . "'>" . $value->name . "</option>";
+            $room_type_options .= "<option value='" . $value->id_room_types . "'>" . $value->name . '</option>';
         }
         foreach ($currency_rates as $key => $value) {
-            $currency_rate_options .= "<option data='" . $value->currency_name . "' value='" . $value->currency_rate . "'>" . $value->currency_name . "</option>";
+            $currency_rate_options .= "<option data='" . $value->currency_name . "' value='" . $value->currency_rate . "'>" . $value->currency_name . '</option>';
         }
         foreach ($addon as $key => $value) {
-            $addon_options .= "<option id='addon_option' value='" . $value->id_addons . "'>" . $value->addon_name . "</option>";
+            $addon_options .= "<option id='addon_option' value='" . $value->id_addons . "'>" . $value->addon_name . '</option>';
         }
         // dd($implode_data);
-        $all_legs = "";
+        $all_legs = '';
         $count = 0;
         // dd($implode_data);
-        foreach ($implode_data as $key_lg =>  $lg) {
+        foreach ($implode_data as $key_lg => $lg) {
             foreach ($airlines as $key => $value) {
                 if ($lg[0] == $value->IATA) {
-                    $selected_airline = "selected";
+                    $selected_airline = 'selected';
                 } else {
-                    $selected_airline = "";
+                    $selected_airline = '';
                 }
-                $airline_options .= "<option " . $selected_airline . " value='" . $value->id_airlines . "'>" . $value->Airline . "</option>";
+                $airline_options .= '<option ' . $selected_airline . " value='" . $value->id_airlines . "'>" . $value->Airline . '</option>';
             }
             $str_date = strtotime($lg[2]);
             $flight_date = date('Y-m-d H:i:s', $str_date);
@@ -1174,10 +1182,10 @@ class AjaxController extends Controller
                         <td><input style="width:100px" value="' . $lg[1] . '" type="text" id="flight_number' . $append_count . '" onchange="airline_calculate()" name="air_ticket[' . $append_count . '][legs_count][flight_number][]" class="form-control"></td>
                         <td><input style="width:100px" type="text" readonly value="' . $flight_date . '" placeholder="MM/DD/YYYY" id="airline_arrival_date' . $append_count . '" onchange="airline_calculate()" name="air_ticket[' . $append_count . '][legs_count][airline_arrival_date][]" class="form-control fc-datepicker' . $append_count . ' "></td>
                         <td><select class="form-control livesearch_for_airline_destination' . $append_count . ' w-100" name="air_ticket[' . $append_count . '][legs_count][airline_arrival_destination][]" id="airline_arrival_destination' . $append_count . '">
-<option value="' . $city_arrival->id . '">' . $country_arrival->country_name . "-" . $city_arrival->name . '</option>
+<option value="' . $city_arrival->id . '">' . $country_arrival->country_name . '-' . $city_arrival->name . '</option>
                         </select></td>
                         <td><select class="form-control livesearch_for_airline_destination' . $append_count . '" name="air_ticket[' . $append_count . '][legs_count][airline_departure_destination][]" id="airline_departure_destination' . $append_count . '">
-                        <option value="' . $city_departure->id . '">' . $country_departure->country_name . "-" . $city_departure->name . '</option>
+                        <option value="' . $city_departure->id . '">' . $country_departure->country_name . '-' . $city_departure->name . '</option>
                         </select></td>
                         <td><input style="width:100px" value="' . $get_arrival_time[$key_lg] . '" type="time" id="arival_time' . $append_count . '" onchange="airline_calculate()" name="air_ticket[' . $append_count . '][legs_count][arrival_time][]" class="form-control "></td>
                         <td><input style="width:100px" value="' . $get_departure_time[$key_lg] . '" type="time" id="departure_time' . $append_count . '" onchange="airline_calculate()" name="air_ticket[' . $append_count . '][legs_count][departure_time][]" class="form-control "></td>
@@ -1199,18 +1207,17 @@ class AjaxController extends Controller
 
     public function get_inventory_details_airline($id, $append_count, $inq_id)
     {
-
         $get_inquiry = inquiry::where('id_inquiry', $inq_id)->first();
         // $no_of_person=$get_inquiry->no_of_infants+$get_inquiry->no_of_children+$get_inquiry->no_of_adults;
         // dd($no_of_person);
         $get_now_date = Carbon::now();
         $get_airline_inv = airline_inventory::where('airline_id', $id)->whereDate('arrival_date', '>=', $get_now_date)->get();
         $get_airline_name = airlines::where('id_airlines', $id)->select('Airline')->first();
-        $inv_details_table = "";
+        $inv_details_table = '';
         foreach ($get_airline_inv as $inv) {
             $get_airline_entries = json_decode($inv->all_entries);
             // dd($get_airline_entries);
-            $entries_html = "";
+            $entries_html = '';
             foreach ($get_airline_entries as $entry) {
                 $entries_html .= '<tr><td><span>' . $entry->flight_class . '</span></td>
  <td><span>' . $entry->qty . '</span></td>
@@ -1270,17 +1277,18 @@ class AjaxController extends Controller
             'airline_name' => $get_airline_name->Airline
         ]);
     }
+
     public function get_airline_rates($append_count)
     {
         $get_now_date = Carbon::now();
         $get_rates = airline_rate::where('status', 1)->get();
         // dd($get_rates);
 
-        $inv_details_table = "";
+        $inv_details_table = '';
         foreach ($get_rates as $rate) {
             // dd($rate);
             $get_airline_name = airlines::where('id_airlines', $rate->airline_id)->select('Airline')->first();
-            $entries_html = "";
+            $entries_html = '';
             $inv_details_table .= '<table id="example2" class="table table-striped mt-2 table-inverse table-responsive" >
             <label>Adults </label><input checked id="adult_put_rates" type="checkbox"  /> <label>Children </label> <input checked id="children_put_rates" type="checkbox"  /> <label>infant </label> <input checked id="infant_put_rates" type="checkbox"  />
             <thead class="thead-inverse mt-2">
@@ -1317,6 +1325,7 @@ class AjaxController extends Controller
             'airline_name' => $get_airline_name->Airline
         ]);
     }
+
     public function get_hotel_rates($id, $append_count, $room_type)
     {
         $get_now_date = Carbon::now();
@@ -1325,10 +1334,10 @@ class AjaxController extends Controller
         // dd($get_rates);
         $get_hotel_name = hotels::where('id_hotels', $id)->select('hotel_name')->first();
         // dd($get_hotel_name);
-        $inv_details_table = "";
+        $inv_details_table = '';
         foreach ($get_rates as $rate) {
             // dd($rate);
-            $entries_html = "";
+            $entries_html = '';
             $inv_details_table .= '
             <label>Adults </label><input checked id="adult_put_rates_hotel" type="checkbox"  /> <label>Children </label> <input checked id="children_put_rates_hotel" type="checkbox"  /> <label>infant </label> <input checked id="infant_put_rates_hotel" type="checkbox"  />
             <table class="table table-striped mt-2 table-inverse table-responsive" >
@@ -1362,18 +1371,19 @@ class AjaxController extends Controller
             'airline_name' => $get_hotel_name->hotel_name
         ]);
     }
+
     public function add_airline_rates($airline_rate)
     {
         $get_rates = airline_rate::where('id_airline_rates', $airline_rate)->select('cost_price', 'selling_price')->first();
         // dd($get_rates);
 
-        $inv_details_table = "";
+        $inv_details_table = '';
         return response()->json([
             'cost_price' => $get_rates->cost_price,
             'selling_price' => $get_rates->selling_price,
-
         ]);
     }
+
     public function add_hotel_rates($hotel_rate)
     {
         $get_rates = hotel_rate::where('id_hotel_rates', $hotel_rate)->select('cost_price', 'selling_price', 'room_type_id')->first();
@@ -1382,15 +1392,15 @@ class AjaxController extends Controller
         // dd($get_rates);
         // dd($get_rates);
         // $get_airline_name = airlines::where('id_airlines', $id)->select('Airline')->first();
-        $inv_details_table = "";
+        $inv_details_table = '';
         return response()->json([
             'cost_price' => $get_rates->selling_price,
             'no_of_beds' => $get_room_type->no_of_beds
         ]);
     }
+
     public function get_inventory_details_hotel($id, $append_count, $inq_id)
     {
-
         $get_inquiry = inquiry::where('id_inquiry', $inq_id)->first();
         // $no_of_person=$get_inquiry->no_of_infants+$get_inquiry->no_of_children+$get_inquiry->no_of_adults;
         // dd($no_of_person);
@@ -1399,11 +1409,11 @@ class AjaxController extends Controller
         $get_hotel_inv = hotel_inventory::where('hotel_id', $id)->where('from_date', '>=', $get_now_date)->get();
         // dd($id);
 
-        $inv_details_table = "";
+        $inv_details_table = '';
         foreach ($get_hotel_inv as $inv) {
             $get_hotel_entries = json_decode($inv->total_entries);
             // dd($get_airline_entries);
-            $entries_html = "";
+            $entries_html = '';
             foreach ($get_hotel_entries as $entry) {
                 $entries_html .= '<tr><td><span>' . $entry->room_type . '</span></td>
                 <td><span>' . $entry->qty . '</span></td>
@@ -1457,6 +1467,7 @@ class AjaxController extends Controller
             'airline_inventory_table' => $inv_details_table
         ]);
     }
+
     public function add_airline_inv_details($inv_id, $append_count)
     {
         $get_airline_inv = airline_inventory::where('id_airline_inventory', $inv_id)->first();
@@ -1474,6 +1485,7 @@ class AjaxController extends Controller
             'append_count' => $append_count,
         ]);
     }
+
     public function add_hotel_inv_details($inv_id, $append_count)
     {
         $get_hotel_inv = hotel_inventory::where('id_hotel_inventory', $inv_id)->first();
@@ -1484,11 +1496,11 @@ class AjaxController extends Controller
         $uniq_ids = array_unique($room_types_id);
         $from_date = Carbon::parse($get_hotel_inv->form_date)->format('d/m/Y');
         $to_date = Carbon::parse($get_hotel_inv->to_date)->format('d/m/Y');
-        $all_types_rate = room_type::where('status', "Active")->whereIn('id_room_types', $uniq_ids)->get();
+        $all_types_rate = room_type::where('status', 'Active')->whereIn('id_room_types', $uniq_ids)->get();
         // dd($all_types_rate);
         $room_type_options = "<option value=''>Select</option>";
         foreach ($all_types_rate as $key => $value) {
-            $room_type_options .= "<option value='" . $value->id_room_types . "'>" . $value->name . "</option>";
+            $room_type_options .= "<option value='" . $value->id_room_types . "'>" . $value->name . '</option>';
         }
         $append_inv_input = "<input type='hidden' class='hotel_inv_id' data-id='" . $append_count . "' s_type='hotel' value='" . $get_hotel_inv->id_hotel_inventory . "' name='hotel[" . $append_count . "][hotel_inv_id][]' id='hotel_inv_id" . $append_count . "'>";
         // $departure_time=2023-06-04 00:00:00;
@@ -1497,21 +1509,21 @@ class AjaxController extends Controller
             'room_type' => $room_type_options,
             'check_in' => $from_date,
             'check_out' => $to_date,
-
             'append_inv_input' => $append_inv_input,
             'append_count' => $append_count,
         ]);
     }
+
     public function get_hotel_available_rooms($hotel_id, $append_count, $inq_id)
     {
         $get_hotel_details = hotel_details::where('hotel_id', $hotel_id)->first();
         $room_types_id = json_decode($get_hotel_details->room_availablity);
         $uniq_ids = array_unique($room_types_id);
-        $all_types_rate = room_type::where('status', "Active")->whereIn('id_room_types', $uniq_ids)->get();
+        $all_types_rate = room_type::where('status', 'Active')->whereIn('id_room_types', $uniq_ids)->get();
         //         dd($uniq_ids);
         $room_type_options = "<option value=''>Select</option>";
         foreach ($all_types_rate as $key => $value) {
-            $room_type_options .= "<option value='" . $value->id_room_types . "'>" . $value->name . "</option>";
+            $room_type_options .= "<option value='" . $value->id_room_types . "'>" . $value->name . '</option>';
         }
 
         return response()->json([
@@ -1519,14 +1531,14 @@ class AjaxController extends Controller
             'append_count' => $append_count,
         ]);
     }
+
     function myFilter($var)
     {
-        return ($var !== NULL && $var !== FALSE && $var !== "");
+        return ($var !== NULL && $var !== FALSE && $var !== '');
     }
-    public  function get_addons($array_ids_addon)
+
+    public function get_addons($array_ids_addon)
     {
-
-
         $explode_entries = explode(',', $array_ids_addon);
         $addon_selling_price = 0;
         $addon_cost_price = 0;
@@ -1545,9 +1557,6 @@ class AjaxController extends Controller
         ]);
     }
 
-
-
-
     // Land Services Work
     function get_land_service_routes($id)
     {
@@ -1560,12 +1569,12 @@ class AjaxController extends Controller
         foreach ($decode as $dc) {
             // $get_route_name = $dc->from_loc . '-' . $dc->to_loc;
             $get_route = route::where('status', 1)->where('id_route', $dc->route_id)->first();
-            $get_land_service_route_options .= "<option value='" . $dc->route_id . "'>" . $get_route->route_location . "</option>";
+            $get_land_service_route_options .= "<option value='" . $dc->route_id . "'>" . $get_route->route_location . '</option>';
         }
         foreach ($decode as $dc) {
             // dd($dc);
             // $get_route_name = $dc->from_loc . '-' . $dc->to_loc;
-            $get_transport_options .= "<option value='" . $dc->transport . "'>" . $dc->transport . "</option>";
+            $get_transport_options .= "<option value='" . $dc->transport . "'>" . $dc->transport . '</option>';
             $get_selling_price = $dc->selling_price;
         }
         return response()->json(
@@ -1576,6 +1585,7 @@ class AjaxController extends Controller
             ]
         );
     }
+
     //    function get_land_service_routes($id)
     //    {
     //        // dd($id);
@@ -1639,7 +1649,6 @@ class AjaxController extends Controller
                 );
             }
         } else {
-
             if ($service_type == 'no_of_person') {
                 $cost_price_service_level_divide = ($get_details->cost_price) / 3;
                 $selling_price_service_level_divide = ($get_details->selling_price) / 3;
@@ -1675,14 +1684,16 @@ class AjaxController extends Controller
     public function getCitiesData()
     {
         $query = cities::query();
-        $query->select('cities.id', 'cities.name', 'cities.state_id', 'cities.state_code', 'cities.country_code', 'countries.country_name')
+        $query
+            ->select('cities.id', 'cities.name', 'cities.state_id', 'cities.state_code', 'cities.country_code', 'countries.country_name')
             ->leftJoin('countries', 'countries.id_countries', '=', 'cities.country_id');
 
         // Process search query (if provided)
         $searchValue = request('search')['value'];
         if ($searchValue) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('cities.name', 'like', '%' . $searchValue . '%')
+                $q
+                    ->where('cities.name', 'like', '%' . $searchValue . '%')
                     ->orWhere('cities.state_code', 'like', '%' . $searchValue . '%')
                     ->orWhere('cities.country_code', 'like', '%' . $searchValue . '%')
                     ->orWhere('countries.country_name', 'like', '%' . $searchValue . '%');
@@ -1696,23 +1707,21 @@ class AjaxController extends Controller
         $totalRecords = $query->count();
 
         // Get the data for the current page
-        $data = $query->offset(request('start'))
+        $data = $query
+            ->offset(request('start'))
             ->limit(request('length'))
             ->get();
 
         return response()->json([
             'draw' => intval(request('draw')),
             'recordsTotal' => $totalRecords,
-            'recordsFiltered' => $totalRecords, // In most cases, recordsFiltered is the same as recordsTotal
+            'recordsFiltered' => $totalRecords,  // In most cases, recordsFiltered is the same as recordsTotal
             'data' => $data,
         ]);
     }
 
-
     function add_more_route_fun($itemCount)
     {
-
-
         echo '
         <div class="col-md-3  rmv_route' . $itemCount . '">
         <div class="form-group">
@@ -1725,6 +1734,7 @@ class AjaxController extends Controller
 
         ';
     }
+
     //     function add_land_services_routes_legs($route, $transport, $land_service, $append_count, $land_sl_count)
     //     {
     //         // dd(request()->service_type_id);
@@ -1908,7 +1918,6 @@ class AjaxController extends Controller
     //             $get_size_of_route = sizeof($get_route_details_decode);
     //         }
 
-
     //         // dd($get_transport);
 
     //         // dd(request()->addmore == 0);
@@ -2077,7 +2086,6 @@ class AjaxController extends Controller
     //             ';
     //         }
 
-
     //         return response()->json([
     //             'data' => $get_legs,
     //             'append_manual_land_legs' => $append_manual_land_legs,
@@ -2088,16 +2096,15 @@ class AjaxController extends Controller
 
     function add_land_services($itemCount)
     {
-
         $get_routes = Route::where('status', 1)->get();
-        $routes_options = "";
+        $routes_options = '';
         $get_vendors = service_vendor::where('vendor_status', 1)->get();
-        $vendor_options = "";
+        $vendor_options = '';
         foreach ($get_routes as $route) {
-            $routes_options .= "<option value='" . $route->id_route . "'>" . $route->route_location . "</option>";
+            $routes_options .= "<option value='" . $route->id_route . "'>" . $route->route_location . '</option>';
         }
         foreach ($get_vendors as $vendor) {
-            $vendor_options .= "<option value='" . $vendor->id_service_vendors . "'>" . $vendor->vendor_name . "</option>";
+            $vendor_options .= "<option value='" . $vendor->id_service_vendors . "'>" . $vendor->vendor_name . '</option>';
         }
 
         echo '<hr class=" rmv_land_services' . $itemCount . '"><div class="row row-sm mg-b-20 rmv_land_services' . $itemCount . ' "><div class="col-md-6 mt-2  rmv_land_services' . $itemCount . ' ">
@@ -2226,53 +2233,54 @@ class AjaxController extends Controller
 </div>';
     }
 
-    //Yousuf Works End Here
+    // Yousuf Works End Here
     // inquiry Create Services On Selection Of Campaign
 
     public function append_hotel_beds($hotel_room_type, $append_count)
     {
         $get_details = room_type::where('id_room_types', $hotel_room_type)->first();
         return response()->json([
-            "beds" => $get_details->no_of_beds
+            'beds' => $get_details->no_of_beds
         ]);
     }
+
     public function get_visa_rates($visa_rate_id)
     {
         $get_details = Visa_rates::where('id_visa_rates', $visa_rate_id)->first();
         return response()->json([
             // "child_c" => $get_details->child_cost_price,
-            "child_s" => $get_details->child_selling_price,
+            'child_s' => $get_details->child_selling_price,
             // "adult_c" => $get_details->adult_cost_price,
-            "adult_s" => $get_details->adult_selling_price,
+            'adult_s' => $get_details->adult_selling_price,
             // "infant_c" => $get_details->infant_cost_price,
-            "infant_s" => $get_details->infant_selling_price,
+            'infant_s' => $get_details->infant_selling_price,
         ]);
     }
+
     public function add_land_services_routes_legs($route, $transport, $land_service, $append_count, $land_sl_count)
     {
-
-        $sub_name = "Land Services";
+        $sub_name = 'Land Services';
         $currency_rates = currency_exchange_rate::all();
         $land_services = Landservicestypes::where('status', 1)->get();
         // dd($addon);
         $land_services_options = "<option value=''>Select</option>";
-        $currency_rate_options = "";
+        $currency_rate_options = '';
         $add_more_legs = 0;
-        $addon_options = "";
+        $addon_options = '';
         foreach ($land_services as $key => $value) {
             // dd($value->name);
             $land_services_types = land_services_type::where('id_land_services_types', $value->name)->first();
-            $land_services_options .= "<option value='" . $value->id_land_and_services_types . "'>" . $land_services_types->service_name . '-' . $value->service_type . "</option>";
+            $land_services_options .= "<option value='" . $value->id_land_and_services_types . "'>" . $land_services_types->service_name . '-' . $value->service_type . '</option>';
         }
         foreach ($currency_rates as $key => $value) {
-            $currency_rate_options .= "<option data='" . $value->currency_name . "' value='" . $value->currency_rate . "'>" . $value->currency_name . "</option>";
+            $currency_rate_options .= "<option data='" . $value->currency_name . "' value='" . $value->currency_rate . "'>" . $value->currency_name . '</option>';
         }
         $legs_count = 0;
         // means Service level (1)
         $service_type_no = 1;
         // dd($land_sl_count);
 
-        if (request()->service_type_id == "service_level") {
+        if (request()->service_type_id == 'service_level') {
             $get_legs = '<div id="land_services_table' . $land_sl_count . '" class="row rmv_land' . $land_sl_count . '"><div class="col-md-12" >
             <table class="table table-striped table-inverse table-responsive mt-2">
             <thead class="thead-inverse">
@@ -2374,7 +2382,6 @@ class AjaxController extends Controller
         ]);
     }
 
-
     function send_quotation_to_approval($q_id, $inq_id)
     {
         $get_approval_group_id = approval_group::select('user_id')->get()->toArray();
@@ -2385,32 +2392,31 @@ class AjaxController extends Controller
         $get_decode_ids = json_encode($get_approval_ids);
         if (count($get_approval_ids) > 0) {
             $get_quotation = quotation::where('id_quotations', $q_id)->first();
-            $get_quotation->status = 1; // send to appproval
+            $get_quotation->status = 1;  // send to appproval
             $get_quotation->save();
 
             $store = new quotation_approval();
             $store->quotation_id = $q_id;
             $store->inquiry_id = $inq_id;
             $store->user_id = $get_decode_ids;
-            $store->status = "Open";
+            $store->status = 'Open';
             $store->created_by = auth()->user()->id;
             $store->save();
             if ($store) {
                 $store = new remarks();
                 $store->inquiry_id = $inq_id;
-                $store->remarks = "Quotation Send For Approval - " . $get_quotation->quotation_no;
-                $store->remarks_status = "Quotation Send For Approval";
-                $store->cancel_reason = "";
-                $store->type = "quotation";
+                $store->remarks = 'Quotation Send For Approval - ' . $get_quotation->quotation_no;
+                $store->remarks_status = 'Quotation Send For Approval';
+                $store->cancel_reason = '';
+                $store->type = 'quotation';
                 $store->quotation_id = $q_id;
-                $store->followup_date = "";
+                $store->followup_date = '';
                 $store->created_by = auth()->user()->id;
                 $store->save();
                 foreach ($get_approval_group_id as $app_user_id) {
                     sendNoti('New Approval Recived Against-' . $get_quotation->quotation_no, null, 'quotation_approval', $app_user_id['user_id']);
                 }
             }
-
 
             return response()->json([
                 'success' => true,
@@ -2438,19 +2444,18 @@ class AjaxController extends Controller
                 $store->inquiry_id = $inq_id;
                 $store->services_type = $get_q_d->services_type;
                 $store->created_by = auth()->user()->id;
-                $store->status = "Un-Assign";
+                $store->status = 'Un-Assign';
                 $store->save();
-
 
                 if ($store) {
                     $store = new remarks();
                     $store->inquiry_id = $inq_id;
-                    $store->remarks = "Quotation(" . $get_q_d->services_type . ")Send For Issuance - " . $get_quotation->quotation_no;
-                    $store->remarks_status = "Quotation Send For Issuance";
-                    $store->cancel_reason = "";
-                    $store->type = "quotation";
+                    $store->remarks = 'Quotation(' . $get_q_d->services_type . ')Send For Issuance - ' . $get_quotation->quotation_no;
+                    $store->remarks_status = 'Quotation Send For Issuance';
+                    $store->cancel_reason = '';
+                    $store->type = 'quotation';
                     $store->quotation_id = $q_id;
-                    $store->followup_date = "";
+                    $store->followup_date = '';
                     $store->created_by = auth()->user()->id;
                     $store->save();
                     // dd($type);
@@ -2463,7 +2468,7 @@ class AjaxController extends Controller
                             $role_permission = role_permission::where('menu_id', $menu->id_main_menu)->pluck('role_id');
                             $users = User::whereIn('role_id', $role_permission)->get();
                             foreach ($users as $use) {
-                                sendNoti('Issuance(' . $get_q_d->services_type . ') Send For Verification ',  $use->name,  'quotation_issuance', $use->id, null);
+                                sendNoti('Issuance(' . $get_q_d->services_type . ') Send For Verification ', $use->name, 'quotation_issuance', $use->id, null);
                             }
                         }
                     }
@@ -2482,6 +2487,7 @@ class AjaxController extends Controller
             ]);
         }
     }
+
     function get_hotel_city_category($city, $cat)
     {
         $trim_city = trim($city);
@@ -2492,9 +2498,9 @@ class AjaxController extends Controller
 
         // dd($get_hotels);
 
-        $hotel_options = "";
+        $hotel_options = '';
         foreach ($get_hotels as $key => $value) {
-            $hotel_options .= "<option value='" . $value->id_hotels . "'>" . $value->hotel_name . "</option>";
+            $hotel_options .= "<option value='" . $value->id_hotels . "'>" . $value->hotel_name . '</option>';
         }
 
         // dd($hotel_options);
@@ -2503,15 +2509,12 @@ class AjaxController extends Controller
             'hotel_options' => $hotel_options
         ]);
         // $store='';
-
-
-
     }
 
     function get_quotation_approvals_data()
     {
         if (request()->ajax()) {
-            $quotation_approval = quotation_approval::join('quotations', 'quotations.id_quotations', '=', 'quotation_approvals.quotation_id')->select('*', 'quotation_approvals.status as q_status')->where('quotation_approvals.status', "Open")->get();
+            $quotation_approval = quotation_approval::join('quotations', 'quotations.id_quotations', '=', 'quotation_approvals.quotation_id')->select('*', 'quotation_approvals.status as q_status')->where('quotation_approvals.status', 'Open')->get();
 
             $get_quotations_approval_data = [];
             foreach ($quotation_approval as $key => $value) {
@@ -2540,7 +2543,7 @@ class AjaxController extends Controller
             //     $object->{$key} = $value['quotation_no'];
             // };
 
-            $query =   $get_quotations_approval_data;
+            $query = $get_quotations_approval_data;
             // dd($query);
             // $query->select('cities.id', 'cities.name', 'cities.state_id', 'cities.state_code', 'cities.country_code', 'countries.country_name')
             //     ->leftJoin('countries', 'countries.id_countries', '=', 'cities.country_id');
@@ -2566,8 +2569,8 @@ class AjaxController extends Controller
             // Get the data for the current page
 
             // Define pagination parameters
-            $start = request('start', 0); // Starting index (default to 0 if not provided)
-            $length = request('length', 10); // Number of records per page (default to 10 if not provided)
+            $start = request('start', 0);  // Starting index (default to 0 if not provided)
+            $length = request('length', 10);  // Number of records per page (default to 10 if not provided)
 
             // Use array_slice to get the paginated data
             $data = array_slice($query, $start, $length);
@@ -2575,18 +2578,18 @@ class AjaxController extends Controller
             return response()->json([
                 'draw' => intval(request('draw')),
                 'recordsTotal' => $totalRecords,
-                'recordsFiltered' => $totalRecords, // In most cases, recordsFiltered is the same as recordsTotal
+                'recordsFiltered' => $totalRecords,  // In most cases, recordsFiltered is the same as recordsTotal
                 'data' => $data,
             ]);
         }
     }
+
     function view_invoice_payment_details($pay_id)
     {
         if (request()->ajax()) {
             $get_payment_details = payments_account::where('id_account_payments', $pay_id)->first();
             //            dd($get_payment_details);exit;
             return response()->json([
-
                 'payment_number' => $get_payment_details->pay_no,
                 'payment_id' => $get_payment_details->id_account_payments,
                 'payment_status' => $get_payment_details->status,
@@ -2598,7 +2601,7 @@ class AjaxController extends Controller
                 'bank_name' => $get_payment_details->bank_name,
                 'deposit_date' => $get_payment_details->deposit_date,
                 'clearing_date' => $get_payment_details->clearing_date,
-                'account_number' => $get_payment_details->account_number, // In most cases, recordsFiltered is the same as recordsTotal
+                'account_number' => $get_payment_details->account_number,  // In most cases, recordsFiltered is the same as recordsTotal
                 'cheque_number' => $get_payment_details->cheque_number,
                 'amount' => $get_payment_details->paid_amount,
                 'recieving_number' => $get_payment_details->recieving_number,
@@ -2606,6 +2609,7 @@ class AjaxController extends Controller
             ]);
         }
     }
+
     function get_pay_quotation_details($i_id)
     {
         if (request()->ajax()) {
@@ -2618,7 +2622,7 @@ class AjaxController extends Controller
                 $get_total = 0;
 
                 foreach ($get_q_details as $q) {
-                    $services_option .= "<option onchange='onchange_services_get_s_amount(" . $q->id_quotation_details . ")' value='" . $q->id_quotation_details . "' >" . $q->services_type . "</option>";
+                    $services_option .= "<option onchange='onchange_services_get_s_amount(" . $q->id_quotation_details . ")' value='" . $q->id_quotation_details . "' >" . $q->services_type . '</option>';
                     if ($q->type == 'service_level') {
                         $get_total_amount = quotations_detail::where('uniq_id', $q->uniq_id)
                             ->select('total', 'services_type', 'default_rate_of_exchange_amt')
@@ -2676,6 +2680,7 @@ class AjaxController extends Controller
             ]);
         }
     }
+
     function onchange_amount_val($i_id)
     {
         if (request()->ajax()) {
@@ -2686,7 +2691,7 @@ class AjaxController extends Controller
             $get_total = 0;
 
             foreach ($get_q_details as $q) {
-                $services_option .= "<option onchange='onchange_services_get_s_amount(" . $q->id_quotation_details . ")' value='" . $q->id_quotation_details . "' >" . $q->services_type . "</option>";
+                $services_option .= "<option onchange='onchange_services_get_s_amount(" . $q->id_quotation_details . ")' value='" . $q->id_quotation_details . "' >" . $q->services_type . '</option>';
                 if ($q->type == 'service_level') {
                     $get_total_detail = quotations_detail::where('uniq_id', $q->uniq_id)
                         ->select('total')
@@ -2712,6 +2717,7 @@ class AjaxController extends Controller
             ]);
         }
     }
+
     function get_followup_details($followup_id)
     {
         $get_follow_up = followup_remark::where('id_followup_remarks', $followup_id)->first();
@@ -2738,13 +2744,13 @@ class AjaxController extends Controller
         $esc = escallation::latest()->limit(5)->where('is_read', 0)->get();
 
         $totalRecords = $query->count();
-        $data = $query->offset(request('start'))
+        $data = $query
+            ->offset(request('start'))
             ->limit(request('length'))
             ->get();
 
         $get_data = [];
         // foreach ($data as $esc_not) {
-
 
         // for ($i = 0; $i < $count; $i++) {
         foreach ($data as $key => $value) {
@@ -2770,7 +2776,6 @@ class AjaxController extends Controller
         // }
         // }
 
-
         $output = array(
             'draw' => intval($_GET['draw']),
             'recordsTotal' => $totalRecords,
@@ -2780,14 +2785,17 @@ class AjaxController extends Controller
 
         echo json_encode($output);
     }
+
     public function getissuanceData()
     {
         $query = Notification::query();
-        $query->select('notifications.id', 'notifications.type', 'notifications.message', 'notifications.is_read', 'notifications.created_at')
+        $query
+            ->select('notifications.id', 'notifications.type', 'notifications.message', 'notifications.is_read', 'notifications.created_at')
             ->where('notifications.type', '=', 'quotation_issuance');
 
         $totalRecords = $query->count();
-        $data = $query->offset(request('start'))
+        $data = $query
+            ->offset(request('start'))
             ->limit(request('length'))
             ->get();
 
@@ -2816,14 +2824,17 @@ class AjaxController extends Controller
 
         echo json_encode($output);
     }
+
     public function getnotificationsData()
     {
         $query = Notification::query();
-        $query->select('notifications.id', 'notifications.type', 'notifications.message', 'notifications.is_read', 'notifications.created_at')
+        $query
+            ->select('notifications.id', 'notifications.type', 'notifications.message', 'notifications.is_read', 'notifications.created_at')
             ->where('notifications.type', '=', 'self_inquiry');
 
         $totalRecords = $query->count();
-        $data = $query->offset(request('start'))
+        $data = $query
+            ->offset(request('start'))
             ->limit(request('length'))
             ->get();
 
@@ -2849,7 +2860,6 @@ class AjaxController extends Controller
             'recordsTotal' => $totalRecords,
             'recordsFiltered' => $totalRecords,
             'data' => $get_data
-
         );
 
         echo json_encode($output);
@@ -2858,10 +2868,12 @@ class AjaxController extends Controller
     public function getteamnotificationsData()
     {
         $query = Notification::query();
-        $query->select('notifications.id', 'notifications.type', 'notifications.message', 'notifications.is_read', 'notifications.created_at')
+        $query
+            ->select('notifications.id', 'notifications.type', 'notifications.message', 'notifications.is_read', 'notifications.created_at')
             ->where('notifications.type', '=', 'team_inquiry');
         $totalRecords = $query->count();
-        $data = $query->offset(request('start'))
+        $data = $query
+            ->offset(request('start'))
             ->limit(request('length'))
             ->get();
         $get_data = [];
@@ -2890,23 +2902,22 @@ class AjaxController extends Controller
         echo json_encode($output);
     }
 
-
     public function getapprovalData()
     {
         $query = Notification::query();
-        $query->select('notifications.id', 'notifications.type', 'notifications.message', 'notifications.is_read', 'notifications.created_at')
+        $query
+            ->select('notifications.id', 'notifications.type', 'notifications.message', 'notifications.is_read', 'notifications.created_at')
             ->where('notifications.type', '=', 'quotation_approval');
 
         $totalRecords = $query->count();
-        $data = $query->offset(request('start'))
+        $data = $query
+            ->offset(request('start'))
             ->limit(request('length'))
             ->get();
-
 
         $get_data = [];
         foreach ($data as $key => $value) {
             if ($value->is_read == '0') {
-
                 $row = '<button class="btn btn-danger btn-center">Unread</button>';
             } else {
                 $row = '<button type="button" class="custom-button text-center">Read</button>';
@@ -2920,12 +2931,11 @@ class AjaxController extends Controller
             $get_data[] = array(++$key, $type, $value->message, $row, $DateValue);
         }
 
-
         $output = array(
-            "draw" => intval($_GET['draw']),
-            "recordsTotal" => $totalRecords,
-            "recordsFiltered" => $totalRecords,
-            "data" => $get_data
+            'draw' => intval($_GET['draw']),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $totalRecords,
+            'data' => $get_data
         );
 
         echo json_encode($output);
@@ -2939,7 +2949,7 @@ class AjaxController extends Controller
         foreach ($get_users as $key => $value) {
             if ($value) {
                 $user = User::where('id', $value)->select('name')->first();
-                $options .= "<option value='" . $value . "'>" . $user->name . "</option>";
+                $options .= "<option value='" . $value . "'>" . $user->name . '</option>';
             }
         }
         return response()->json([
@@ -2947,22 +2957,21 @@ class AjaxController extends Controller
         ]);
     }
 
-
-
     public function getCustomerData()
     {
-        $query = Customer::query();
-        $query->select(
-            'customers.id_customers',
-            'customers.customer_name',
-            'customers.customer_type',
-            'users.name as sale_person',
-            'customers.whatsapp_number',
-            'customers.customer_phone2',
-            'customers.customer_email',
-            'cities.name as city_name',
-            'countries.name as country_name'
-        )
+        $query = customer::query();
+        $query
+            ->select(
+                'customers.id_customers',
+                'customers.customer_name',
+                'customers.customer_type',
+                'users.name as sale_person',
+                'customers.whatsapp_number',
+                'customers.customer_phone2',
+                'customers.customer_email',
+                'cities.name as city_name',
+                'countries.name as country_name'
+            )
             ->leftJoin('users', 'users.id', '=', 'customers.sale_person')
             ->leftJoin('cities', 'cities.id', '=', 'customers.city_id')
             ->leftJoin('countries', 'countries.id_countries', '=', 'customers.country');
@@ -2971,7 +2980,8 @@ class AjaxController extends Controller
         $searchValue = request('search')['value'] ?? '';
         if ($searchValue) {
             $query->where(function ($q) use ($searchValue) {
-                $q->where('customers.customer_name', 'like', '%' . $searchValue . '%')
+                $q
+                    ->where('customers.customer_name', 'like', '%' . $searchValue . '%')
                     ->orWhere('customers.customer_type', 'like', '%' . $searchValue . '%')
                     ->orWhere('users.name', 'like', '%' . $searchValue . '%')
                     ->orWhere('customers.whatsapp_number', 'like', '%' . $searchValue . '%')
@@ -2983,16 +2993,17 @@ class AjaxController extends Controller
         }
 
         // Get the total number of records (required for pagination)
-        $totalRecords = Customer::count();
+        $totalRecords = customer::count();
 
         // Get the data for the current page
-        $data = $query->offset(request('start'))
+        $data = $query
+            ->offset(request('start'))
             ->limit(request('length'))
             ->get()
             ->map(function ($item) {
-                $item->actions = '<a class="btn btn-rounded btn-primary" href="' . url('customers/edit/' . Crypt::encrypt($item->id_customers)) . '">Edit</a> ' .
-                    '<a class="btn btn-rounded btn-success" href="' . url('customers/view/' . Crypt::encrypt($item->id_customers)) . '">View</a> ' .
-                    '<a class="btn btn-rounded btn-danger" href="' . url('customers/destroy/' . Crypt::encrypt($item->id_customers)) . '">Delete</a>';
+                $item->actions = '<a class="btn btn-rounded btn-primary" href="' . url('customers/edit/' . Crypt::encrypt($item->id_customers)) . '">Edit</a> '
+                    . '<a class="btn btn-rounded btn-success" href="' . url('customers/view/' . Crypt::encrypt($item->id_customers)) . '">View</a> '
+                    . '<a class="btn btn-rounded btn-danger" href="' . url('customers/destroy/' . Crypt::encrypt($item->id_customers)) . '">Delete</a>';
                 return $item;
             });
 

@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Edit Permission</h1>
 
-    <form action="{{ route('permissions.update', $permission->id) }}" method="POST">
+    <form action="{{ route('permission.update', $permission->id) }}" method="POST">
         @csrf
         @method('PUT')
 

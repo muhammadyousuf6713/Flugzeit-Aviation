@@ -531,9 +531,7 @@
 
                     <div class="col-md-9" style="height: auto !important;overflow: auto;">
                         <div class="card bg-white rounded-10" style="height: auto;overflow: auto;border:none;">
-                            <!--                            <div class="card-body">-->
                             <h4 class="card-title "><u>FOLLOW-UPS / REMINDERS</u></h4>
-                            <!--<div class="card bd-0">-->
                             <div class="card-header bg-gray-400 bd-b-0-f pd-b-0">
                                 <nav class="nav nav-tabs">
                                     <a class="nav-link active" data-bs-toggle="tab" href="#tabCont11">ALL</a>
@@ -581,7 +579,6 @@
                                                                 ->first();
                                                         @endphp
                                                         <tr>
-
                                                             <td>{{ $key + 1 }}</td>
                                                             <td>{{ $followup_type->type_name }}</td>
                                                             <td>{{ $primary_followup->followup_date }}</td>
@@ -598,8 +595,6 @@
                                                                     style="margin: 0px" type="button"
                                                                     onclick="edit_followup({{ $primary_followup->id_followup_remarks }})"
                                                                     class="btn btn-sm  btn-warning">Renew</button></td>
-
-
                                                             <td>
                                                                 <table id="example2" class="table table-bordered"
                                                                     style="width:100%;">
@@ -620,7 +615,6 @@
                                                                             @foreach ($need_further_follow_ups as $key2 => $secondary_followup)
                                                                                 <?php
                                                                                 $sec_followup_type = \App\follow_up_type::where('id_follow_up_types', $secondary_followup->followup_type)->first();
-
                                                                                 ?>
                                                                                 @if ($secondary_followup->followup_id == $primary_followup->id_followup_remarks)
                                                                                     @php
@@ -638,7 +632,6 @@
                                                                                             ->first();
                                                                                     @endphp
                                                                                     <tr>
-
                                                                                         <td>{{ $sec_followup_type->type_name }}
                                                                                         </td>
                                                                                         <td>{{ $secondary_followup->followup_date }}
@@ -675,7 +668,6 @@
                                     <table id="example3" class="table table-bordered" style="width:100%;">
                                         <thead>
                                             <tr>
-
                                                 <th>Type</th>
                                                 <th>Date</th>
                                                 <th>Remarks</th>
@@ -684,7 +676,6 @@
                                                 {{-- <th>Assigned To</th> --}}
                                                 <th>Action</th>
                                                 <th class="none">Details</th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -692,7 +683,6 @@
                                                 @foreach ($open_follow_ups as $key => $primary_followup)
                                                     <?php
                                                     $followup_type = \App\follow_up_type::where('id_follow_up_types', $primary_followup->followup_type)->first();
-
                                                     ?>
                                                     @if ($primary_followup->followup_id == null)
                                                         @php
@@ -710,7 +700,6 @@
                                                                 ->first();
                                                         @endphp
                                                         <tr>
-
                                                             <td>{{ $followup_type->type_name }}</td>
                                                             <td>{{ $primary_followup->followup_date }}</td>
                                                             <td>{{ $primary_followup->remarks }}</td>

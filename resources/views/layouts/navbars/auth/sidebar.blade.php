@@ -1,144 +1,163 @@
+@can('Sidebar')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-<aside class="card sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 "
+<style>
+    /* Sidebar enhancements */
+    #sidenav-main {
+        background: #fff;
+        border-radius: 15px;
+        overflow-y: auto;
+        max-height: 100vh;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    #sidenav-main .nav-item {
+        transition: all 0.2s ease-in-out;
+    }
+
+    #sidenav-main .nav-link {
+        border-radius: 12px;
+        margin: 4px 10px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #444;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    #sidenav-main .nav-link:hover {
+        background: linear-gradient(90deg, #0ba7d0, #00beda);
+        color: #fff;
+        transform: translateX(3px);
+    }
+
+    #sidenav-main .nav-link.active {
+        background: linear-gradient(90deg, #0ba7d0, #00beda);
+        color: #fff !important;
+        box-shadow: 0 3px 10px rgba(0, 190, 218, 0.3);
+    }
+
+    #sidenav-main .icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        margin-right: 10px;
+        background-color: #f8f9fa;
+    }
+
+    #sidenav-main .nav-link.active .icon {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    #sidenav-main h6 {
+        font-size: 11px;
+        color: #888;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+</style>
+
+<aside class="card sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3"
     id="sidenav-main">
     <div class="sidenav-header">
-        <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
-            aria-hidden="true" id="iconSidenav"></i>
+        <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-xl-none"
+            id="iconSidenav"></i>
         <a class="d-flex justify-content-center m-0 navbar-brand" href="{{ route('dashboard') }}">
-            <img src="{{ asset('assets/img/logo-ct.png') }}" class="img-fluid" style="max-width: 100%; height: auto;"
-                alt="Logo">
+            <img src="{{ asset('assets/img/logo-ct.png') }}" class="img-fluid p-2" alt="Logo">
         </a>
     </div>
 
     <hr class="horizontal dark mt-0">
-    <div class="collapse navbar-collapse  w-auto" id="sidenav-collapse-main">
+
+    <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
         <ul class="navbar-nav">
-            <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Dashboard</h6>
-            </li>
-            <li class="nav-item">
+
+            <!-- Dashboard -->
+            <li class="nav-item mt-2">
+                <h6 class="ps-4 text-uppercase">Dashboard</h6>
                 <a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('dashboard') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fa-solid fa-house"
-                            style="color: {{ Request::is('admission/list') ? '#fff' : '#0ba7d0' }};"></i>
-
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-gauge"></i>
                     </div>
-                    <span class="nav-link-text ms-1">Dashboard</span>
+                    Dashboard
                 </a>
             </li>
+
+            <!-- Operations -->
             <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Operations</h6>
-            </li>
-
-
-            <li class="nav-item pb-2">
+                <h6 class="ps-4 text-uppercase">Operations</h6>
                 <a class="nav-link {{ Request::is('customers') ? 'active' : '' }}" href="{{ url('customers') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                            style="color: {{ Request::is('customers') ? '#fff' : '#00beda' }};" aria-hidden="true"></i>
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-users"></i>
                     </div>
-                    <span class="nav-link-text ms-1">Customers</span>
+                    Customers
                 </a>
-            </li>
-
-            <li class="nav-item">
                 <a class="nav-link {{ Request::is('inquiry') ? 'active' : '' }}" href="{{ url('inquiry') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fa fa-file-alt" style="color: {{ Request::is('inquiry') ? '#fff' : '#00beda' }};"></i>
-                        {{-- <i class="fa fa-question-circle" title="Inquiry"></i> --}}
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-question-circle"></i>
                     </div>
-                    <span class="nav-link-text ms-1">Inquiry</span>
+                    Inquiry
+                </a>
+                <a class="nav-link {{ Request::is('followups') ? 'active' : '' }}" href="{{ route('followups.index') }}">
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    Follow-up List
                 </a>
             </li>
 
-
-
+            <!-- Preferences -->
             <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Preferrences</h6>
-            </li>
-            <li class="nav-item pb-2">
-                <a class="nav-link {{ Request::is('inquiry-type') ? 'active' : '' }}"
-                    href="{{ url('inquiry-type') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                            style="color: {{ Request::is('inquiry-type') ? '#fff' : '#00beda' }};"
-                            aria-hidden="true"></i>
+                <h6 class="ps-4 text-uppercase">Preferences</h6>
+                <a class="nav-link {{ Request::is('inquiry-type') ? 'active' : '' }}" href="{{ url('inquiry-type') }}">
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-list"></i>
                     </div>
-                    <span class="nav-link-text ms-1">Inquiry Types</span>
+                    Inquiry Types
                 </a>
-            </li>
-            <li class="nav-item pb-2">
-                <a class="nav-link {{ Request::is('services') ? 'active' : '' }}" href="{{ url('services') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                            style="color: {{ Request::is('services') ? '#fff' : '#00beda' }};" aria-hidden="true"></i>
+                {{-- <a class="nav-link {{ Request::is('services') ? 'active' : '' }}" href="{{ url('services') }}">
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-concierge-bell"></i>
                     </div>
-                    <span class="nav-link-text ms-1">Services</span>
-                </a>
-            </li>
-            <li class="nav-item pb-2">
-                <a class="nav-link {{ Request::is('sales-reference') ? 'active' : '' }}"
-                    href="{{ url('sales-reference') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                            style="color: {{ Request::is('sales-reference') ? '#fff' : '#00beda' }};"
-                            aria-hidden="true"></i>
+                    Services
+                </a> --}}
+                <a class="nav-link {{ Request::is('sales-reference') ? 'active' : '' }}" href="{{ url('sales-reference') }}">
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-concierge-bell"></i>
                     </div>
-                    <span class="nav-link-text ms-1">Sales References</span>
+                    Sales Reference
                 </a>
-            </li>
-            <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Administration</h6>
             </li>
 
-            @can('Customers list')
-                <li class="nav-item pb-2">
-                    <a class="nav-link {{ Request::is('user-management') ? 'active' : '' }}"
-                        href="{{ url('user-management') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                                style="color: {{ Request::is('user-management') ? '#fff' : '#00beda' }};"
-                                aria-hidden="true"></i>
+            <!-- Admin -->
+            <li class="nav-item mt-3">
+                <h6 class="ps-4 text-uppercase">Administration</h6>
+                @can('Customers list')
+                    <a class="nav-link {{ Request::is('user-management') ? 'active' : '' }}" href="{{ url('user-management') }}">
+                        <div class="icon d-flex align-items-center justify-content-center">
+                            <i class="fa-solid fa-user-shield"></i>
                         </div>
-                        <span class="nav-link-text ms-1">User Management</span>
+                        User Management
                     </a>
-                </li>
-            @endcan
-
-            <li class="nav-item pb-2">
+                @endcan
                 <a class="nav-link {{ Request::is('roles') ? 'active' : '' }}" href="{{ url('roles') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                            style="color: {{ Request::is('roles') ? '#fff' : '#00beda' }};" aria-hidden="true"></i>
+                    <div class="icon d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-user-tag"></i>
                     </div>
-                    <span class="nav-link-text ms-1">Roles Management</span>
+                    Roles Management
                 </a>
-            </li>
-
-            @can('Super-Admin')
-                <li class="nav-item pb-2">
+                @can('Super-Admin')
                     <a class="nav-link {{ Request::is('permission') ? 'active' : '' }}" href="{{ url('permission') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"
-                                style="color: {{ Request::is('permission') ? '#fff' : '#00beda' }};"
-                                aria-hidden="true"></i>
+                        <div class="icon d-flex align-items-center justify-content-center">
+                            <i class="fa-solid fa-key"></i>
                         </div>
-                        <span class="nav-link-text ms-1">Permissions</span>
+                        Permissions
                     </a>
-                </li>
-            @endcan
-
+                @endcan
+            </li>
 
         </ul>
     </div>
 </aside>
+@endcan

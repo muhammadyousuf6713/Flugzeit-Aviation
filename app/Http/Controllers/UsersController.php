@@ -22,7 +22,6 @@
 //      */
 //     protected $role_id;
 
-
 //     public function index()
 //     {
 
@@ -34,7 +33,6 @@
 //         // dd($users);
 //         return view('Users.index')->with(compact('users'));
 //     }
-
 
 //     public function create()
 //     {
@@ -56,7 +54,6 @@
 //             'password' => 'required|string|min:8|confirmed'
 //         ]);
 
-
 //         //$this->validate($request, $validate);
 
 //         $user = new User(); // User::firstOrCreate(['name' => $request->name, 'email' => $request->email]);
@@ -73,8 +70,6 @@
 //         //dd($user); exit;
 //         //$user->password = bcrypt($request->password);
 
-
-
 //         if ($user->save()) {
 
 //             $role_user = new role_user();
@@ -88,7 +83,6 @@
 //         }
 //         return redirect(url('user-management'));
 //     }
-
 
 //     public function edit($id)
 //     {
@@ -112,9 +106,6 @@
 //             $validator['password'] = 'required|string|min:8|confirmed';
 //         }
 //         $this->validate($request, $validator);
-
-
-
 
 //         //$this->validate($request, $validate);
 
@@ -144,23 +135,18 @@
 //     }
 // }
 
-
-
-
-
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Notifications;
 use App\Models\User;
-use App\roles;
+use App\Notifications;
 use App\role_user;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
+use App\roles;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class UsersController extends Controller
 {
@@ -204,8 +190,6 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-
-
     public function index()
     {
         // $users = User::select('users.id', 'users.name', 'users.status', 'users.created_at', 'users.updated_at', DB::raw('roles.name as role_name'))
@@ -216,7 +200,6 @@ class UsersController extends Controller
         $users = User::where('id', '!=', auth()->user()->id)->get();
         return view('users.index')->with(compact('users'));
     }
-
 
     public function create()
     {
@@ -238,7 +221,6 @@ class UsersController extends Controller
     //         'password' => 'required|string|min:8|confirmed'
     //     ]);
 
-
     //     //$this->validate($request, $validate);
 
     //     $user = new User(); // User::firstOrCreate(['name' => $request->name, 'email' => $request->email]);
@@ -254,8 +236,6 @@ class UsersController extends Controller
     //     $user->role_id = $request->role_id;
     //     //dd($user); exit;
     //     //$user->password = bcrypt($request->password);
-
-
 
     //     if ($user->save()) {
     //         $role_user = new role_user();
@@ -300,22 +280,21 @@ class UsersController extends Controller
         return redirect(url('user-management'));
     }
 
-
-
     public function edit($id)
     {
-        $dec_id = \Crypt::decrypt($id);
-        $users = User::find($dec_id);
+        // $dec_id = \Crypt::decrypt($id);
+        $users = User::find($id);
 
         $roles = roles::all();
 
-        //print_r($plot); exit;
+        // print_r($plot); exit;
         return view('users.edit')->with(compact('users', 'roles'));
     }
 
     public function update(Request $request)
     {
-        $dec_id = \Crypt::decrypt($request->u_id);
+        // $dec_id = \Crypt::decrypt($request->u_id);
+        $dec_id = $request->u_id;
         $validator = [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $dec_id . ',id'
@@ -324,7 +303,7 @@ class UsersController extends Controller
             $validator['password'] = 'required|string|min:8|confirmed';
         }
         $this->validate($request, $validator);
-        //$this->validate($request, $validate);
+        // $this->validate($request, $validate);
 
         $user = User::find($dec_id);
 
@@ -338,7 +317,11 @@ class UsersController extends Controller
         $user->role_id = $request->role_id;
 
         if ($user->save()) {
-            $user->syncRoles($request->role_id);
+            // Assign role using Spatie
+            $role = roles::find($request->role_id);
+            if ($role) {
+                $user->syncRoles($role->name);
+            }
             // $role = DB::table('role_user')->where('user_id', $dec_id)->update(['user_id' => $user->id, 'role_id' => $request->role_id]); //role id will come from Form input
             session()->flash('success', 'User has been updated');
         } else {
@@ -350,5 +333,13 @@ class UsersController extends Controller
     public function profile_index()
     {
         return view('users.profile');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::find($id);
+        $user->delete();
+        session()->flash('success', 'User deleted successfully'); 
+        return redirect(url('user-management'));
     }
 }

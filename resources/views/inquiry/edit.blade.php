@@ -13,6 +13,10 @@
             font-family: Arial, sans-serif;
         }
 
+        select.muted {
+            color: #999;
+            /* your desired muted color */
+        }
 
         .container {
             margin: 50px;
@@ -99,440 +103,566 @@
             cursor: not-allowed;
         }
     </style>
+
+
     <div class="col-md-12 col-lg-12 col-xl-12">
+        @include('inquiry.bulk_upload')
         <div class="card card-body pd-40">
             <div class="az-content-breadcrumb ">
                 <span>Inquiry</span>
-                <span>Add Inquiry</span>
+                <span>Edit Inquiry</span>
             </div>
-            <h2 class="az-content-title" style="display: inline">CREATE A NEW INQUIRY <span><a href="{{ url('inquiry') }}"
-                        class="btn btn-az-primary" style="float: right">Inquiry List</a></span></h2>
+            <div class="" style="display: inline">
+                EDIT INQUIRY
+                <span class=""><a href="{{ url('inquiry') }}" class="btn btn-az-primary " style="float: right">Inquiry
+                        List</a></span>
+            </div>
 
             <div class="az-content">
                 <div class="container-fluid">
 
                     <div class="az-content-body d-flex flex-column">
-                        <form action="{{ url('inquiry/update', $inquiry->id) }}" method="post" id="submit_inquiry">
+                        <form action="{{ url('update_inquiry', $inquiry->id_inquiry) }}" method="post" id="submit_inquiry">
                             @csrf
-                            @method('PUT')
-                            <div id="wizard2" class="col-md-12">
-                                <div class="tabs">
-                                    <span id="tab1" class="tab-btn">
-                                        <div class="btn-az-primary active">
-                                            <strong>1</strong>
-                                            <span><u>Add Customer Details</u></span>
-                                        </div>
-                                    </span>
-                                    <span id="tab2" class="tab-btn disabled">
-                                        <div class="btn-az-primary">
-                                            <strong>2</strong>
-                                            <span><u>Travel & Services Information</u></span>
-                                        </div>
-                                    </span>
-                                </div>
-                                <div id="section1" style="padding: 20px; border: 1px solid lightgrey">
-                                    <h3>Add Customer Details</h3>
-                                    <section>
-                                        <div class="row row-lg">
-                                            <div class="col-lg-4">
-                                                <label class="az-content-label tx-11 tx-medium tx-gray-600">Start typing by
-                                                    name/contact number:</label>
-                                                <input class="form-control" id="contact_search" type="search"
-                                                    placeholder="Search">
-                                                <hr>
-                                                <button class="btn btn-warning" onclick="clear_feilds()"
-                                                    id="clear_customer_information">Clear</button>
-                                                <a href="#customer_div" class="btn btn-success d-none text-white "
-                                                    id="add_new_customer_btn">Add New Customer</a>
+                            <div class="card shadow-sm mb-4 p-4">
+                                <h4 class="fw-bold mb-4">
+                                    <i class="fa fa-user-plus text-primary me-2"></i> Inquiry Form
+                                </h4>
+
+                                {{-- Section: Search & Existing Customer --}}
+                                <div class="row g-3 align-items-start">
+
+                                    {{-- Search Input --}}
+                                    <div class="col-lg-4">
+                                        <div class="card mb-3">
+                                            <div class="card-header bg-light">
+                                                <label class="form-label fw-semibold">
+                                                    <i class="fa fa-search me-1 text-primary"></i> Search by Name / Contact:
+                                                </label>
                                             </div>
-                                            <div style="height:180px;overflow-y:scroll;border-left:1px solid #e3e7ed;"
-                                                class='col-lg-4' id="search_result">
-                                            </div>
-                                            <div class="col-lg-3" id="customer_details"
-                                                style="border-left:1px solid #e3e7ed;">
-                                                <p class="az-content-label tx-11 tx-medium tx-gray-600"
-                                                    style="font-size:12px;">
-                                                    Customer: <span style="text-decoration: underline;"></span></p>
-                                                <p class="az-content-label tx-11 tx-medium tx-gray-600"
-                                                    style="font-size:12px;">
-                                                    Contact#
-                                                    <span style="text-decoration: underline;"></span>
-                                                </p>
-                                                <p class="az-content-label tx-11 tx-medium tx-gray-600"
-                                                    style="font-size:12px;">
-                                                    Email:
-                                                    <span style="text-decoration: underline;"></span>
-                                                </p>
-                                                <p class="az-content-label tx-11 tx-medium tx-gray-600"
-                                                    style="font-size:12px;">
-                                                    Last Inquiry:
-                                                    <span style="text-decoration: underline;"></span>
-                                                </p>
-                                                <p class="az-content-label tx-11 tx-medium tx-gray-600"
-                                                    style="font-size:12px;">
-                                                    Status:
-                                                    <span style="text-decoration: underline;"></span>
-                                                </p>
-                                            </div>
-                                            <div class="col-lg-1">
-                                                <img src="{{ asset('img/default_user.png') }}"
-                                                    style="height:100px;width:100px;border-radius: 50%;" />
+                                            <div class="card-body">
+                                                <input class="form-control mb-2 shadow-sm" id="contact_search"
+                                                    type="search" placeholder="Search customer...">
                                             </div>
                                         </div>
-                                        <br>
-                                        <hr>
-                                        {{-- <h5>Add New Customer</h5>
-                                        <div class="row row-sm" id="customer_div">
-                                            <div class="col-lg-4 mg-t-20 mg-md-t-0">
-                                                <div class="form-group">
-                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                        Name:
-                                                        <span style="color:red;">*</span></label>
-                                                    <input id="customer_name"
-                                                        onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9 ]/g, '')"
-                                                        class="form-control" data-parsley-id="7" required
-                                                        name="customer_name" placeholder="Full Name" type="text"
-                                                        value="{{ $inquiry->customer_name }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mg-t-20 mg-md-t-0">
-                                                <div class="form-group">
-                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                        Type</label>
-                                                    <select name="customer_type" id="customer_type" class="form-control">
-                                                        <option value="Individual"
-                                                            {{ $inquiry->customer_type == 'Individual' ? 'selected' : '' }}>
-                                                            Individual</option>
-                                                        <option value="Group"
-                                                            {{ $inquiry->customer_type == 'Group' ? 'selected' : '' }}>Group
-                                                        </option>
-                                                        <option value="Corporate"
-                                                            {{ $inquiry->customer_type == 'Corporate' ? 'selected' : '' }}>
-                                                            Corporate </option>
-                                                    </select>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <button class="btn btn-warning flex-fill" onclick="clear_feilds()"
+                                                id="clear_customer_information">
+                                                <i class="fa fa-eraser me-1"></i> Clear
+                                            </button>
+                                            <a href="#customer_div"
+                                                class="btn btn-success d-none text-white flex-fill toggleCustomerBtn"
+                                                id="add_new_customer_btn">
+                                                <i class="fa fa-plus me-1"></i> Add New
+                                            </a>
+                                        </div>
+                                    </div>
 
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mg-t-20 mg-md-t-0">
-                                                <div class="form-group">
-                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">
-                                                        <span>Customer Cell </span>
-                                                        <span style="color:red;">*</span> Whats-App
-                                                        <input type="checkbox" name="whatsapp_check"
-                                                            {{ $inquiry->whatsapp_check ? 'checked' : '' }}>
-                                                    </label>
+                                    {{-- Search Result --}}
+                                    <div class="col-lg-4" id="search_result"
+                                        style="height:200px; overflow-y:auto; background:#fafafa; border-radius:6px; border-left:1px solid #e3e7ed; padding:4px;">
+                                    </div>
 
-                                                    <div class="input-group">
-                                                        <input type="tel" id="customer_cell"
-                                                            placeholder="(92) 123-4567890" maxlength="14"
-                                                            class="form-control phone" name="customer_cell"
-                                                            style="width: 180% !important" required
-                                                            value="{{ $inquiry->customer_cell }}" />
-                                                    </div>
+                                    {{-- Selected Info --}}
+                                    <div class="col-lg-3" id="customer_details" style="border-left:1px solid #e3e7ed;">
+                                        <div class="small text-secondary mb-2 fw-semibold">
+                                            <i class="fa fa-id-card me-1 text-info"></i> Selected Customer Info:
+                                        </div>
+                                        <p class="mb-1"><i class="fa fa-user text-primary me-1"></i> Customer:
+                                            <span class="fw-semibold text-dark text-decoration-underline">{{ $inquiry->customer->customer_name ?? '' }}</span>
+                                        </p>
+                                        <p class="mb-1"><i class="fa fa-phone text-success me-1"></i> Contact#:
+                                            <span class="fw-semibold text-dark text-decoration-underline">{{ $inquiry->customer->customer_cell ?? '' }}</span>
+                                        </p>
+                                        <p class="mb-1"><i class="fa fa-envelope text-danger me-1"></i> Email:
+                                            <span class="fw-semibold text-dark text-decoration-underline">{{ $inquiry->customer->customer_email ?? '' }}</span>
+                                        </p>
+                                        <p class="mb-1"><i class="fa fa-file-alt text-info me-1"></i> Last
+                                            Inquiry: <span class="fw-semibold text-dark text-decoration-underline"></span>
+                                        </p>
+                                        <p class="mb-1"><i class="fa fa-info-circle text-warning me-1"></i>
+                                            Status: <span class="fw-semibold text-dark text-decoration-underline"></span>
+                                        </p>
+                                    </div>
 
-                                                    <div class="invalid-feedback0"></div>
-                                                </div>
-                                            </div>
-                                            <div class="row row-sm">
-                                                <div class="col-md-6">
-                                                    <div class="form-group ml-2 mt-2">
-                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Contact
-                                                            -
-                                                            WhatsApp</label>
-                                                        <input type="text" id="whatsapp_number" class="form-control"
-                                                            name="customer_whatsapp"
-                                                            value="{{ $inquiry->customer_whatsapp }}">
-                                                        <div class="invalid-feedback1"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group ml-2 mt-2">
-                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Contact
-                                                            -
-                                                            Other
-                                                            /
-                                                            PTCL</label>
-                                                        <input type="text" class="form-control" id="customer_phone_2"
-                                                            name="customer_phone_2"
-                                                            value="{{ $inquiry->customer_phone_2 }}">
-                                                        <div class="invalid-feedback2"></div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group ml-2 mt-2">
-                                                            <div class="form-group">
-                                                                <label
-                                                                    class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                                    Address</label>
-                                                                <input type="text" name="customer_address"
-                                                                    id="customer_address" class="form-control"
-                                                                    value="{{ $inquiry->customer_address }}" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group ml-2 mt-2">
-                                                            <div class="form-group">
-                                                                <label
-                                                                    class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                                    Email</label>
-                                                                <input type="text" name="customer_email"
-                                                                    id="customer_email" class="form-control"
-                                                                    value="{{ $inquiry->customer_email }}" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group ml-2 mt-2">
-                                                            <label
-                                                                class="az-content-label tx-11 tx-medium tx-gray-600">Customer
-                                                                Details</label>
-                                                            <input type="text" class="form-control"
-                                                                id="customer_remarks" name="customer_details"
-                                                                value="{{ $inquiry->customer_details }}">
-                                                            <div class="invalid-feedback"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> --}}
-                                    </section>
+                                    <div class="col-lg-1 d-flex align-items-start">
+                                        <img src="{{ asset('img/default_user.png') }}"
+                                            class="rounded-circle border shadow-sm" style="width:100%; max-width:80px;"
+                                            alt="Profile">
+                                    </div>
                                 </div>
-                                <div id="section2" style="display: none; padding: 20px; border: 1px solid lightgrey">
-                                    <h3>Travel & Services Information</h3>
-                                    <section>
-                                        <div class="row row-sm">
-                                            <div class="row mt-2">
-                                                <div class=" rmv_service col-lg-6 mg-t-20 mg-lg-t-0">
-                                                    <div class="form-group">
-                                                        <label
-                                                            class="az-content-label tx-11 tx-medium tx-gray-600">Services:
-                                                            <span style="color:red;">*</span></label>
-                                                        <select name="services[]" id="services"
-                                                            class="form-control service_dis" required>
-                                                            <option>Select Services </option>
-                                                            @forelse ($services as $service)
-                                                                <option value="{{ $service->id_other_services }}">
-                                                                    {{ $service->service_name }}
-                                                                </option>
-                                                            @empty
-                                                                No Results Found
-                                                            @endforelse
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="rmv_service col-lg-6 mg-t-20 mg-lg-t-0">
-                                                    <div class="form-group">
-                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Sub
-                                                            Services:</label>
-                                                        <select style="width: 100%" name="sub_services[]"
-                                                            id="sub_services"
-                                                            class="js-example-basic-multiple service_dis"
-                                                            multiple="multiple">
-                                                            <option>Select Sub Service</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row" id="append_services">
-                                            </div>
-                                            <div class="row ">
-                                                <div class="col-lg-3 mg-t-20 mg-lg-t-0 mt-2">
-                                                    <div class="form-group">
-                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Inquiry
-                                                            Type: <span style="color:red;">*</span></label>
-                                                        <select name="inquiry_type" id="inquiry_type"
-                                                            class="form-control" required>
-                                                            <option>Select Inquiry Type</option>
-                                                            @forelse ($inquiry_types as $inq_type)
-                                                                <option value="{{ $inq_type->type_id }}"
-                                                                    {{ $inquiry->inquiry_type == $inq_type->type_id ? 'selected' : '' }}>
-                                                                    {{ $inq_type->type_name }}
-                                                                </option>
-                                                            @empty
-                                                                No Results Found
-                                                            @endforelse
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 mg-t-20 mg-md-t-0 mt-2">
-                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Inquiry
-                                                        Category:</label>
-                                                    <select name="inquiry_category" class="form-control" required>
-                                                        <option value="">Select Inquiry Category</option>
-                                                        <option value="Economy"
-                                                            {{ $inquiry->inquiry_category == 'Economy' ? 'selected' : '' }}>
-                                                            Economy</option>
-                                                        <option value="Standard"
-                                                            {{ $inquiry->inquiry_category == 'Standard' ? 'selected' : '' }}>
-                                                            Standard</option>
-                                                        <option value="2 - Star"
-                                                            {{ $inquiry->inquiry_category == '2 - Star' ? 'selected' : '' }}>
-                                                            2 - Star</option>
-                                                        <option value="3 - Star"
-                                                            {{ $inquiry->inquiry_category == '3 - Star' ? 'selected' : '' }}>
-                                                            3 - Star</option>
-                                                        <option value="4 - Star"
-                                                            {{ $inquiry->inquiry_category == '4 - Star' ? 'selected' : '' }}>
-                                                            4 - Star</option>
-                                                        <option value="5 - Star"
-                                                            {{ $inquiry->inquiry_category == '5 - Star' ? 'selected' : '' }}>
-                                                            5 - Star</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-lg-3 mg-t-20 mg-lg-t-0 mt-2">
-                                                    <div class="form-group">
 
-                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Sale
-                                                            Reference</label>
-                                                        <select class="form-control" id="sale_reference"
-                                                            name="sale_reference" required>
-                                                            <option>Select</option>
-                                                            @forelse ($sales_reference as $sale_ref)
-                                                                <option value="{{ $sale_ref->type_id }}"
-                                                                    {{ $inquiry->sale_reference == $sale_ref->type_id ? 'selected' : '' }}>
-                                                                    {{ $sale_ref->type_name }}
-                                                                </option>
-                                                            @empty
-                                                                No Results Found
-                                                            @endforelse
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 mg-t-20 mg-md-t-0 mt-2">
-                                                    <label
-                                                        class="az-content-label tx-11 tx-medium tx-gray-600">Priority</label>
-                                                    <select name="priority" class="form-control">
-                                                        <option value="1"
-                                                            {{ $inquiry->priority == 1 ? 'selected' : '' }}>Priority 1
-                                                        </option>
-                                                        <option value="2"
-                                                            {{ $inquiry->priority == 2 ? 'selected' : '' }}>Priority 2
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="row ">
-                                                <div class="col-lg-4 mg-t-20 mg-lg-t-0 mt-2">
-                                                    <div class="form-group">
-                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">No Of
-                                                            Adults <span style="color:red;">*</span></label>
-                                                        <input type="number" min="1" minlength="1"
-                                                            onkeyup="if(this.value<0){this.value= this.value * -1}"
-                                                            required class="form-control" name="no_of_adults" required
-                                                            value="{{ $inquiry->no_of_adults }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-4 mg-t-20 mg-lg-t-0 mt-2">
-                                                    <div class="form-group">
-                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">No Of
-                                                            Children</label>
-                                                        <input type="number"
-                                                            onkeyup="if(this.value<0){this.value= this.value * -1}"
-                                                            class="form-control" name="no_of_children"
-                                                            value="{{ $inquiry->no_of_children }}">
-                                                    </div>
 
-                                                </div>
-                                                <div class="col-lg-4 mg-t-20 mg-lg-t-0 mt-2">
-                                                    <div class="form-group">
 
-                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">No Of
-                                                            Infants</label>
-                                                        <input type="number"
-                                                            onkeyup="if(this.value<0){this.value= this.value * -1}"
-                                                            class="form-control" name="no_of_infants"
-                                                            value="{{ $inquiry->no_of_infants }}">
-                                                    </div>
-                                                </div>
-                                            </div </div>
-                                            <div class="row row-sm">
-                                                <div class="col-lg-6 mg-t-20 mg-md-t-0 mt-2">
-                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Travel
-                                                        Date:
-                                                        <span style="color:red;">*</span></label>
-                                                    <input type="text" readonly name="travel_date"
-                                                        class="form-control fc-datepicker2" placeholder="MM/DD/YYYY"
-                                                        required readonly value="{{ $inquiry->travel_date }}" />
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group ml-2 mt-2">
-                                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Sales
-                                                            Person
-                                                            <span style="color:red;">*</span></label>
-                                                        @csrf
-                                                        <select name="sale_person" class="form-control" id="sale_person">
-                                                            <option>Select</option>
-                                                            @forelse ($sale_persons as $sp)
-                                                                <option @if ($sp['id'] == $inquiry->created_by) selected @endif
-                                                                    value="{{ $sp['id'] }}">{{ $sp['name'] }}
-                                                                </option>
-                                                            @empty
-                                                                No Results Found
-                                                            @endforelse
-                                                        </select>
-                                                        <div class="invalid-feedback"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-12 mg-t-20 mg-md-t-0 mt-2">
-                                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Remarks:
-                                                        <span class="text-danger">*</span></label>
 
-                                                    <div style="width: 100% ; margin-top: 10px"
-                                                        class="col-md-12 ql-wrapper ql-wrapper-demo">
-                                                        <div id="toolbar-container">
-                                                            <span class="ql-formats">
-                                                                <select class="ql-header">
-                                                                    <option value="1"></option>
-                                                                    <option value="2"></option>
-                                                                    <option value="3"></option>
-                                                                    <option value="4"></option>
-                                                                    <option value="5"></option>
-                                                                    <option value="6"></option>
-                                                                    <option selected></option>
-                                                                </select>
-                                                                <button class="ql-bold"></button>
-                                                                <button class="ql-italic"></button>
-                                                                <button class="ql-underline"></button>
-                                                                <button class="ql-strike"></button>
-                                                            </span>
-                                                            <span class="ql-formats">
-                                                                <button class="ql-list" value="ordered"></button>
-                                                                <button class="ql-list" value="bullet"></button>
-                                                            </span>
-                                                        </div>
-                                                        <div id="editor-container" onkeyup="saveQuillContent()">
-                                                            {!! $inquiry->remarks !!}</div>
-                                                        <textarea name="remarks" id="editorTextarea" style="display: none;"></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                    </section>
+
+                                {{-- Cities --}}
+                                @php
+                                    $cities = [
+                                        'Karachi',
+                                        'Abbottabad',
+                                        'Ahmedpur East',
+                                        'Aliabad',
+                                        'Arifwala',
+                                        'Attock',
+                                        'Baden',
+                                        'Bahawalnagar',
+                                        'Bahawalpur',
+                                        'Burewala',
+                                        'Chakwal',
+                                        'Chaman',
+                                        'Chiniot',
+                                        'Chishtian',
+                                        'Dadu',
+                                        'Daharki',
+                                        'Daska',
+                                        'Dera Ghazi Khan',
+                                        'Dera Ismail Khan',
+                                        'Faisalabad',
+                                        'Ghotki',
+                                        'Gojra',
+                                        'Gujranwala',
+                                        'Gujrat',
+                                        'Hafizabad',
+                                        'Haripur',
+                                        'Hasilpur',
+                                        'Haveli Lakha',
+                                        'Hyderabad',
+                                        'Islamabad',
+                                        'Jacobabad',
+                                        'Jaranwala',
+                                        'Jhang',
+                                        'Jhelum',
+                                        'Kamalpur',
+                                        'Kasur',
+                                        'Khanewal',
+                                        'Kharian',
+                                        'Khushab',
+                                        'Kohat',
+                                        'Kotri',
+                                        'Lahore',
+                                        'Larkana',
+                                        'Mandi Bahauddin',
+                                        'Mansehra',
+                                        'Mardan',
+                                        'Mirpur',
+                                        'Mirpur Khas',
+                                        'Multan',
+                                        'Muzaffargarh',
+                                        'Nawabshah',
+                                        'Nowshera',
+                                        'Okara',
+                                        'Peshawar',
+                                        'Rahim Yar Khan',
+                                        'Rawalpindi',
+                                        'Sahiwal',
+                                        'Sargodha',
+                                        'Sialkot',
+                                        'Sheikhupura',
+                                        'Shikarpur',
+                                        'Sukkur',
+                                        'Swabi',
+                                        'Swat',
+                                        'Tando Adam',
+                                        'Tando Allahyar',
+                                        'Taxila',
+                                        'Vehari',
+                                        'Wah Cantonment',
+                                        'Zhob',
+                                    ];
+                                @endphp
+
+                                <div id="customer_div" style="display: none;">
+                                    <hr class="my-4">
+                                    {{-- Section: New Customer Details --}}
+                                    <h5 class="fw-bold mb-3 d-flex justify-content-between align-items-center">
+                                        <span><i class="fa fa-user-edit text-primary me-1"></i> Add New Customers</span>
+
+                                    </h5>
+                                    <div class="row g-3">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Customer Name <i class="fa fa-info-circle"
+                                                    style="color:red;" data-toggle="tooltip"
+                                                    title="This field is required"></i></label>
+                                            <input id="customer_name"
+                                                onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9 ]/g, '')"
+                                                class="form-control" required name="customer_name" placeholder="Full Name"
+                                                type="text" value="{{ $inquiry->customer->customer_name ?? '' }}" disabled>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Customer Type</label>
+                                            <select name="customer_type" id="customer_type" class="form-select" disabled>
+                                                <option value="Individual" {{ ($inquiry->customer->customer_type ?? '') == 'Individual' ? 'selected' : '' }}>Individual</option>
+                                                <option value="Group" {{ ($inquiry->customer->customer_type ?? '') == 'Group' ? 'selected' : '' }}>Group</option>
+                                                <option value="Corporate" {{ ($inquiry->customer->customer_type ?? '') == 'Corporate' ? 'selected' : '' }}>Corporate</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Customer Cell <i class="fa fa-info-circle"
+                                                    style="color:red;" data-toggle="tooltip"
+                                                    title="This field is required"></i></label>
+                                            <input type="tel" id="customer_cell" placeholder="(92) 123-4567890"
+                                                maxlength="14" class="form-control phone" name="customer_cell" required value="{{ $inquiry->customer->customer_cell ?? '' }}" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mt-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label">WhatsApp</label>
+                                            <input type="text" id="whatsapp_number" class="form-control"
+                                                name="customer_whatsapp" placeholder="e.g. (92) 123-4567890" value="{{ $inquiry->customer->customer_whatsapp ?? '' }}" disabled>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" name="customer_email" id="customer_email"
+                                                class="form-control" placeholder="e.g. example@gmail.com" value="{{ $inquiry->customer->customer_email ?? '' }}" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mt-2">
+                                        <div class="col-md-8">
+                                            <label class="form-label">Address</label>
+                                            <input type="text" name="customer_address" id="customer_address"
+                                                class="form-control" placeholder="e.g. Complete Address Detail" value="{{ $inquiry->customer->customer_address ?? '' }}" disabled>
+                                        </div>
+                                        <div class="col-md-4 ">
+                                            <label class="form-label">City</label>
+                                            <select name="customer_city" id="customer_city" class="form-control select2" disabled>
+                                                <option disabled selected>Select City</option>
+                                                @foreach ($cities as $city)
+                                                    <option value="{{ $city }}" {{ ($inquiry->customer->city ?? '') == $city ? 'selected' : '' }}>{{ $city }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
-                                <br>
-                                <input type="hidden" name="" id="count_id">
+
+                                {{-- <div class="row g-3 mt-2">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Details</label>
+                                        <input type="text" class="form-control" id="customer_remarks"
+                                            name="customer_details" placeholder="e.g. Passport Ready ? Yes.">
+                                    </div>
+                                </div> --}}
+
+                                <hr class="my-4">
+
+                                {{-- Section: Travel & Services --}}
+                                <h5 class="fw-bold mb-3"><i class="fa fa-plane text-primary me-1"></i> Travel &
+                                    Services
+                                    Information</h5>
+                                
+                                @php
+                                    $serviceSubServices = json_decode($inquiry->services_sub_services, true) ?? [];
+                                    $firstServiceId = null;
+                                    $firstSubServiceIds = [];
+                                    if (!empty($serviceSubServices)) {
+                                        // Handle potential format issues or empty strings
+                                        if (str_contains($serviceSubServices[0], '/')) {
+                                            [$firstServiceId, $firstSubIdsStr] = explode('/', $serviceSubServices[0]);
+                                            $firstSubServiceIds = explode(',', $firstSubIdsStr);
+                                        }
+                                    }
+                                @endphp
+
+                                <div class="row mt-2">
+                                    <div class=" rmv_service col-lg-4 mg-t-20 mg-lg-t-0">
+                                        <label class="form-label">Services:
+                                            <i class="fa fa-info-circle " style="color:red;" data-toggle="tooltip"
+                                                title="This field is required"></i>
+                                        </label>
+                                        <select name="services[]" id="services" class="form-control service_dis"
+                                            required>
+                                            <option>Select Services</option>
+                                            @forelse ($services as $service)
+                                                <option value="{{ $service->id_other_services }}" {{ $service->id_other_services == $firstServiceId ? 'selected' : '' }}>
+                                                    {{ $service->service_name }}
+                                                </option>
+                                            @empty
+                                                No Results Found
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                    <div class="rmv_service col-lg-6 mg-t-20 mg-lg-t-0">
+                                        <div class="form-group" style="display: nosne;">
+                                            <label class="form-label">Sub
+                                                Services:</label>
+                                            <select style="width: 100%" name="sub_services[]" id="sub_services"
+                                                class="js-example-basic-multiple service_dis" multiple="multiple">
+                                                <option>Select Sub Service</option>
+                                                @if($firstServiceId)
+                                                    @php
+                                                        $subServicesOptions = \App\other_service::where('parent_id', $firstServiceId)->get();
+                                                    @endphp
+                                                    @foreach($subServicesOptions as $subService)
+                                                        <option value="{{ $subService->id_other_services }}" {{ in_array($subService->id_other_services, $firstSubServiceIds) ? 'selected' : '' }}>
+                                                            {{ $subService->service_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-1 mg-t-20 mg-md-t-0">
+                                         <button onclick="add_more()" class="btn btn-az-primary mt-4" type="button">Add More</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="row" id="append_services">
+                                    @foreach($serviceSubServices as $index => $ssItem)
+                                        @if($index > 0)
+                                            @php
+                                                if (str_contains($ssItem, '/')) {
+                                                    [$svcId, $subIdsStr] = explode('/', $ssItem);
+                                                    $subIds = explode(',', $subIdsStr);
+                                                    $subServicesOptions = \App\other_service::where('parent_id', $svcId)->get();
+                                                } else {
+                                                    continue; 
+                                                }
+                                            @endphp
+                                            <div class="col-lg-5 mg-t-20 mg-lg-t-0 rmv{{ $index }}">
+                                                <div class="form-group">
+                                                    <label class="form-control-label">Services: <span style="color:red;">*</span></label>
+                                                    <select name="services[]" id="services{{ $index }}" class="form-control" required="required">
+                                                        <option>Select Services</option>
+                                                        @foreach ($services as $service)
+                                                            <option value="{{ $service->id_other_services }}" {{ $service->id_other_services == $svcId ? 'selected' : '' }}>
+                                                                {{ $service->service_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 mg-t-20 mg-lg-t-0 rmv{{ $index }}">
+                                                <div class="form-group">
+                                                    <label class="form-control-label">Sub Services:</label>
+                                                    <select style="width: 100%" name="sub_services{{ $index }}[]" id="sub_services{{ $index }}" class="js-example-basic-multiple" multiple="multiple">
+                                                        @foreach($subServicesOptions as $subService)
+                                                            <option value="{{ $subService->id_other_services }}" {{ in_array($subService->id_other_services, $subIds) ? 'selected' : '' }}>
+                                                                {{ $subService->service_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-1 mg-t-20 mg-md-t-0 rmv{{ $index }}">
+                                                <button onclick="remove({{ $index }})" class="btn btn-danger mt-4" type="button">Remove</button>
+                                            </div>
+                                            
+                                            <script>
+                                                // Initialize change handler for this row
+                                                $(document).ready(function() {
+                                                     $("#services{{ $index }}").on("change", function() {
+                                                       var val = $(this).val();
+                                                       $.ajax({
+                                                           url: "{{ url('get_sub_services') }}/" + val,
+                                                           type: "GET",
+                                                           success: function(data) {
+                                                               $("#sub_services{{ $index }}").html(data);
+                                                           }
+                                                       });
+                                                   });
+                                                });
+                                            </script>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                
+                                <div class="row ">
+                                    <div class="col-lg-4 mg-t-20 mg-lg-t-0 mt-2">
+                                        <div class="form-group">
+                                            <label class="form-label">Inquiry
+                                                Type: <i class="fa fa-info-circle " style="color:red;"
+                                                    data-toggle="tooltip" title="This field is required"></i>
+                                            </label>
+                                            <select name="inquiry_type" id="inquiry_type" class="form-control" required>
+                                                <option>Select Inquiry Type</option>
+                                                @forelse ($inquiry_types as $inq_type)
+                                                    <option value="{{ $inq_type->type_id }}" {{ ($inquiry->inquiry_type ?? '') == $inq_type->type_id ? 'selected' : '' }}>
+                                                        {{ $inq_type->type_name }}
+                                                    </option>
+                                                @empty
+                                                    No Results Found
+                                                @endforelse
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mg-t-20 mg-md-t-0 mt-2">
+                                        <label class="form-label">Inquiry
+                                            Category:</label>
+                                        <select name="inquiry_category" class="form-control" required>
+                                            <option value="">Select Inquiry Category</option>
+                                            <option value="Economy" {{ ($inquiry->inquiry_category ?? '') == 'Economy' ? 'selected' : '' }}>Economy</option>
+                                            <option value="Standard" {{ ($inquiry->inquiry_category ?? '') == 'Standard' ? 'selected' : '' }}>Standard</option>
+                                            <option value="2 - Star" {{ ($inquiry->inquiry_category ?? '') == '2 - Star' ? 'selected' : '' }}>2 - Star</option>
+                                            <option value="3 - Star" {{ ($inquiry->inquiry_category ?? '') == '3 - Star' ? 'selected' : '' }}>3 - Star</option>
+                                            <option value="4 - Star" {{ ($inquiry->inquiry_category ?? '') == '4 - Star' ? 'selected' : '' }}>4 - Star</option>
+                                            <option value="5 - Star" {{ ($inquiry->inquiry_category ?? '') == '5 - Star' ? 'selected' : '' }}>5 - Star</option>
+
+                                        </select>
+                                    </div>
+                                <div class="row ">
+
+                                    <div class="col-lg-4 mg-t-20 mg-lg-t-0 mt-2">
+                                        <div class="form-group">
+
+                                            <label class="form-label">Sale
+                                                Reference</label>
+                                            <select class="form-control" id="sale_reference" name="sale_reference"
+                                                required>
+                                                <option>Select</option>
+                                                @forelse ($sales_reference as $sale_ref)
+                                                    <option value="{{ $sale_ref->type_id }}" {{ ($inquiry->sales_reference ?? '') == $sale_ref->type_id ? 'selected' : '' }}>
+                                                        {{ $sale_ref->type_name }}
+                                                    </option>
+                                                @empty
+                                                    No Results Found
+                                                @endforelse
+                                            </select>
+                                        </div>
+                                    </div>
+                                    {{-- <div class="col-lg-3 mg-t-20 mg-md-t-0 mt-2">
+                                                <label
+                                                    class="form-label">Priority</label>
+                                                <select name="priority" class="form-control">
+                                                    <option value="1">Priority 1</option>
+                                                    <option selected value="2">Priority 2</option>
+                                                </select>
+                                            </div> --}}
+                                    <div class="col-lg-4 mg-t-20 mg-md-t-0 mt-2">
+                                        <label class="form-label">Travel
+                                            Date:
+                                            <i class="fa fa-info-circle " style="color:red;" data-toggle="tooltip"
+                                                title="This field is required"></i></label>
+                                        <input type="text" readonly name="travel_date"
+                                            class="form-control fc-datepicker2" placeholder="MM/DD/YYYY" required
+                                            readonly value="{{ $inquiry->travel_date ?? '' }}" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group ml-2 mt-2">
+                                            <label class="form-label">Sales
+                                                Person
+                                                <i class="fa fa-info-circle " style="color:red;" data-toggle="tooltip"
+                                                    title="This field is required"></i></label>
+                                            @csrf
+                                            {{-- Assuming $get_permission_data is available or handle if not --}}
+                                            @php
+                                                $assign_others = $get_permission_data['assign_others'] ?? 'false';
+                                            @endphp
+                                            @if ($assign_others == 'true')
+                                                <select disabled name="sale_person" class="form-control"
+                                                    id="sale_person">
+                                                    <option>Select</option>
+                                                    @forelse ($sale_persons as $sp)
+                                                        <option @if ($sp['id'] == ($inquiry->saleperson ?? auth()->user()->id)) selected @endif
+                                                            value="{{ $sp['id'] }}">{{ $sp['name'] }}
+                                                        </option>
+                                                    @empty
+                                                        No Results Found
+                                                    @endforelse
+                                                </select>
+                                            @elseif($assign_others == 'false')
+                                                <select name="sale_person" class="form-control" id="sale_person">
+                                                    <option>Select</option>
+                                                    @forelse ($sale_persons as $sp)
+                                                        <option @if ($sp['id'] == ($inquiry->saleperson ?? auth()->user()->id)) selected @endif
+                                                            value="{{ $sp['id'] }}">{{ $sp['name'] }}
+                                                        </option>
+                                                    @empty
+                                                        No Results Found
+                                                    @endforelse
+                                                </select>
+                                            @endif
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- <div class="row ">
+                                        <div class="col-lg-4 mg-t-20 mg-lg-t-0 mt-2">
+                                            <div class="form-group">
+                                                <label class="form-label">No Of
+                                                    Adults <i class="fa fa-info-circle " style="color:red;" data-toggle="tooltip" title="This field is required"></i></label>
+                                                <input type="number" min="1" minlength="1"
+                                                    onkeyup="if(this.value<0){this.value= this.value * -1}" required
+                                                    class="form-control" name="no_of_adults" required value="{{ $inquiry->no_of_adults ?? '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 mg-t-20 mg-lg-t-0 mt-2">
+                                            <div class="form-group">
+                                                <label class="form-label">No Of
+                                                    Children</label>
+                                                <input type="number"
+                                                    onkeyup="if(this.value<0){this.value= this.value * -1}"
+                                                    class="form-control" name="no_of_children" value="{{ $inquiry->no_of_children ?? '' }}">
+                                            </div>
+
+                                        </div>
+                                        <div class="col-lg-4 mg-t-20 mg-lg-t-0 mt-2">
+                                            <div class="form-group">
+
+                                                <label class="form-label">No Of
+                                                    Infants</label>
+                                                <input type="number"
+                                                    onkeyup="if(this.value<0){this.value= this.value * -1}"
+                                                    class="form-control" name="no_of_infants" value="{{ $inquiry->no_of_infants ?? '' }}">
+                                            </div>
+                                        </div>
+                                    </div> --}}
+
+                                <div class="col-lg-12 mg-t-20 mg-md-t-0 mt-2">
+                                    <label class="form-label">Remarks:
+                                        <i class="fa fa-info-circle " style="color:red;" data-toggle="tooltip"
+                                            title="This field is required"></i></label>
+                                    <div style="width: 100% ; margin-top: 10px"
+                                        class="col-md-12 ql-wrapper ql-wrapper-demo">
+                                        <div id="toolbar-container">
+                                            <span class="ql-formats">
+                                                <select class="ql-header">
+                                                    <option value="1"></option>
+                                                    <option value="2"></option>
+                                                    <option value="3"></option>
+                                                    <option value="4"></option>
+                                                    <option value="5"></option>
+                                                    <option value="6"></option>
+                                                    <option selected></option>
+                                                </select>
+                                                <button class="ql-bold"></button>
+                                                <button class="ql-italic"></button>
+                                                <button class="ql-underline"></button>
+                                                <button class="ql-strike"></button>
+                                            </span>
+                                            <span class="ql-formats">
+                                                <button class="ql-list" value="ordered"></button>
+                                                <button class="ql-list" value="bullet"></button>
+                                            </span>
+                                            <span class="ql-formats">
+                                                <button class="ql-link"></button>
+                                                <button class="ql-image"></button>
+                                                <button class="ql-video"></button>
+                                            </span>
+                                        </div>
+                                        <div id="editor-container" onkeyup="saveQuillContent()">
+                                            {!! $inquiry->remarks ?? '' !!}
+                                        </div>
+                                        <textarea name="remarks" id="remarks" style="display: none;">{{ $inquiry->remarks ?? '' }}</textarea>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="wizard-buttons" style="padding: 20px; border: 1px solid lightgrey">
-                                <span id="prev" class="btn btn-secondary" style="cursor: not-allowed;"
-                                    disabled>Previous</span>
-                                <span id="next" class="btn btn-az-primary" style="float: right">Next</span>
-                                <button id="submit" class="btn btn-az-primary"
-                                    style="float: right; margin-right: 20px; display: none;">Submit</button>
+
+                            <div class="mt-4 text-end">
+                                <button type="button" onclick="check_validation()" class="btn btn-az-primary">
+                                    <i class="fa fa-paper-plane me-1"></i> Update Inquiry
+                                </button>
                             </div>
-                        </form>
-                        <!--</div> az-content-body -->
-                    </div><!-- container -->
-                </div><!-- az-content -->
-            </div>
+                    </div>
+                    </form>
+                </div>
+                <!-- container -->
+            </div><!-- az-content -->
         </div>
     </div>
+    </div>
 @endsection
-
 
 
 @push('scripts')
@@ -558,14 +688,41 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
+    {{-- for expanding the customer form --}}
+    <script>
+        document.querySelector(".toggleCustomerBtn").addEventListener("click", function() {
+            const customerDiv = document.getElementById("customer_div");
+            if (customerDiv.style.display === "none" || customerDiv.style.display === "") {
+                customerDiv.style.display = "block";
+                this.innerHTML = '<i class="fa fa-minus me-1"></i> Hide Customer Form';
+            } else {
+                customerDiv.style.display = "none";
+                this.innerHTML = '<i class="fa fa-plus me-1"></i> Add New Customer';
+            }
+        });
+    </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var input = document.querySelector("#customer_cell");
-            window.intlTelInput(input, {
-                initialCountry: "pk",
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+            const allSelects = document.querySelectorAll("select");
+
+            allSelects.forEach(selectBox => {
+                function updateSelectStyle() {
+                    if (selectBox.selectedIndex === 0) {
+                        selectBox.classList.add("muted");
+                    } else {
+                        selectBox.classList.remove("muted");
+                    }
+                }
+
+                selectBox.addEventListener("change", updateSelectStyle);
+                updateSelectStyle(); // apply on page load
             });
         });
+    </script>
+
+
+    <script>
         document.querySelector("form").addEventListener("submit", function(event) {
             var input = document.querySelector("#customer_cell");
             var iti = window.intlTelInputGlobals.getInstance(input);
@@ -576,6 +733,7 @@
 
         var quill = new Quill('#editor-container', {
             theme: 'snow',
+            placeholder: 'e.g. Number Of Person, Total Travel Days, etc.',
             modules: {
                 toolbar: '#toolbar-container'
             }
@@ -586,7 +744,7 @@
             // Get the content in HTML format
             var remarks = quill.root.innerHTML;
             // Set the content to the hidden textarea
-            document.getElementById('editorTextarea').value = remarks;
+            document.getElementById('remarks').value = remarks;
         }
 
         document.querySelector("form").addEventListener("submit", function(event) {
@@ -781,76 +939,70 @@
 
         function check_validation() {
             var count_errors = 0;
-            var message = ""
-            var message2 = ""
-            var message3 = ""
-            var message4 = ""
-            var message5 = ""
-            var message6 = ""
-            var message7 = ""
-            if (!$('#customer_name').is(":disabled") && $('#customer_name').val().length < 1) {
-                message1 = "<li style='text-align:left;' class='text-danger'>Customer Name field is Empty</li>";
-                message += message1;
-                var count_errors = count_errors + 1
-            }
-            if (!$('#customer_cell').is(":disabled") && $('#customer_cell').val().length < 1) {
-                message2 = "<li style='text-align:left;' class='text-danger'>Customer field Cell is Empty</li>";
-                message += message2;
-                var count_errors = count_errors + 1
-            }
-            if ($('#inquiry_type').val() == "Select Inquiry Type") {
-                message3 = "<li style='text-align:left;' class='text-danger'>Inquiry Type field is Empty</li>";
-                var count_errors = count_errors + 1
-                message += message3;
+            var message = "";
 
-            }
-            if ($('#services').val() == "Select Services") {
-                message4 = "<li style='text-align:left;' class='text-danger'>Services field is Empty</li>";
-                message += message4;
-
-                var count_errors = count_errors + 1
-            }
-            // if ($('#sub_services').val().length < 1) {
-            //     message5 = "<li style='text-align:left;' class='text-danger'>Sub Services is Empty</li>";
-            //     message += message5;
-
-            //     var count_errors = count_errors + 1
-            // }
-            if ($('input[name="travel_date"]').val().length < 1) {
-                message6 = "<li style='text-align:left;' class='text-danger' >Travel Date field is Empty</li>";
-                message += message6;
-                var count_errors = count_errors + 1
+            // Validate Customer Name only if enabled
+            if (!$('#customer_name').prop('disabled') && $('#customer_name').val().trim().length < 1) {
+                message += "<li style='text-align:left;' class='text-danger'>Customer Name field is Empty</li>";
+                count_errors++;
             }
 
-            // alert($('input[name="no_of_adults"]').val())
-            if ($('input[name="no_of_adults"]').val() < 1 || $('input[name="no_of_adults"]').val().length < 1) {
-                message9 = "<li style='text-align:left;' class='text-danger' >No. Of Adults field Cannot be 0</li>";
-                message += message9;
-                var count_errors = count_errors + 1
+            // Validate Customer Cell only if enabled
+            if (!$('#customer_cell').prop('disabled') && $('#customer_cell').val().trim().length < 1) {
+                message += "<li style='text-align:left;' class='text-danger'>Customer Cell field is Empty</li>";
+                count_errors++;
             }
-            if ($('#sale_person').val().length < 1) {
-                message7 = "<li style='text-align:left;' class='text-danger'>Sales Person field is Empty</li>";
-                message += message7;
-                var count_errors = count_errors + 1
+
+            if ($('#inquiry_type').val() == "Select Inquiry Type" || $('#inquiry_type').val() == "") {
+                message += "<li style='text-align:left;' class='text-danger'>Inquiry Type field is Empty</li>";
+                count_errors++;
             }
-            if ($('#remarks').val().length < 1) {
-                message8 = "<li style='text-align:left;' class='text-danger'>Remarks field is Empty</li>";
-                message += message8;
-                var count_errors = count_errors + 1
+
+            if ($('#services').val() == "Select Services" || $('#services').val() == "") {
+                message += "<li style='text-align:left;' class='text-danger'>Services field is Empty</li>";
+                count_errors++;
+            }
+
+            if ($('input[name="travel_date"]').val().trim().length < 1) {
+                message += "<li style='text-align:left;' class='text-danger'>Travel Date field is Empty</li>";
+                count_errors++;
+            }
+
+            if ($('#sale_person').val() == "Select" || $('#sale_person').val() == "") {
+                message += "<li style='text-align:left;' class='text-danger'>Sales Person field is Empty</li>";
+                count_errors++;
+            }
+
+            saveQuillContent(); // Save content to textarea before validation
+            
+            // Check remarks (strip HTML tags to check for real content)
+            var remarksContent = $('#remarks').val();
+            var strippedRemarks = remarksContent.replace(/<[^>]*>/g, '').trim();
+            
+            if (strippedRemarks.length < 1) {
+                message += "<li style='text-align:left;' class='text-danger'>Remarks field is Empty</li>";
+                count_errors++;
             }
 
             if (count_errors > 0) {
                 Swal.fire({
                     icon: 'error',
-                    html: `${message}`,
+                    html: `<ul>${message}</ul>`, // Wrapped in ul for better formatting
                     showCloseButton: false,
                     focusConfirm: false,
                 })
             } else {
+                // Enable disabled fields before submit to ensure they are sent in the request
+                $('#customer_name').prop('disabled', false);
+                $('#customer_cell').prop('disabled', false);
+                $('#customer_type').prop('disabled', false);
+                $('#whatsapp_number').prop('disabled', false);
+                $('#customer_email').prop('disabled', false);
+                $('#customer_address').prop('disabled', false);
+                $('#customer_city').prop('disabled', false);
+                
                 $('#submit_inquiry').submit();
             }
-
-
         }
         // wizard work
 
@@ -936,19 +1088,28 @@
 
         // });
         function clear_feilds() {
-            var text1 =
-                '<p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Customer: <span style="text-decoration: underline;"></span></p>';
-            var text2 =
-                '<p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Contact# <span style="text-decoration: underline;"></span></p>';
-            var text3 =
-                '<p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Email: <span style="text-decoration: underline;"></span></p>';
-            var text4 =
-                '<p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Last Inquiry: <span style="text-decoration: underline;"></span></p>';
-            var text5 =
-                '<p class="az-content-label tx-11 tx-medium tx-gray-600" style="font-size:12px;">Status: <span style="text-decoration: underline;"></span></p>';
+            var customerDetails =
+                '<div class="small text-secondary mb-2 fw-semibold">' +
+                '<i class="fa fa-id-card me-1 text-info"></i> Selected Customer Info:' +
+                '</div>' +
+                '<p class="mb-1"><i class="fa fa-user text-primary me-1"></i> Customer: ' +
+                '<span class="fw-semibold text-dark text-decoration-underline"></span>' +
+                '</p>' +
+                '<p class="mb-1"><i class="fa fa-phone text-success me-1"></i> Contact#: ' +
+                '<span class="fw-semibold text-dark text-decoration-underline"></span>' +
+                '</p>' +
+                '<p class="mb-1"><i class="fa fa-envelope text-danger me-1"></i> Email: ' +
+                '<span class="fw-semibold text-dark text-decoration-underline"></span>' +
+                '</p>' +
+                '<p class="mb-1"><i class="fa fa-file-alt text-info me-1"></i> Last Inquiry: ' +
+                '<span class="fw-semibold text-dark text-decoration-underline"></span>' +
+                '</p>' +
+                '<p class="mb-1"><i class="fa fa-info-circle text-warning me-1"></i> Status: ' +
+                '<span class="fw-semibold text-dark text-decoration-underline"></span>' +
+                '</p>';
 
             $("#search_result").empty();
-            $("#customer_details").empty().append(text1, text2, text3, text4, text5);
+            $("#customer_details").empty().append(customerDetails);
             $('#customer_name').addClass('disabled');
             $("#customer_name").prop('disabled', false);
             $('#customer_type').addClass('disabled');
@@ -961,6 +1122,8 @@
             $("#customer_phone_2").prop('disabled', false);
             $('#customer_address').addClass('disabled');
             $("#customer_address").prop('disabled', false);
+            $('#customer_city').addClass('disabled');
+            $("#customer_city").prop('disabled', false);
             $('#customer_email').addClass('disabled');
             $("#customer_email").prop('disabled', false);
             $('#customer_reference').addClass('disabled');
@@ -1040,6 +1203,8 @@
                         $("#customer_phone_2").prop('disabled', true);
                         $('#customer_address').addClass('disabled');
                         $("#customer_address").prop('disabled', true);
+                        $('#customer_city').addClass('disabled');
+                        $("#customer_city").prop('disabled', true);
                         $('#customer_email').addClass('disabled');
                         $("#customer_email").prop('disabled', true);
                         $('#customer_reference').addClass('disabled');
@@ -1164,7 +1329,7 @@
 
         });
 
-        var counti = 0;
+        var counti = {{ count(json_decode($inquiry->services_sub_services, true) ?? []) > 0 ? count(json_decode($inquiry->services_sub_services, true) ?? []) - 1 : 0 }};
 
 
 
@@ -1235,31 +1400,4 @@
             });
         });
     </script>
-
-    <!--    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const phoneInput = document.getElementById('customer_cell');
-
-            phoneInput.addEventListener('input', function() {
-                let value = phoneInput.value;
-                // Remove non-digit characters
-                value = value.replace(/\D/g, '');
-
-                // Apply the mask
-                if (value.length > 0) value = '(' + value;
-                if (value.length > 3) value = value.slice(0, 4) + ') ' + value.slice(4);
-                if (value.length > 6) value = value.slice(0, 9) + '-' + value.slice(9);
-
-                // Trim the input to the correct length for a phone number
-                if (value.length > 14) value = value.slice(0, 14);
-
-                // Update the input value
-                phoneInput.value = value;
-            });
-
-            document.getElementById('showPhoneBtn').addEventListener('click', function() {
-                alert(phoneInput.value);
-            });
-        });
-    </script>-->
 @endpush

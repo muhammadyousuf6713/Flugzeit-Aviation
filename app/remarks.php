@@ -9,9 +9,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class remarks extends Model
 {
 
-	use SoftDeletes;
+    use SoftDeletes;
     protected $dates = ['deleted_at'];
     protected $primaryKey = 'id_remarks';
     protected $table = 'remarks';
     public $timestamps = true;
+
+    
+    public function createdBy()
+    {
+        return $this->belongsTo(user::class, 'created_by', 'id');
+    }
 }

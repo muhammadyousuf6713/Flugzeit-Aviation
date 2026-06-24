@@ -9,7 +9,7 @@ use App\airline_inventory;
 use App\airlines;
 use App\campaign;
 use App\currency_exchange_rate;
-use App\Customer;
+use App\customer;
 use App\document;
 use App\hotel_inventory;
 use App\hotels;
@@ -77,7 +77,7 @@ class QuotationController extends Controller
         //     $final_permission[] = $get_roles_permission;
         //     $final_user_ids[] = $value[1];
         // }
-        // $sale_persons = \App\User::select('users.name', 'users.id')->where('role_id', '=', 6)->get()->toArray();
+        // $sale_persons = \App\Models\User::select('users.name', 'users.id')->where('role_id', '=', 6)->get()->toArray();
         $users = User::all();
         foreach ($users as $key => $value) {
             $user_role_id = $value->role_id;
@@ -115,7 +115,7 @@ class QuotationController extends Controller
         // dd($services_inq);
         // dd($services_option);
         // dd($services);
-        $get_customer = Customer::where('id_customers', $get_inquiry->customer_id)->first();
+        $get_customer = customer::where('id_customers', $get_inquiry->customer_id)->first();
         $get_campaign = campaign::where('id_campaigns', $get_inquiry->campaign_id)->first();
         $currency_rates = currency_exchange_rate::all();
         // dd($get_inquiry);
@@ -200,7 +200,7 @@ class QuotationController extends Controller
         //     $final_permission[] = $get_roles_permission;
         //     $final_user_ids[] = $value[1];
         // }
-        // $sale_persons = \App\User::select('users.name', 'users.id')->where('role_id', '=', 6)->get()->toArray();
+        // $sale_persons = \App\Models\User::select('users.name', 'users.id')->where('role_id', '=', 6)->get()->toArray();
         $users = User::all();
         foreach ($users as $key => $value) {
             $user_role_id = $value->role_id;
@@ -238,7 +238,7 @@ class QuotationController extends Controller
         // dd($services_inq);
         // dd($services_option);
         // dd($services);
-        $get_customer = Customer::where('id_customers', $get_inquiry->customer_id)->first();
+        $get_customer = customer::where('id_customers', $get_inquiry->customer_id)->first();
         $get_campaign = campaign::where('id_campaigns', $get_inquiry->campaign_id)->first();
         $currency_rates = currency_exchange_rate::all();
         // dd($get_inquiry);

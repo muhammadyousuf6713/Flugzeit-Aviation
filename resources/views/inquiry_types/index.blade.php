@@ -1,83 +1,62 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
+ <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/v/dt/dt-1.13.6/b-2.4.2/b-html5-2.4.2/r-2.5.0/datatables.min.css" />
+
+    
     <div>
         <div class="row">
             <div class="col-12">
-                <div class="card mb-4 mx-4">
-                    <div class="card-header pb-0">
-                        <div class="d-flex flex-row justify-content-between">
+                <div class="card mb-4 mx-4 shadow-sm border-0">
+                    <div class="card-header pb-0 bg-white">
+                        <div class="d-flex flex-row justify-content-between align-items-center">
                             <div>
-                                <h5 class="mb-0">All Inquiry Type</h5>
+                                <h5 class="mb-0 fw-bold">Inquiry Types List</h5>
                             </div>
-                            <a href="{{ url('inquiry-type/create') }}" class="btn bg-gradient-primary  mb-2" type="button"><i
-                                    class="fa fa-plus"></i>&nbsp; New 
-                                Inquiry Type</a>
+                            <a href="{{ url('inquiry-type/create') }}" class="btn bg-gradient-primary btn-sm mb-0 text-uppercase" type="button">
+                                <i class="fa fa-plus me-1"></i> New Type
+                            </a>
                         </div>
                     </div>
 
-                    <div class="az-content-body d-flex flex-column">
-                        <div class="row">
-                            <div class="col-md-12 col-lg-12 col-xl-12">
-                                <div class="card card-body pd-20">
-                                    <hr>
-                                    <div class="table-responsive">
-                                        <table id="example23" class="table table-striped table-bordered table-hover nowrap"
-                                            cellspacing="1" width="100%">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th class="wd-10p">S.No</th>
-                                                    <th class="wd-20p">Inquiry Type Name</th>
-                                                    {{-- <th class="wd-10p">Status</th> --}}
-                                                    <th class="wd-10p">Created</th>
-                                                    <th class="wd-10p">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($inquiry_types as $key => $inquiry_types)
-                                                    <tr>
-                                                        <td>{{ $key + 1 }}</td>
-                                                        <td>{{ $inquiry_types->type_name }}</td>
-                                                        {{-- <td>
-                                                            @if ($inquiry_types->status == 1)
-                                                                <span class="btn btn-rounded btn-success text-white">Active</span>
-                                                            @else
-                                                                <span class="btn btn-rounded btn-danger">In Active</span>
-                                                            @endif
-                                                        </td> --}}
-                                                        <td>{{ date('d-m-Y', strtotime($inquiry_types->created_at)) }}</td>
-                                                        <td>
-                                                           
-                                                                <a class="btn rounded shadow-base"
-                                                                    href="{{ url('inquiry-type/edit', \Crypt::encrypt($inquiry_types->type_id)) }}">
-                                                                    <i class="text-primary fa-regular fa-pen-to-square"></i> <span
-                                                                        class="text-primary"> Edit </span>
-                                                                </a>
-                                                      
-                    
-                                                            
-                                                                <a class="btn rounded shadow-base" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ $inquiry_types->type_id }}">
-                                                                    <i class="text-danger fa-solid fa-trash-can"></i> <span class="text-danger">Remove</span>
-                                                                </a>
-                                                                
-                                                            
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th class="wd-10p">S.No</th>
-                                                    <th class="wd-20p">Inquiry Type Name</th>
-                                                    {{-- <th class="wd-10p">Status</th> --}}
-                                                    <th class="wd-10p">Created</th>
-                                                    <th class="wd-10p">Action</th>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="card-body px-0 pt-0 pb-2">
+                        <div class="table-responsive p-3">
+                            <table id="example23" class="table table-striped table-bordered align-middle w-100">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="wd-10p">S.No</th>
+                                        <th class="wd-20p">Inquiry Type Name</th>
+                                        <th class="wd-10p">Created</th>
+                                        <th class="wd-10p text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($inquiry_types as $key => $inquiry_types)
+                                        <tr>
+                                            <td class="fw-bold text-secondary text-xs">{{ $key + 1 }}</td>
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">{{ $inquiry_types->type_name }}</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-xs text-secondary">{{ date('d M Y', strtotime($inquiry_types->created_at)) }}</td>
+                                            <td class="text-center">
+                                                <a class="btn bg-gradient-info btn-sm mb-0 me-2"
+                                                    href="{{ url('inquiry-type/edit', $inquiry_types->type_id) }}">
+                                                    <i class="fa fa-pen-to-square me-1"></i> Edit
+                                                </a>
+                                                <a class="btn bg-gradient-danger btn-sm mb-0" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal" data-id="{{ $inquiry_types->type_id }}">
+                                                    <i class="fa fa-trash-can me-1"></i> Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -109,60 +88,29 @@
     </div>
 </div>
 
-  
+
 @endsection
 
 @push('scripts')
     <script type="text/javascript">
-        document.addEventListener('keydown', function(event) {
-            if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
-                event.preventDefault(); // Prevent default CTRL + A behavior (Select All)
-
-                // Trigger the click on the "Add Customers" button
-                document.getElementById('addbtn').click();
-            }
-        });
-        $(function() {
-            oTable = $('#example23').DataTable({
-                dom: 'Bfrtip',
-                buttons: [{
-                        extend: 'csv',
-                        text: 'CSV',
-                        title: 'Supplier List',
-                        className: 'btn btn-default',
-                        exportOptions: {
-                            columns: 'th:not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'excel',
-                        text: 'Excel',
-                        title: 'Supplier List',
-                        className: 'btn btn-default',
-                        exportOptions: {
-                            columns: 'th:not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'pdf',
-                        text: 'PDF',
-                        title: 'Supplier List',
-                        className: 'btn btn-default',
-                        exportOptions: {
-                            columns: 'th:not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'print',
-                        text: 'Print',
-                        title: 'Supplier List',
-                        className: 'btn btn-default',
-                        exportOptions: {
-                            columns: 'th:not(:last-child)'
-                        }
-                    }
+        $(document).ready(function() {
+            var table = $('#example23').DataTable({
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel', 'pdf', 'print'
                 ],
-                responsive: !0
+                lengthMenu: [
+                    [10, 25, 50 , 100],
+                    [10, 25, 50, 100]
+                ],
+                language: {
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span>',
+                    paginate: {
+                        next: '<i class="fa fa-angle-right"></i>',
+                        previous: '<i class="fa fa-angle-left"></i>'
+                    }
+                },
+                responsive: true
             });
         });
 
@@ -179,7 +127,7 @@
             });
         });
     </script>
-    
+
 @endpush
 
 

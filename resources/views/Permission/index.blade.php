@@ -146,209 +146,183 @@
 </style>
 
 @section('content')
-    <div class="az-content-breadcrumb">
-        <span>Roles Permission Management</span>
-    </div>
-    <h2 class="az-content-title d-flex justify-content-between align-items-center">
-        Permissions List
-        <a href="{{ url('roles') }}" class="btn btn-outline-secondary">
-            <i class="fa-solid fa-bars-staggered"></i> Back to Roles
-        </a>
-    </h2>
-
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-12">
             @if (Session('alert'))
-                <div class="alert alert-card alert-{{ Session('alert-class') }}" role="alert">
-                    {{ Session('alert') }}
-                    <button class="close" type="button" data-dismiss="alert" aria-label="Close">
+                <div class="alert alert-{{ Session('alert-class') }} alert-dismissible fade show" role="alert">
+                    <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-text"><strong>{{ Session('alert') }}</strong></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
             @endif
-        </div>
-    </div>
 
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <label for="role">Role</label>
-            <select onchange="location.href='{{ url('roles/permission') }}/' + this.value;" class="form-control">
-                <option value="0">--Select--</option>
-                @foreach ($roles as $role)
-                    <option value="{{ $role->id }}" {{ $role_id == $role->id ? 'selected' : '' }}>
-                        {{ $role->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-6">
-        </div>
-        <div class="col-md-2">
+            <div class="card mb-4 mx-4 shadow-sm border-0">
+                <div class="card-header pb-0 bg-white">
+                    <div class="d-flex flex-row justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0 fw-bold">Roles Permission Management</h5>
+                        </div>
+                        <a href="{{ url('roles') }}" class="btn bg-gradient-secondary btn-sm mb-0 text-uppercase">
+                            <i class="fa fa-arrow-left me-1"></i> Back to Roles
+                        </a>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="role" class="form-control-label">Select Role</label>
+                                <select onchange="location.href='{{ url('roles/permission') }}/' + this.value;" class="form-control">
+                                    <option value="0">--Select Role--</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}" {{ $role_id == $role->id ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-
-        </div>
-    </div>
-
-    <div class="separator-breadcrumb border-top"></div>
-    <form id="permission" action="{{ url('roles/permission', [$role_id]) }}" method="post">
-        @csrf
-        <div class="row">
-            <div class="col-md-12">
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <div class="card text-left shadow p-3 mb-5 bg-white rounded">
-                            <div class="card-body ">
-                                <!-- Colorful Switches Description -->
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="description-container">
-                                            <h5>Access Control Information:</h5>
-                                            <div class="d-flex flex-column">
-                                                <div class="d-flex align-items-center mb-2">
-                                                    <label class="switch switch-primary mr-2">
-                                                        <input type="checkbox" checked value="1" />
-                                                        <span class="slider module-slider"></span>
-                                                    </label>
-                                                    <span class="description-text">
-                                                        <b style="color:#3bafda;">Primary Modules Permission:</b> switch for
-                                                        core
-                                                        accessibility
-                                                    </span>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <form id="permission" action="{{ url('roles/permission', [$role_id]) }}" method="post">
+                        @csrf
+                        <div class="p-4">
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="card shadow-none border">
+                                        <div class="card-body">
+                                            <!-- Colorful Switches Description -->
+                                            <div class="row align-items-center">
+                                                <div class="col-md-8">
+                                                    <div class="description-container">
+                                                        <h6 class="fw-bold mb-3">Access Control Legend:</h6>
+                                                        <div class="d-flex flex-wrap gap-3">
+                                                            <div class="d-flex align-items-center mb-2 me-3">
+                                                                <label class="switch switch-primary me-2 mb-0">
+                                                                    <input type="checkbox" checked disabled />
+                                                                    <span class="slider module-slider"></span>
+                                                                </label>
+                                                                <span class="text-xs text-muted"> <b class="text-info">Primary:</b> Core Module</span>
+                                                            </div>
+                                                            <div class="d-flex align-items-center mb-2 me-3">
+                                                                <label class="switch switch-success me-2 mb-0">
+                                                                    <input type="checkbox" checked disabled />
+                                                                    <span class="slider submodule-slider"></span>
+                                                                </label>
+                                                                <span class="text-xs text-muted"> <b class="text-success">Sub-Module:</b> Feature</span>
+                                                            </div>
+                                                            <div class="d-flex align-items-center mb-2">
+                                                                <label class="switch switch-warning me-2 mb-0">
+                                                                    <input type="checkbox" checked disabled />
+                                                                    <span class="slider subpermissions-slider"></span>
+                                                                </label>
+                                                                <span class="text-xs text-muted"> <b class="text-warning">Action:</b> Control</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="d-flex align-items-center mb-2">
-                                                    <label class="switch switch-success mr-2">
-                                                        <input type="checkbox" checked value="1" />
-                                                        <span class="slider submodule-slider"></span>
-                                                    </label>
-                                                    <span class="description-text">
-                                                        <b style="color:#4caf50;">Sub Modules Permission:</b> switch for
-                                                        primary
-                                                        core
-                                                        accessibility
-                                                    </span>
-                                                </div>
-                                                <div class="d-flex align-items-center">
-                                                    <label class="switch switch-warning mr-2">
-                                                        <input type="checkbox" checked value="1" />
-                                                        <span class="slider subpermissions-slider"></span>
-                                                    </label>
-                                                    <span class="description-text">
-                                                        <b style="color:#ffc107;">Access Controls Permission:</b> switch for
-                                                        sub
-                                                        controls
-                                                        accessibility
-                                                    </span>
+                                                <div class="col-md-4 text-end">
+                                                    <button type="submit" class="btn bg-gradient-primary mb-0">
+                                                        <i class="fa fa-save me-1"></i> Update Permissions
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <button style="float: right" type="submit" class="btn btn-az-primary">Update
-                                            Permissions</button>
-                                    </div>
                                 </div>
-                                <hr>
-                                <h2>Modules Permissions</h2>
+                            </div>
 
-                                {{-- <h4 class="card-title mb-3">List</h4> --}}
-                                <h6 class="card-title mb-3">
-                                    <span for="check-all">Check All</span>
-                                    <input type="checkbox" class="check-module" id="check-all">
-                                </h6>
+                            <hr class="horizontal dark my-4">
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0 fw-bold">Module Permissions</h6>
+                                <div class="form-check form-switch ps-0">
+                                    <input class="form-check-input ms-auto check-module" type="checkbox" id="check-all">
+                                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="check-all">Check All</label>
+                                </div>
+                            </div>
                                 {{-- @csrf --}}
-                                <div class="table-responsive">
-
-
-                                    <table id="permissionsTable" class="table table-striped table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Pages</th>
-                                                <th>Permission</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php $count = 1; @endphp
-                                            @foreach ($permissions->groupBy('parent_id') as $parent_id => $group)
-                                                @if ($parent_id == 0)
-                                                    @foreach ($group as $permission)
-                                                        <tr class="odd gradeX">
+                            <div class="table-responsive">
+                                <table id="permissionsTable" class="table table-striped table-bordered w-100">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Pages</th>
+                                            <th>Permission</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php $count = 1; @endphp
+                                        @foreach ($permissions->groupBy('parent_id') as $parent_id => $group)
+                                            @if ($parent_id == 0)
+                                                @foreach ($group as $permission)
+                                                    <tr class="odd gradeX">
+                                                        <td>{{ $count++ }}</td>
+                                                        <td class="fw-bold text-dark">
+                                                            {{ $permission->name }}
+                                                        </td>
+                                                        <td>
+                                                            <label class="switch">
+                                                                <input type="checkbox" class="check-module"
+                                                                    name="permissions[]" value="{{ $permission->id }}"
+                                                                    {{ in_array($permission->id, $assigned_permissions) ? 'checked' : '' }}>
+                                                                <span class="slider module-slider"></span>
+                                                            </label>
+                                                        </td>
+                                                    </tr>
+                                                    @foreach ($permissions->where('parent_id', $permission->id) as $subPermission)
+                                                        <tr class="odd gradeX sub-module"
+                                                            data-parent="{{ $permission->id }}">
                                                             <td>{{ $count++ }}</td>
-                                                            <td>
-                                                                <label>
-                                                                    <strong>{{ $permission->name }}</strong>
-                                                                </label>
+                                                            <td style="padding-left: 3rem;">
+                                                                <span class="dot me-2"></span>
+                                                                <span class="text-secondary">{{ $subPermission->name }}</span>
                                                             </td>
                                                             <td>
                                                                 <label class="switch">
                                                                     <input type="checkbox" class="check-module"
-                                                                        name="permissions[]" value="{{ $permission->id }}"
-                                                                        {{ in_array($permission->id, $assigned_permissions) ? 'checked' : '' }}>
-                                                                    <span class="slider module-slider"></span>
+                                                                        name="permissions[]"
+                                                                        value="{{ $subPermission->id }}"
+                                                                        {{ in_array($subPermission->id, $assigned_permissions) ? 'checked' : '' }}>
+                                                                    <span class="slider submodule-slider"></span>
                                                                 </label>
                                                             </td>
                                                         </tr>
-                                                        @foreach ($permissions->where('parent_id', $permission->id) as $subPermission)
-                                                            <tr class="odd gradeX sub-module"
-                                                                data-parent="{{ $permission->id }}">
+                                                        @foreach ($permissions->where('parent_id', $subPermission->id) as $subSubPermission)
+                                                            <tr class="odd gradeX sub-permissions"
+                                                                data-parent="{{ $subPermission->id }}">
                                                                 <td>{{ $count++ }}</td>
-                                                                <td style="padding-left: 3rem;">
-                                                                    <label>
-                                                                        <span class="dot"></span>
-                                                                        {{ $subPermission->name }}
-                                                                    </label>
+                                                                <td style="padding-left: 5rem;">
+                                                                    <span class="dot2 me-2"></span>
+                                                                    <small class="text-muted">{{ $subSubPermission->name }}</small>
                                                                 </td>
                                                                 <td>
                                                                     <label class="switch">
                                                                         <input type="checkbox" class="check-module"
                                                                             name="permissions[]"
-                                                                            value="{{ $subPermission->id }}"
-                                                                            {{ in_array($subPermission->id, $assigned_permissions) ? 'checked' : '' }}>
-                                                                        <span class="slider submodule-slider"></span>
+                                                                            value="{{ $subSubPermission->id }}"
+                                                                            {{ in_array($subSubPermission->id, $assigned_permissions) ? 'checked' : '' }}>
+                                                                        <span
+                                                                            class="slider subpermissions-slider"></span>
                                                                     </label>
                                                                 </td>
                                                             </tr>
-                                                            @foreach ($permissions->where('parent_id', $subPermission->id) as $subSubPermission)
-                                                                <tr class="odd gradeX sub-permissions"
-                                                                    data-parent="{{ $subPermission->id }}">
-                                                                    <td>{{ $count++ }}</td>
-                                                                    <td style="padding-left: 5rem;">
-                                                                        <span class="dot2"></span>
-                                                                        {{ $subSubPermission->name }}
-                                                                    </td>
-                                                                    <td>
-                                                                        <label class="switch">
-                                                                            <input type="checkbox" class="check-module"
-                                                                                name="permissions[]"
-                                                                                value="{{ $subSubPermission->id }}"
-                                                                                {{ in_array($subSubPermission->id, $assigned_permissions) ? 'checked' : '' }}>
-                                                                            <span
-                                                                                class="slider subpermissions-slider"></span>
-                                                                        </label>
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
                                                         @endforeach
                                                     @endforeach
-                                                @endif
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    <br>
-                                    {{-- <button type="submit" class="btn btn-az-primary">Update
-                                        Permissions</button> --}}
-                                </div>
-
+                                                @endforeach
+                                            @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-
-
         </div>
-
-    </form>
+    </div>
 @endsection
 
 @push('scripts')
@@ -364,7 +338,15 @@
             $('#permissionsTable').DataTable({
                 "paging": false,
                 "info": false,
-                "searching": false
+                "dom": 'Bfrtip',
+                "buttons": [
+                    'excel', 'pdf', 'print'
+                ],
+                "language": {
+                    "search": "",
+                    "searchPlaceholder": "Search Permissions...",
+                    "processing": '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span>'
+                }
             });
 
 

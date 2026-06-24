@@ -6,206 +6,203 @@
         width: 100%;
     }
 </style>
-<div class="az-content pd-y-20 pd-lg-y-30 pd-xl-y-40">
-    <div class="container">
-        <div class="az-content-body pd-lg-l-40 d-flex flex-column">
-
-            <div class="az-content-breadcrumb">
-                <span>Customer list</span>
-                <span>Edit Customer</span>
-            </div>
-            <h2 class="az-content-title" style="display: inline">Edit Customer <span><a href="{{ url('customers') }}"
-                        class="btn btn-az-primary" style="float: right">Customer List</a></span></h2>
-
-            <div class="row">
-                <div class="col-md-12 col-lg-12 col-xl-12">
-                    <div class="card card-body pd-40">
-                        <h5 class="card-title mg-b-20">Edit Customer Details</h5>
-                        <form method="post" enctype="multipart/form-data" action="{{ route('customers.update', $customer->id_customers) }}">
-                            @csrf
-                            @method('PUT')
-
-                            @if (count($errors) > 0)
-                                <div class="p-1">
-                                    @foreach ($errors->all() as $error)
-                                        <div class="alert alert-warning alert-danger fade show" role="alert">
-                                            {{ $error }}
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
-
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer Name <span style="color:red;">*</span></label>
-                                        <input type="text" name="customer_name" class="form-control"
-                                               value="{{ old('customer_name', $customer->customer_name) }}" required />
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer Type</label>
-                                        <select name="customer_type" class="form-control" required>
-                                            <option value="Individual" {{ $customer->customer_type == 'Individual' ? 'selected' : '' }}>Individual</option>
-                                            <option value="Group" {{ $customer->customer_type == 'Group' ? 'selected' : '' }}>Group</option>
-                                            <option value="Corporate" {{ $customer->customer_type == 'Corporate' ? 'selected' : '' }}>Corporate</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group" style="margin-top:-10px;">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">
-                                            WhatsApp <input type="checkbox" name="whatsapp_check" {{ $customer->whatsapp_check ? 'checked' : '' }}>
-                                            <span><br>Customer Cell</span><span style="color:red;">*</span>
-                                        </label>
-                                        <input type="tel" id="phone0" class="form-control" required
-                                               name="customer_cell" value="{{ old('customer_cell', $customer->customer_cell) }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Contact - WhatsApp</label>
-                                        <input type="text" id="whatsapp_number" class="form-control"
-                                               name="customer_whatsapp" value="{{ old('customer_whatsapp', $customer->whatsapp_number) }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Contact - Other / PTCL</label>
-                                        <input type="text" class="form-control" name="customer_phone_2"
-                                               value="{{ old('customer_phone_2', $customer->customer_phone2) }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer Address</label>
-                                        <input type="text" name="customer_address" class="form-control"
-                                               value="{{ old('customer_address', $customer->customer_address) }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer Email</label>
-                                        <input type="email" name="customer_email" class="form-control"
-                                               value="{{ old('customer_email', $customer->customer_email) }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer Reference</label>
-                                        <input type="text" class="form-control" name="customer_reference"
-                                               value="{{ old('customer_reference', $customer->customer_reference) }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Remarks</label>
-                                        <input type="text" class="form-control" name="customer_remarks"
-                                               value="{{ old('customer_remarks', $customer->customer_remarks) }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Sales Person <span style="color:red;">*</span></label>
-                                        <select name="sale_person" class="form-control" required>
-                                            <option value="">Select</option>
-                                            @foreach ($sale_persons as $sp)
-                                                <option value="{{ $sp['id'] }}"
-                                                    {{ $customer->sale_person == $sp['id'] ? 'selected' : '' }}>
-                                                    {{ $sp['name'] }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Status</label>
-                                        <select name="status" class="form-control" required>
-                                            <option value="Verified" {{ $customer->status == 'Verified' ? 'selected' : '' }}>Verified</option>
-                                            <option value="UnVerified" {{ $customer->status == 'UnVerified' ? 'selected' : '' }}>Un-verified</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Accounts Customer Rating</label>
-                                        <input type="text" class="form-control" name="accounts_customer_rating"
-                                               value="{{ old('accounts_customer_rating', $customer->accounts_customer_rating) }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">Country</label>
-                                        <select name="country" class="form-control" id="country-dropdown">
-                                            <option>Select Country</option>
-                                            @foreach ($countries as $con)
-                                                <option value="{{ $con->name }}"
-                                                    {{ $customer->country == $con->name ? 'selected' : '' }}>
-                                                    {{ $con->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group ml-2 mt-2">
-                                        <label class="az-content-label tx-11 tx-medium tx-gray-600">City</label>
-                                        <select name="city" class="form-control" id="city-dropdown">
-                                            <option value="{{ $customer->city_id }}">
-                                                {{ $customer->city->name ?? 'N/A' }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="form-group ml-2 mt-2">
-                                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Customer Image</label>
-                                    @if($customer->customer_image)
-                                        <div class="mb-2">
-                                            <img src="{{ asset('storage/'.$customer->customer_image) }}"
-                                                 alt="Customer Image" style="max-width: 200px;">
-                                            <br>
-                                            <a href="#" class="text-danger" onclick="document.getElementById('image-delete').value = '1'">
-                                                Remove current image
-                                            </a>
-                                            <input type="hidden" name="remove_image" id="image-delete" value="0">
-                                        </div>
-                                    @endif
-                                    <input type="file" class="form-control" name="customer_image">
-                                </div>
-                            </div>
-
-                            <button onclick="history.back()" class="btn btn-danger btn-block mt-2">
-                                Back
-                            </button>
-                            <button type="submit" class="btn btn-az-primary btn-block mt-2" style="float: right">
-                                Update Customer
-                            </button>
-                        </form>
-                    </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4 mx-4 shadow-sm border-0">
+            <div class="card-header pb-0 bg-white">
+                <div class="d-flex flex-row justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Edit Customer</h5>
+                    <a href="{{ url('customers') }}" class="btn bg-gradient-secondary btn-sm mb-0 text-uppercase">
+                        <i class="fa fa-arrow-left me-1"></i> Customer List
+                    </a>
                 </div>
+            </div>
+            <div class="card-body px-4 pt-4 pb-2">
+                <form method="post" enctype="multipart/form-data" action="{{ route('customers.update', $customer->id_customers) }}">
+                    @csrf
+                    @method('PUT')
+
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger text-white alert-dismissible fade show" role="alert">
+                             <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                             <span class="alert-text"><strong>Error!</strong>
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Customer Details</h6>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-control-label">Customer Name <span class="text-danger">*</span></label>
+                                <input type="text" name="customer_name" class="form-control"
+                                       value="{{ old('customer_name', $customer->customer_name) }}" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-control-label">Customer Type</label>
+                                <select name="customer_type" class="form-control" required>
+                                    <option value="Individual" {{ $customer->customer_type == 'Individual' ? 'selected' : '' }}>Individual</option>
+                                    <option value="Group" {{ $customer->customer_type == 'Group' ? 'selected' : '' }}>Group</option>
+                                    <option value="Corporate" {{ $customer->customer_type == 'Corporate' ? 'selected' : '' }}>Corporate</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-control-label">
+                                    WhatsApp <input type="checkbox" name="whatsapp_check" class="ms-1" {{ $customer->whatsapp_check ? 'checked' : '' }}>
+                                    <br> Customer Cell <span class="text-danger">*</span>
+                                </label>
+                                <input type="tel" id="phone0" class="form-control" required
+                                       name="customer_cell" value="{{ old('customer_cell', $customer->customer_cell) }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-control-label">Contact - WhatsApp</label>
+                                <input type="text" id="whatsapp_number" class="form-control"
+                                       name="customer_whatsapp" value="{{ old('customer_whatsapp', $customer->whatsapp_number) }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-control-label">Contact - Other / PTCL</label>
+                                <input type="text" class="form-control" name="customer_phone_2"
+                                       value="{{ old('customer_phone_2', $customer->customer_phone2) }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label class="form-control-label">Customer Address</label>
+                                <input type="text" name="customer_address" class="form-control"
+                                       value="{{ old('customer_address', $customer->customer_address) }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-control-label">Customer Email</label>
+                                <input type="email" name="customer_email" class="form-control"
+                                       value="{{ old('customer_email', $customer->customer_email) }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-control-label">Customer Reference</label>
+                                <input type="text" class="form-control" name="customer_reference"
+                                       value="{{ old('customer_reference', $customer->customer_reference) }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-control-label">Remarks</label>
+                                <input type="text" class="form-control" name="customer_remarks"
+                                       value="{{ old('customer_remarks', $customer->customer_remarks) }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-control-label">Sales Person <span class="text-danger">*</span></label>
+                                <select name="sale_person" class="form-control" required>
+                                    <option value="">Select</option>
+                                    @foreach ($sale_persons as $sp)
+                                        <option value="{{ $sp['id'] }}"
+                                            {{ $customer->sale_person == $sp['id'] ? 'selected' : '' }}>
+                                            {{ $sp['name'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-control-label">Status</label>
+                                <select name="status" class="form-control" required>
+                                    <option value="Verified" {{ $customer->status == 'Verified' ? 'selected' : '' }}>Verified</option>
+                                    <option value="UnVerified" {{ $customer->status == 'UnVerified' ? 'selected' : '' }}>Un-verified</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-control-label">Accounts Customer Rating</label>
+                                <input type="text" class="form-control" name="accounts_customer_rating"
+                                       value="{{ old('accounts_customer_rating', $customer->accounts_customer_rating) }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="horizontal dark">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-control-label">Country</label>
+                                <select name="country" class="form-control" id="country-dropdown">
+                                    <option>Select Country</option>
+                                    @foreach ($countries as $con)
+                                        <option value="{{ $con->name }}"
+                                            {{ $customer->country == $con->name ? 'selected' : '' }}>
+                                            {{ $con->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-control-label">City</label>
+                                <select name="city" class="form-control" id="city-dropdown">
+                                    <option value="{{ $customer->city_id }}">
+                                        {{ $customer->city->name ?? 'N/A' }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-control-label">Customer Image</label>
+                        @if($customer->customer_image)
+                            <div class="mb-2">
+                                <img src="{{ asset('storage/'.$customer->customer_image) }}"
+                                     alt="Customer Image" style="max-width: 200px;">
+                                <br>
+                                <a href="#" class="text-danger small" onclick="document.getElementById('image-delete').value = '1'; this.style.display='none'; return false;">
+                                    <i class="fa fa-trash me-1"></i> Remove current image
+                                </a>
+                                <input type="hidden" name="remove_image" id="image-delete" value="0">
+                            </div>
+                        @endif
+                        <input type="file" class="form-control" name="customer_image">
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn bg-gradient-primary btn-md">Update Customer</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
