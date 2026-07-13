@@ -67,6 +67,7 @@ class InquiryController extends Controller
         $sales_person = User::all();  // adjust filter if you only want sales users
 
         $data['inquiry_type'] = inquirytypes::select('type_id', 'type_name')->get();
+        $data['sales_reference'] = \App\sales_reference::select('type_id', 'type_name')->get();
 
         $query = inquiry::with([
             'customer:id_customers,customer_name,customer_cell,customer_email,customer_phone1',
@@ -433,27 +434,8 @@ class InquiryController extends Controller
                 return other_service::pluck('service_name', 'id_other_services')->toArray();
             });
 
-            $query = Inquiry::leftJoin('customers', 'inquiry.customer_id', '=', 'customers.id_customers')
-                ->leftJoin('inquirytypes', 'inquiry.inquiry_type', '=', 'inquirytypes.type_id')
-                ->leftJoin('sales_reference', 'inquiry.sales_reference', '=', 'sales_reference.type_id')
-                ->leftJoin('users as sp', 'inquiry.saleperson', '=', 'sp.id')
-                ->leftJoin('users as cb', 'inquiry.created_by', '=', 'cb.id')
-                ->with([
-                    'latestFollowup',
-                    'followups' => fn($q) => $q->latest()->take(5)->with('createdBy:id,name'),
-                    'remarks' => fn($q) => $q->latest()->take(5)->with('createdBy:id,name'),
-                ])
-                ->select([
-                    'inquiry.*',
-                    'customers.customer_name',
-                    'customers.customer_cell',
-                    'customers.customer_email',
-                    'customers.customer_phone2',
-                    'inquirytypes.type_name as inquiry_type_name',
-                    'sales_reference.type_name as sales_ref_name',
-                    'sp.name as salesperson_name',
-                    'cb.name as created_by_name'
-                ]);
+            $query = inquiry::with(['customer', 'inquiryType', 'salesPerson', 'salesReference', 'createdBy', 'latestFollowup'])
+                ->select(['inquiry.*']);
 
             if (!request()->has('order')) {
                 $query->orderByDesc('inquiry.id_inquiry');
@@ -494,19 +476,25 @@ class InquiryController extends Controller
             }
 
             $today = now()->toDateString();
-            $pastChecked = request('followup_past', 0);
-            $todayChecked = request('followup_today', 0);
-
-            if (!$pastChecked) {
-                $query->where(fn($q) => $q
-                    ->whereDoesntHave('latestFollowup')
-                    ->orWhereHas('latestFollowup', fn($q2) => $q2->whereDate('followup_date', '>=', $today)));
-            }
-
-            if (!$todayChecked) {
-                $query->where(fn($q) => $q
-                    ->whereDoesntHave('latestFollowup')
-                    ->orWhereHas('latestFollowup', fn($q2) => $q2->whereDate('followup_date', '!=', $today)));
+            $fudFilter = request('fud_filter');
+            if ($fudFilter) {
+                $query->whereIn('id_inquiry', function ($sub) use ($fudFilter, $today) {
+                    $sub->select('inquiry_id')
+                        ->from('followup_remarks')
+                        ->whereIn('id_followup_remarks', function ($sub2) {
+                            $sub2->selectRaw('MAX(id_followup_remarks)')
+                                ->from('followup_remarks')
+                                ->groupBy('inquiry_id');
+                        });
+                        
+                    if ($fudFilter === 'today') {
+                        $sub->whereDate('followup_date', '=', $today);
+                    } elseif ($fudFilter === 'upcoming') {
+                        $sub->whereDate('followup_date', '>', $today);
+                    } elseif ($fudFilter === 'overdue') {
+                        $sub->whereDate('followup_date', '<', $today);
+                    }
+                });
             }
 
             return DataTables::of($query)
@@ -515,23 +503,68 @@ class InquiryController extends Controller
                     return $row->inquiry_type_name ?? '';
                 })
                 // ✅ Per-column filters for related models
-                ->filterColumn('inquiry_type', function ($query, $keyword) {
-                    $query->where('inquirytypes.type_name', 'like', "%{$keyword}%");
-                })
-                ->filterColumn('sales_reference', function ($query, $keyword) {
-                    $query->where('sales_reference.type_name', 'like', "%{$keyword}%");
-                })
                 ->filterColumn('customer_name', function ($query, $keyword) {
-                    $query->where('customers.customer_name', 'like', "%{$keyword}%");
+                    $query->whereHas('customer', function($q) use ($keyword) {
+                        $q->where('customer_name', 'like', "%{$keyword}%");
+                    });
                 })
                 ->filterColumn('customer_cell', function ($query, $keyword) {
-                    $query->where('customers.customer_cell', 'like', "%{$keyword}%");
+                    $query->whereHas('customer', function($q) use ($keyword) {
+                        $q->where('customer_cell', 'like', "%{$keyword}%");
+                    });
                 })
-                ->filterColumn('saleperson', function ($query, $keyword) {
-                    $query->where('sp.name', 'like', "%{$keyword}%");
+                ->filterColumn('inquiry_type_name', function ($query, $keyword) {
+                    $query->whereHas('inquiryType', function($q) use ($keyword) {
+                        $q->where('type_name', 'like', "%{$keyword}%");
+                    });
                 })
-                ->filterColumn('created_by', function ($query, $keyword) {
-                    $query->where('cb.name', 'like', "%{$keyword}%");
+                ->filterColumn('salesperson_name', function ($query, $keyword) {
+                    $query->whereHas('salesPerson', function($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('sales_ref_name', function ($query, $keyword) {
+                    $query->whereHas('salesReference', function($q) use ($keyword) {
+                        $q->where('type_name', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('travel_date', function ($query, $keyword) {
+                    $date = date('Y-m-d', strtotime($keyword));
+                    if ($date != '1970-01-01') {
+                        $query->whereDate('inquiry.travel_date', $date);
+                    } else {
+                        $query->where('inquiry.travel_date', 'like', "%{$keyword}%");
+                    }
+                })
+                ->filterColumn('followup_date', function ($query, $keyword) {
+                    $date = date('Y-m-d', strtotime($keyword));
+                    if ($date != '1970-01-01') {
+                        $query->whereHas('latestFollowup', function ($q) use ($date) {
+                            $q->whereDate('followup_date', $date);
+                        });
+                    }
+                })
+                // ✅ Per-column ordering for related models
+                ->orderColumn('customer_name', function ($query, $order) {
+                    $query->orderBy(\App\customer::select('customer_name')->whereColumn('customers.id_customers', 'inquiry.customer_id')->limit(1), $order);
+                })
+                ->orderColumn('customer_cell', function ($query, $order) {
+                    $query->orderBy(\App\customer::select('customer_cell')->whereColumn('customers.id_customers', 'inquiry.customer_id')->limit(1), $order);
+                })
+                ->orderColumn('inquiry_type_name', function ($query, $order) {
+                    $query->orderBy(\App\inquirytypes::select('type_name')->whereColumn('inquirytypes.type_id', 'inquiry.inquiry_type')->limit(1), $order);
+                })
+                ->orderColumn('salesperson_name', function ($query, $order) {
+                    $query->orderBy(\App\User::select('name')->whereColumn('users.id', 'inquiry.saleperson')->limit(1), $order);
+                })
+                ->orderColumn('sales_ref_name', function ($query, $order) {
+                    $query->orderBy(\App\sales_reference::select('type_name')->whereColumn('sales_reference.type_id', 'inquiry.sales_reference')->limit(1), $order);
+                })
+                ->orderColumn('travel_date', function ($query, $order) {
+                    $query->orderBy('inquiry.travel_date', $order);
+                })
+                ->orderColumn('followup_date', function ($query, $order) {
+                    $query->orderBy(\App\followup_remark::select('followup_date')->whereColumn('followup_remarks.inquiry_id', 'inquiry.id_inquiry')->orderByDesc('id_followup_remarks')->limit(1), $order);
                 })
                 // ✅ Optional: search status (e.g., Open, Completed) text badge
                 ->filterColumn('status', function ($query, $keyword) {
@@ -555,37 +588,29 @@ class InquiryController extends Controller
                 ->addColumn('checkbox', function ($i) {
                     return '<input type="checkbox" name="inquiry_ids[]" value="' . $i->id_inquiry . '" class="form-check-input inquiry-checkbox">';
                 })
-                ->editColumn('customer_name', fn($i) => $i->customer_name ?? '-')
+                ->editColumn('customer_name', fn($i) => $i->customer->customer_name ?? '-')
                 ->editColumn('customer_cell', function ($i) {
-                    if (!empty($i->customer_cell)) {
-                        $raw = trim($i->customer_cell);
+                    if (!empty($i->customer->customer_cell)) {
+                        $raw = trim($i->customer->customer_cell);
                         if (str_starts_with($raw, '0')) {
                             $whatsAppNumber = '+92' . substr($raw, 1);
                         } elseif (str_starts_with($raw, '+91')) {
                             $whatsAppNumber = $raw;
-                        } elseif (!str_starts_with($raw, '+')) {
-                            $whatsAppNumber = '+92' . $raw;
                         } else {
-                            $whatsAppNumber = $raw;
+                            $whatsAppNumber = str_starts_with($raw, '+') ? $raw : '+' . $raw;
                         }
-                        $waLinkNumber = preg_replace('/\D/', '', $whatsAppNumber);
-                        $displayNumber = e($raw);
-
-                        return '<a href="https://wa.me/' . $waLinkNumber . '" target="_blank" style="color: #28a745; font-weight: 500; text-decoration: none;">
-                    <i class="fab fa-whatsapp"></i> ' . $displayNumber . '
-                </a>';
+                        return '<a href="https://wa.me/' . str_replace(['+', ' '], '', $whatsAppNumber) . '" target="_blank" class="text-success text-decoration-none">
+                                    <i class="fab fa-whatsapp me-1"></i>' . htmlspecialchars($raw) . '
+                                </a>';
                     }
                     return '-';
                 })
                 ->editColumn('initial_remarks', fn($i) => strip_tags($i->remarks))
                 ->editColumn('services', fn($i) => $this->servicesSubServices($i->services_sub_services, $servicesMap))
                 ->editColumn('remarks', fn($i) => $this->progressRemarks($i))
-                ->editColumn('inquiry_type', fn($i) => $i->inquiry_type_name ?? '-')
-                ->editColumn(
-                    'saleperson',
-                    fn($i) =>
-                        $i->saleperson === 'un_assign' ? 'Un Assigned' : ($i->salesPerson->name ?? '-')
-                )
+                ->addColumn('inquiry_type_name', fn($i) => $i->inquiryType->type_name ?? '-')
+                ->addColumn('salesperson_name', fn($i) => $i->saleperson === 'un_assign' ? 'Un Assigned' : ($i->salesPerson->name ?? '-'))
+                ->addColumn('sales_ref_name', fn($i) => $i->salesReference->type_name ?? '-')
                 ->editColumn('status', fn($i) => $this->statusController($i->status))
                 ->editColumn('sales_reference', fn($i) => $i->salesReference->type_name ?? '-')
                 ->editColumn('email', fn($i) => $i->customer->customer_email ?? '-')
@@ -595,6 +620,7 @@ class InquiryController extends Controller
                 ->editColumn('created_at', fn($i) => $i->created_at ? date('d-m-y H:i', strtotime($i->created_at)) : '-')
                 ->editColumn('contact_2', fn($i) => $i->customer->customer_phone2 ?? '-')
                 ->addColumn('action', fn($i) => $this->actionButtons($i))
+                ->addColumn('progress_remarks_html', fn($i) => $this->progressRemarksOnly($i))
                 ->addColumn('followup_status_badge', fn($i) => $this->followupStatusBadge($i))
                 ->addColumn('row_class', fn($i) => $this->rowClass($i, request('followup_past', 0), request('followup_today', 0)))
                 ->rawColumns([
@@ -604,6 +630,7 @@ class InquiryController extends Controller
                     'services',
                     'status',
                     'remarks',
+                    'progress_remarks_html',
                     'followup_date',
                     'followup_status_badge',
                 ])
@@ -659,7 +686,7 @@ class InquiryController extends Controller
     private function progressRemarks(Inquiry $inquiry)
     {
         // start with the initial remarks (attribute)
-        $html = strip_tags($inquiry->remarks) . '<hr>';
+        $html = "<div style='word-wrap: break-word; white-space: normal; overflow-wrap: break-word;'>" . strip_tags($inquiry->remarks) . "</div><hr>";
 
         // 1) FOLLOW‑UP REMARKS
         $followups = $inquiry
@@ -674,7 +701,7 @@ class InquiryController extends Controller
                 ? date('d-m-Y', strtotime($fr->followup_date))
                 : '-';
             $html .= "
-            <div class='p-2 mb-2 border-start border-primary'>
+            <div class='p-2 mb-2 border-start border-primary' style='word-wrap: break-word; white-space: normal; overflow-wrap: break-word;'>
               <strong>Follow-up Remarks:</strong> 
               <em>" . e($fr->remarks) . '</em><br>
               <small>~' . e($fr->createdBy->name ?? '') . " on 
@@ -701,12 +728,12 @@ class InquiryController extends Controller
                 ? date('d-m-Y', strtotime($p->followup_date))
                 : '-';
             $html .= "
-            <div class='p-2 mb-2 border-start border-success'>
+            <div class='p-2 mb-2 border-start border-success' style='word-wrap: break-word; white-space: normal; overflow-wrap: break-word;'>
               <strong>Progress Remarks:</strong> 
               <em>" . e($p->remarks) . '</em><br>
               <small>~' . e($p->createdBy->name ?? '') . " on 
                 <span class='badge bg-light text-dark'>"
-                . date('d-m-Y H:i', strtotime($p->created_on))
+                . date('d-m-Y H:i', strtotime($p->created_at))
                 . '</span>
               </small>
               ' . $this->statusController($p->remarks_status) . "
@@ -715,6 +742,37 @@ class InquiryController extends Controller
         ";
         }
 
+        return $html;
+    }
+
+    private function progressRemarksOnly(Inquiry $inquiry)
+    {
+        $html = '';
+        $progressList = $inquiry
+            ->remarks()  // explicitly call the relation
+            ->latest('id_remarks')
+            ->take(5)
+            ->with('createdBy:id,name')
+            ->get();
+
+        foreach ($progressList as $p) {
+            $date = $p->followup_date
+                ? date('d-m-Y', strtotime($p->followup_date))
+                : '-';
+            $html .= "
+            <div class='p-2 mb-2 border-start border-success shadow-sm bg-white rounded' style='word-wrap: break-word; white-space: normal; overflow-wrap: break-word;'>
+              <div class='d-flex justify-content-between align-items-center mb-1'>
+                  <strong class='text-dark'><i class='fa fa-tasks text-success me-1'></i> Progress Remarks:</strong>
+                  <span class='badge bg-light text-dark border'><i class='fa fa-calendar-alt me-1'></i> Followup: {$date}</span>
+              </div>
+              <em class='text-muted d-block mb-2'>" . e($p->remarks) . "</em>
+              <div class='d-flex justify-content-between align-items-center'>
+                  <small class='text-secondary'><i class='fa fa-user me-1'></i> " . e($p->createdBy->name ?? '') . "</small>
+                  <small class='text-secondary'><i class='fa fa-clock me-1'></i> " . date('d-m-Y H:i', strtotime($p->created_at)) . "</small>
+              </div>
+            </div>
+        ";
+        }
         return $html;
     }
 
@@ -785,17 +843,17 @@ class InquiryController extends Controller
 
         if (Auth::user()?->can('Inquiry edit')) {
             $html .= '<a href="' . url('/edit_inquiry/' . $inquiry->id_inquiry) . '" 
-            class="btn btn-sm btn-primary p-2" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background-color: #3b71ca; border: none;" title="Edit">
+            class="btn btn-sm btn-primary p-2" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;" title="Edit">
             <i class="fa fa-pen" style="font-size: 12px;"></i></a>';
         }
 
         $html .= '<button type="button" class="btn btn-sm btn-dark p-2 view-followup" 
-            data-id="' . $inquiry->id_inquiry . '" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background-color: #333; border: none;" title="Follow-up">
+            data-id="' . $inquiry->id_inquiry . '" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;" title="Follow-up">
             <i class="fa fa-comments" style="font-size: 12px;"></i></button>';
 
         if (Auth::user()?->can('Inquiry Progress View')) {
             $html .= '<button type="button" class="btn btn-sm btn-info p-2 view-progress" 
-                data-id="' . $inquiry->id_inquiry . '" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background-color: #0dcaf0; border: none;" title="Progress">
+                data-id="' . $inquiry->id_inquiry . '" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;" title="Progress">
                 <i class="fa fa-tasks" style="font-size: 12px;"></i></button>';
         }
 
@@ -804,7 +862,7 @@ class InquiryController extends Controller
             $html .= '<button type="button" class="btn btn-sm btn-warning p-2 change-salesperson" 
                 data-id="' . $inquiry->id_inquiry . '" 
                 data-current-sp="' . $currentSP . '" 
-                style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background-color: #ffc107; border: none;"
+                style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;"
                 title="Change Sales Person">
                 <i class="fa fa-user-edit" style="font-size: 12px;"></i></button>';
         }
@@ -812,7 +870,7 @@ class InquiryController extends Controller
         if (Auth::user()?->can('Inquiry delete')) {
             $html .= '<a href="' . url('/inquiry/delete/' . $inquiry->id_inquiry) . '" 
             class="btn btn-sm btn-danger p-2" 
-            style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background-color: #dc3545; border: none;"
+            style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;"
             onclick="return confirm(\'Are you sure?\')" title="Delete">
             <i class="fa fa-trash" style="font-size: 12px;"></i></a>';
         }
@@ -871,9 +929,11 @@ class InquiryController extends Controller
         $sales_reference = sales_reference::all();
         $customers = customer::all();
         $sales_person = User::get();
-        $countries = countries::all();
+        // Removed heavy queries for countries/cities to prevent crash
         $campaigns = \App\campaign::all();
-        $services = other_service::where('parent_id', null)->where('status', 'Active')->get();
+        $services = other_service::where(function($q) {
+            $q->whereNull('parent_id')->orWhere('parent_id', 0)->orWhere('parent_id', '');
+        })->where('status', 'Active')->get();
 
         $get_role_id = Auth::user()->role_id;
         $get_per_of_assign_others = role_permission::where('role_id', $get_role_id)->where('menu_id', 101)->first();
@@ -883,7 +943,7 @@ class InquiryController extends Controller
             'unassign_inquiry' => $get_per_of_unassign_inquiry ? 'true' : 'false',
         ];
         // dd($get_permission_data);
-        $sale_persons = \App\user::select('users.name', 'users.id')->get()->toArray();
+        $sale_persons = \App\User::select('users.name', 'users.id')->get()->toArray();
         // dd( $sale_persons);
         $users = User::all();
         foreach ($users as $key => $value) {
@@ -910,7 +970,7 @@ class InquiryController extends Controller
         // }
 
         // dd($sale_persons);
-        return view('inquiry.create', compact('inquiry_types', 'get_permission_data', 'sales_person', 'sales_reference', 'customers', 'countries', 'services', 'sale_persons', 'campaigns'));
+        return view('inquiry.create', compact('inquiry_types', 'get_permission_data', 'sales_person', 'sales_reference', 'customers', 'services', 'sale_persons', 'campaigns'));
 
         //    dd($sale_persons);
     }
@@ -985,9 +1045,11 @@ class InquiryController extends Controller
                     // dd($i);
                     $services[] = $data['services'][$i];
                     if ($i == 0) {
-                        $sub_services[] = $services[$i] . '/' . implode(',', $data['sub_services']);
+                        $sub = isset($data['sub_services']) ? implode(',', (array)$data['sub_services']) : '';
+                        $sub_services[] = $services[$i] . '/' . $sub;
                     } else {
-                        $sub_services[] = $services[$i] . '/' . implode(',', $data['sub_services' . $i]);
+                        $sub = isset($data['sub_services' . $i]) ? implode(',', (array)$data['sub_services' . $i]) : '';
+                        $sub_services[] = $services[$i] . '/' . $sub;
                     }
                 }
 
@@ -1175,9 +1237,11 @@ class InquiryController extends Controller
                 // dd($i);
                 $services[] = $data['services'][$i];
                 if ($i == 0) {
-                    $sub_services[] = $services[$i] . '/' . implode(',', $data['sub_services']);
+                    $sub = isset($data['sub_services']) ? implode(',', (array)$data['sub_services']) : '';
+                    $sub_services[] = $services[$i] . '/' . $sub;
                 } else {
-                    $sub_services[] = $services[$i] . '/' . implode(',', $data['sub_services' . $i]);
+                    $sub = isset($data['sub_services' . $i]) ? implode(',', (array)$data['sub_services' . $i]) : '';
+                    $sub_services[] = $services[$i] . '/' . $sub;
                 }
             }
             $inquiry = inquiry::forceCreate([
@@ -1442,9 +1506,11 @@ class InquiryController extends Controller
         for ($i = 0; $i < $services_count; $i++) {
             $services[] = $data['services'][$i];
             if ($i == 0) {
-                $sub_services[] = $services[$i] . '/' . implode(',', $data['sub_services']);
+                $sub = isset($data['sub_services']) ? implode(',', (array)$data['sub_services']) : '';
+                $sub_services[] = $services[$i] . '/' . $sub;
             } else {
-                $sub_services[] = $services[$i] . '/' . implode(',', $data['sub_services' . $i]);
+                $sub = isset($data['sub_services' . $i]) ? implode(',', (array)$data['sub_services' . $i]) : '';
+                $sub_services[] = $services[$i] . '/' . $sub;
             }
         }
 
@@ -1549,15 +1615,25 @@ class InquiryController extends Controller
         }
 
         foreach ($data as $row) {
+            // Pad or slice row to match header count to prevent array_combine failures
+            $rowCount = count($row);
+            $headerCount = count($header);
+            
+            if ($rowCount < $headerCount) {
+                $row = array_pad($row, $headerCount, '');
+            } elseif ($rowCount > $headerCount) {
+                $row = array_slice($row, 0, $headerCount);
+            }
+
             $row = array_combine($header, $row);
 
             // Create Customer
             $customer = customer::create([
-                'customer_name' => $row['customer_name'],
-                'customer_cell' => $row['customer_cell'],
+                'customer_name' => $row['customer_name'] ?: 'Unknown',
+                'customer_cell' => $row['customer_cell'] ?: 'N/A',
                 'customer_email' => $row['customer_email'] ?? null,
-                'customer_type' => $row['customer_type'] ?? 'Individual',
-                'sale_person' => Auth::user()->name,
+                'customer_type' => !empty($row['customer_type']) ? $row['customer_type'] : 'Individual',
+                'sale_person' => Auth::id(),
                 'created_by' => Auth::id()
             ]);
 
@@ -2248,6 +2324,41 @@ class InquiryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Sales person updated successfully'
+        ]);
+    }
+    
+    public function get_more_followups(Request $request)
+    {
+        $id = $request->id;
+        $offset = $request->offset ?? 5;
+        $limit = 5;
+
+        $followups = \App\followup_remark::with('createdBy')
+            ->where('inquiry_id', $id)
+            ->latest()
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        $html = '';
+        foreach ($followups as $fr) {
+            $date = $fr->followup_date ? date('d-m-Y', strtotime($fr->followup_date)) : '-';
+            $html .= '<div class="p-2 mb-2 border-start border-primary shadow-sm bg-white rounded">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <strong class="text-dark"><i class="fa fa-comment-dots text-primary me-1"></i> Follow-up Remarks:</strong>
+                    <span class="badge bg-light text-dark border"><i class="fa fa-calendar-alt me-1"></i> Followup: ' . $date . '</span>
+                </div>
+                <em class="text-muted d-block mb-2" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word;">' . e($fr->remarks) . '</em>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-secondary"><i class="fa fa-user me-1"></i> ' . e($fr->createdBy->name ?? 'Unknown') . '</small>
+                    <small class="text-secondary"><i class="fa fa-clock me-1"></i> ' . date('d-m-Y H:i', strtotime($fr->created_at)) . '</small>
+                </div>
+            </div>';
+        }
+
+        return response()->json([
+            'html' => $html,
+            'has_more' => $followups->count() === $limit
         ]);
     }
 }

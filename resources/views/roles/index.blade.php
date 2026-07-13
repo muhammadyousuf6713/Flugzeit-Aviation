@@ -1,9 +1,5 @@
 @extends('layouts.user_type.auth')
 @section('content')
- <link rel="stylesheet" type="text/css"
-        href="https://cdn.datatables.net/v/dt/dt-1.13.6/b-2.4.2/b-html5-2.4.2/r-2.5.0/datatables.min.css" />
-
-    
     <div class="row">
         <div class="col-12">
             @if (Session('alert'))
@@ -16,14 +12,14 @@
                 </div>
             @endif
 
-            <div class="card mb-4 mx-4 shadow-sm border-0">
+            <div class="card mb-4 shadow-sm border-0">
                 <div class="card-header pb-0 bg-white">
-                    <div class="d-flex flex-row justify-content-between align-items-center">
+                    <div class="d-flex flex-row justify-content-between align-items-center mb-3">
                         <div>
                             <h5 class="mb-0 fw-bold">Roles List</h5>
                         </div>
                         {{-- @can('Roles add') --}}
-                            <a href="{{ url('roles/add') }}" class="btn bg-gradient-primary btn-sm mb-0 text-uppercase">
+                            <a href="{{ url('roles/add') }}" class="btn btn-primary btn-sm mb-0 text-uppercase">
                                 <i class="fa fa-plus me-1"></i> Add Role
                             </a>
                         {{-- @endcan --}}
@@ -87,9 +83,24 @@
 
             $('#example23').DataTable({
                 "ordering": true,
-                "dom": 'Blfrtip',
+                dom: "<'row mb-3'<'col-md-8 d-flex align-items-center gap-2'B l><'col-md-4'f>>t<'row mt-3'<'col-md-6'i><'col-md-6'p>>",
                 "buttons": [
-                    'excel', 'pdf', 'print'
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        className: 'btn btn-sm btn-primaryHtml5',
+                        exportOptions: {
+                            columns: [0, 1]
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        className: 'btn btn-sm btn-primaryHtml5',
+                        exportOptions: {
+                            columns: [0, 1]
+                        }
+                    }
                 ],
                 "lengthMenu": [
                     [10, 25, 50 , 100],
@@ -98,8 +109,8 @@
                 "language": {
                     "processing": '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span>',
                     "paginate": {
-                        "next": '<i class="fa fa-angle-right"></i>',
-                        "previous": '<i class="fa fa-angle-left"></i>'
+                        "next": '>',
+                        "previous": '<'
                     }
                 },
                 responsive: !0,

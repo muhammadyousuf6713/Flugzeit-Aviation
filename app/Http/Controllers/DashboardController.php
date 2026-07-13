@@ -51,6 +51,34 @@ class DashboardController extends Controller
             ->take(20)
             ->get();
 
+        // 6. Inquiry Status by Salesperson
+        $rawCounts = inquiry::join('users', 'inquiry.saleperson', '=', 'users.id')
+            ->select('users.id as salesperson_id', 'users.name as salesperson_name', 'inquiry.status', DB::raw('count(*) as total'))
+            ->groupBy('users.id', 'users.name', 'inquiry.status')
+            ->get();
+
+        $salespersonStatusCounts = [];
+        $allStatuses = ['Open', 'In-Progress', 'Quotation', 'Confirmed', 'Hold', 'Cancelled'];
+        
+        foreach ($rawCounts as $row) {
+            $sp = $row->salesperson_name;
+            if (!isset($salespersonStatusCounts[$sp])) {
+                $salespersonStatusCounts[$sp] = [
+                    'id' => $row->salesperson_id,
+                    'counts' => array_fill_keys($allStatuses, 0)
+                ];
+            }
+            if (array_key_exists($row->status, $salespersonStatusCounts[$sp]['counts'])) {
+                $salespersonStatusCounts[$sp]['counts'][$row->status] = $row->total;
+            } else {
+                // Unknown status
+                $salespersonStatusCounts[$sp]['counts'][$row->status] = $row->total;
+                if (!in_array($row->status, $allStatuses)) {
+                    $allStatuses[] = $row->status;
+                }
+            }
+        }
+
         return view('dashboard', compact(
             'totalInquiries',
             'totalCustomers',
@@ -60,7 +88,9 @@ class DashboardController extends Controller
             'upcomingFollowupsCount',
             'latestFollowups',
             'inquiryStatusCounts',
-            'userPerformance'
+            'userPerformance',
+            'salespersonStatusCounts',
+            'allStatuses'
         ));
     }
 }

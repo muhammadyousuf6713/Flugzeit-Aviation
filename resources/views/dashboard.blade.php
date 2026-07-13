@@ -1,7 +1,7 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-    <div class="container-fluid py-4">
+    <div class="container-fluid">
 
         {{-- 📊 Top Stats Cards --}}
         <div class="row g-4 mb-4">
@@ -95,6 +95,29 @@
                         </div>
                     </div>
                 </a>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header pb-0 p-3 bg-white">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-chart-pie me-2 text-primary"></i>Inquiry Status Chart</h6>
+                    </div>
+                    <div class="card-body p-3" style="position: relative; height:300px;">
+                        <canvas id="statusPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header pb-0 p-3 bg-white">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-chart-bar me-2 text-info"></i>User Workload Chart</h6>
+                    </div>
+                    <div class="card-body p-3" style="position: relative; height:300px;">
+                        <canvas id="workloadBarChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -194,6 +217,62 @@
             </div>
         </div>
 
+        </div>
+
+        {{-- 📊 Salesperson Status Breakdown --}}
+        <div class="row mt-4 mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header pb-0 p-3 bg-white">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-chart-bar me-2 text-primary"></i>Inquiry Status by Salesperson</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="table-responsive">
+                            <table class="table align-items-center mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Salesperson</th>
+                                        @foreach($allStatuses as $status)
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">{{ $status }}</th>
+                                        @endforeach
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($salespersonStatusCounts as $spName => $data)
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">{{ $spName ?? 'Unassigned' }}</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            @foreach($allStatuses as $status)
+                                                <td class="align-middle text-center">
+                                                    @php $count = $data['counts'][$status] ?? 0; @endphp
+                                                    @if($count > 0 && isset($data['id']))
+                                                        <a href="{{ route('inquiry.index', ['sales_person' => $data['id'], 'status' => $status]) }}" class="text-primary text-xs font-weight-bold text-decoration-underline" title="View Inquiries">
+                                                            {{ $count }}
+                                                        </a>
+                                                    @else
+                                                        <span class="text-secondary text-xs font-weight-bold">{{ $count }}</span>
+                                                    @endif
+                                                </td>
+                                            @endforeach
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="{{ count($allStatuses) + 1 }}" class="text-center text-sm">No data available</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {{-- 📅 Latest Follow-ups --}}
         <div class="row">
             <div class="col-12">
@@ -278,3 +357,62 @@
 
     </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var statusData = @json($inquiryStatusCounts);
+    var statusLabels = Object.keys(statusData);
+    var statusValues = Object.values(statusData);
+
+    if(document.getElementById("statusPieChart")) {
+        var ctxPie = document.getElementById("statusPieChart").getContext("2d");
+        new Chart(ctxPie, {
+            type: "pie",
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusValues,
+                    backgroundColor: ["#f5365c", "#fb6340", "#ffd600", "#2dce89", "#11cdef", "#8965e0", "#adb5bd"],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+    }
+
+    var userPerf = @json($userPerformance);
+    var userLabels = userPerf.map(u => u.name);
+    var userValues = userPerf.map(u => u.inquiry_count);
+
+    if(document.getElementById("workloadBarChart")) {
+        var ctxBar = document.getElementById("workloadBarChart").getContext("2d");
+        new Chart(ctxBar, {
+            type: "bar",
+            data: {
+                labels: userLabels,
+                datasets: [{
+                    label: "Assigned Inquiries",
+                    data: userValues,
+                    backgroundColor: "#5e72e4",
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+});
+</script>
+@endpush

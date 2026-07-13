@@ -3,7 +3,7 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <div class="card mb-4 mx-4 shadow-sm border-0">
+            <div class="card mb-4 shadow-sm border-0">
                 <div class="card-header pb-0 bg-white">
                     <div class="d-flex flex-row justify-content-between align-items-center">
                         <h5 class="mb-0 fw-bold">Add New User</h5>

@@ -2,15 +2,7 @@
 
 @section('content')
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
     <style>
       
@@ -19,7 +11,7 @@
     <div class="container-fluid">
 
         {{-- 🔍 Filter Panel --}}
-        <div class="card mb-4 shadow-sm mx-4">
+        <div class="card mb-4 shadow-sm">
             <div class="card-header p-3 d-flex justify-content-between align-items-center">
                 <h6 class="fw-bold mb-0">Filter Inquiries</h6>
                 <button class="btn btn-sm btn-outline-primary" type="button" id="toggleFilterBtn">
@@ -67,6 +59,15 @@
                                 <input type="text" class="form-control" name="id_inquiry" placeholder="e.g. 1234">
                             </div>
                             <div class="col-6 col-md-3">
+                                <label class="form-label">Follow Up Date</label>
+                                <select class="form-select" name="fud_filter">
+                                    <option value="">All</option>
+                                    <option value="today">Today</option>
+                                    <option value="upcoming">Upcoming</option>
+                                    <option value="overdue">Overdue</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3">
                                 <label class="form-label">Customer Name</label>
                                 <input type="text" class="form-control" name="customer_name" placeholder="Name">
                             </div>
@@ -112,31 +113,17 @@
         {{-- 📋 Inquiries Table --}}
         <div class="row">
             <div class="col-12">
-                <div class="card mb-4 mx-4">
+                <div class="card mb-4">
                     <div class="card-header pb-0">
                         <div class="d-flex flex-row justify-content-between align-items-center mb-3">
                             <div>
-                                <h5 class="mb-0">All Inquiries</h5>
+                                <!-- <h5 class="mb-0">All Inquiries</h5> -->
                                 <small class="text-muted">
                                     <i class="fa fa-info-circle me-1"></i>
                                     Click on the <strong>ID #</strong> to view details.
                                 </small>
                             </div>
                             <div class="d-flex align-items-center gap-3">
-                                <div class="form-check" title="Show rows where last follow-up is before today">
-                                    <input class="form-check-input followup-past-check-box" type="checkbox"
-                                        name="followup_past" id="followupPast" value="1" checked>
-                                    <label class="form-check-label text-secondary" for="followupPast">
-                                        Follow-up Past
-                                    </label>
-                                </div>
-                                <div class="form-check" title="Show rows where last follow-up is today">
-                                    <input class="form-check-input followup-today-check-box" type="checkbox"
-                                        name="followup_today" id="followupToday" value="1" checked>
-                                    <label class="form-check-label text-secondary" for="followupToday">
-                                        Follow-up Today
-                                    </label>
-                                </div>
                                 <button type="button" class="btn btn-sm btn-info d-none" id="bulkAssignBtn">
                                     <i class="fa fa-users-cog"></i> Bulk Assign
                                 </button>
@@ -147,11 +134,11 @@
                         </div>
                     </div>
 
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="example23" class="table table-bordered nowrap align-middle"
+                    <div class="card-body px-2 pt-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table id="example23" class="table table-sm table-bordered nowrap align-middle"
                                 width="100%">
-                                <thead class="thead-light">
+                                <thead class="bg-light text-secondary">
                                     <tr>
                                         <th style="width: 2%;"><input type="checkbox" id="checkAll" class="form-check-input"></th>
                                         <th style="width: 80px; min-width: 80px;">ID #</th>
@@ -167,20 +154,24 @@
                                         <th class="none">City</th>
                                         <th class="">Created At</th>
                                         <th class="none">Remarks</th>
+                                        <th class="none">Progress Remarks HTML</th>
                                         <th class="none">Created By</th>
                                         <th class="none">Updated At</th>
-                                        <th style="width:14%;">Action</th>
+                                        <th class="all" style="width:14%;">Action</th>
                                     </tr>
-                                </thead>
-                                <tfoot>
                                     <tr>
                                         <th></th>
-                                        @foreach (range(1, 16) as $i)
-                                            <th><input type="text" class="form-control form-control-sm"
-                                                    placeholder="Search..." /></th>
+                                        @foreach (range(1, 17) as $i)
+                                            <th class="{{ in_array($i, [10, 11, 13, 14, 15, 16]) ? 'none' : '' }}" {!! in_array($i, [10, 11, 13, 14, 15, 16]) ? 'style="display: none;"' : '' !!}>
+                                                @if(in_array($i, [1, 2, 3, 4, 5, 6, 7, 8, 9, 12]))
+                                                    <input type="text" class="form-control form-control-sm" placeholder="Search..." />
+                                                @endif
+                                            </th>
                                         @endforeach
                                     </tr>
-                                </tfoot>
+                                </thead>
+                                <tbody>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -333,7 +324,7 @@
                         @csrf
                         <div id="bulkInquiryIds"></div>
                         
-                        <div class="alert alert-info">
+                        <div class="alert alert-info text-white">
                             <i class="fa fa-info-circle me-1"></i> You are about to assign <strong id="selectedCount">0</strong> inquiries.
                         </div>
 
@@ -364,19 +355,6 @@
     {{-- 🎨 Styles: Loaded from public/assets/css/custom.css --}}
 @endsection
 @push('scripts')
-    <!-- DataTables Buttons CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-
-    <!-- DataTables Buttons JS + dependencies -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-    {{-- <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script> --}}
 
     <script>
         $(function() {
@@ -628,28 +606,93 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            
+            // Pre-fill filters from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('salesperson_id')) {
+                $('select[name="sales_person"]').val(urlParams.get('salesperson_id')).trigger('change.select2');
+            }
+            if (urlParams.has('status')) {
+                $('select[name="status"]').val(urlParams.get('status')).trigger('change.select2');
+            }
 
             var table = $('#example23').DataTable({
                 responsive: {
                     details: {
                         type: 'column',
-                        target: '.dtr-control'
+                        target: '.dtr-control',
+                        renderer: function (api, rowIdx, columns) {
+                            var data = api.row(rowIdx).data();
+                            var rowId = data.id_inquiry;
+
+                            // Left Column Data
+                            var services = data.services || '-';
+                            var city = data.city || '-';
+                            var createdBy = data.created_by || '-';
+                            var createdAt = data.created_at || '-';
+                            var updatedAt = data.updated_at || '-';
+                            
+                            // To match formats: Ensure created_at and updated_at are standard (Y-m-d H:i)
+                            // We can use JS Date parsing to match them if necessary, but assume server sends them somewhat formatted.
+
+                            var leftCol = '<div class="col-12 col-md-5 mb-3 mb-md-0">';
+                            leftCol += '<h6 class="fw-bold mb-3 border-bottom pb-2">Inquiry Details</h6>';
+                            leftCol += '<div class="mb-2"><strong><i class="fa fa-tags text-secondary me-2"></i>Services:</strong><br><div class="mt-1">' + services + '</div></div><hr class="my-2">';
+                            leftCol += '<div class="mb-2"><strong><i class="fa fa-city text-secondary me-2"></i>City:</strong> ' + city + '</div><hr class="my-2">';
+                            leftCol += '<div class="mb-2"><strong><i class="fa fa-user-plus text-secondary me-2"></i>Created By:</strong> ' + createdBy + '</div><hr class="my-2">';
+                            leftCol += '<div class="mb-2"><strong><i class="fa fa-clock text-secondary me-2"></i>Created At:</strong> ' + createdAt + '</div><hr class="my-2">';
+                            leftCol += '<div class="mb-2"><strong><i class="fa fa-history text-secondary me-2"></i>Updated At:</strong> ' + updatedAt + '</div>';
+                            leftCol += '</div>';
+
+                            var rightCol = '<div class="col-12 col-md-7 ps-md-4 border-start-md">';
+                            rightCol += '<h6 class="fw-bold mb-3 border-bottom pb-2">Remarks & History</h6>';
+                            rightCol += '<div class="mb-3"><strong><i class="fa fa-comment text-secondary me-2"></i>Remarks:</strong><br><div class="text-muted mt-1" style="word-wrap: break-word; white-space: normal; overflow-wrap: break-word;">' + (data.initial_remarks || '-') + '</div></div><hr class="my-2">';
+                            rightCol += '<div class="mt-3"><strong><i class="fa fa-history text-secondary me-2"></i>Follow-Up History:</strong><br>';
+                            rightCol += '<div id="followup-container-' + rowId + '" class="mt-2">';
+                            rightCol += '<div class="text-center my-3"><i class="fa fa-spinner fa-spin fa-lg text-primary"></i></div>';
+                            rightCol += '</div>';
+                            rightCol += '<div class="text-center mt-2 mb-3"><button type="button" class="btn btn-sm btn-outline-primary load-more-followups" data-id="' + rowId + '" data-offset="0" style="display:none;">Show More</button></div><hr class="my-2">';
+                            
+                            // Add Progress Remarks here
+                            if(data.progress_remarks_html) {
+                                rightCol += '<div class="mt-3"><strong><i class="fa fa-tasks text-success me-2"></i>Progress Remarks:</strong><br>';
+                                rightCol += '<div class="mt-2">' + data.progress_remarks_html + '</div></div>';
+                            }
+                            
+                            rightCol += '</div></div>';
+
+                            var html = '<div class="container-fluid py-3 px-2 bg-light rounded shadow-sm border"><div class="row">' + leftCol + rightCol + '</div></div>';
+
+                            // Delay AJAX call slightly to allow DOM insertion
+                            setTimeout(function() {
+                                loadFollowups(rowId, 0, true);
+                            }, 100);
+
+                            return html;
+                        }
                     }
                 },
                 paging: true,
                 searching: true, // global search box
                 ordering: true,
+                orderCellsTop: true,
                 order: [[1, 'desc']], // Default sort by ID (column 1 now)
                 info: true,
                 language: {
                     search: "_INPUT_",
-                    searchPlaceholder: "Search records"
+                    searchPlaceholder: "Search records",
+                    lengthMenu: "_MENU_",
+                    paginate: {
+                        previous: '<',
+                        next: '>'
+                    }
                 },
                 stateSave: true,
                 processing: true,
                 serverSide: true,
                 deferRender: true,
                 pageLength: 25,
+                orderCellsTop: true,
               
 
                 createdRow: function(row, data, dataIndex) {
@@ -670,8 +713,15 @@
                         d.customer_cell = $('input[name="customer_cell"]').val();
                         d.customer_email = $('input[name="customer_email"]').val();
                         d.sales_reference = $('select[name="sales_reference"]').val();
-                        d.followup_past = $('.followup-past-check-box').is(':checked') ? 1 : 0;
-                        d.followup_today = $('.followup-today-check-box').is(':checked') ? 1 : 0;
+                        d.fud_filter = $('select[name="fud_filter"]').val();
+                        
+                        const urlParams = new URLSearchParams(window.location.search);
+                        if (urlParams.has('salesperson_id') && !d.sales_person) {
+                            d.sales_person = urlParams.get('salesperson_id');
+                        }
+                        if (urlParams.has('status') && !d.status) {
+                            d.status = urlParams.get('status');
+                        }
                     }
                 },
                 columns: [{
@@ -688,11 +738,11 @@
                     },
                     {
                         data: 'customer_name',
-                        name: 'customers.customer_name'
+                        name: 'customer_name'
                     },
                     {
                         data: 'customer_cell',
-                        name: 'customers.customer_cell'
+                        name: 'customer_cell'
                     },
 
                     /*{
@@ -701,24 +751,24 @@
                     },*/
 
                     {
-                        data: 'inquiry_type',
-                        name: 'inquirytypes.type_name'
+                        data: 'inquiry_type_name',
+                        name: 'inquiry_type_name'
                     },
                     {
-                        data: 'saleperson',
-                        name: 'sp.name'
+                        data: 'salesperson_name',
+                        name: 'salesperson_name'
                     },
                     {
-                        data: 'sales_reference',
-                        name: 'sales_reference.type_name'
+                        data: 'sales_ref_name',
+                        name: 'sales_ref_name'
                     },
                     {
                         data: 'followup_date',
-                        name: 'inquiry.followup_date'
+                        name: 'followup_date'
                     },
                     {
                         data: 'travel_date',
-                        name: 'inquiry.travel_date'
+                        name: 'travel_date'
                     },
                     {
                         data: 'status',
@@ -745,6 +795,12 @@
                         className: 'remarks-content'
                     },
                     {
+                        data: 'progress_remarks_html',
+                        name: 'progress_remarks_html',
+                        visible: false,
+                        searchable: false
+                    },
+                    {
                         data: 'created_by',
                         name: 'cb.name'
                     },
@@ -760,29 +816,49 @@
                     }
                 ],
                 lengthMenu: [
-                    [10, 25, 50 , 100],
-                    [10, 25, 50 , 100],
+                    [10, 25, 50, 100, 250, -1],
+                    [10, 25, 50, 100, 250],
                 ],
                 columnDefs: [{
                     targets: -1,
                     className: 'text-center'
                 }],
-                dom: 'Blfrtip', // ✅ fixed dom to include length menu
+                dom: "<'row mb-3'<'col-md-8 d-flex align-items-center gap-2'B l><'col-md-4'f>>t<'row mt-3'<'col-md-6'i><'col-md-6'p>>",
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL',
+                        className: 'btn btn-sm btn-primaryHtml5',
+                        exportOptions: {
+                            columns: [1, 2, 3, 5, 6, 7, 8, 9, 10, 11] // Skip checkbox and action columns
+                        },
+                        customize: function(doc) {
+                            doc.defaultStyle.fontSize = 8; // Reduce font size to fit everything
+                            doc.styles.tableHeader.fontSize = 9;
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        className: 'btn btn-sm btn-primaryHtml5',
+                        exportOptions: {
+                            columns: ':visible:not(.not-export-col)'
+                        }
+                    }
+                ]
             });
 
-            // ✅ Per-column footer search
-            $('#example23 tfoot th').each(function() {
-                var that = this;
+            // ✅ Per-column search (thead)
+            $('#example23 thead tr:eq(1) th').each(function(i) {
                 $('input', this).on('keyup change clear', function() {
-                    if (table.column($(that).index() + ':visible').search() !== this.value) {
-                        table
-                            .column($(that).index() + ':visible')
-                            .search(this.value)
-                            .draw();
+                    if (table.column(i).search() !== this.value) {
+                        table.column(i).search(this.value).draw();
                     }
                 });
             });
-            $('.followup-past-check-box, .followup-today-check-box').on('change', function() {
+            $('select[name="fud_filter"]').on('change', function() {
                 table.ajax.reload();
             });
 
@@ -817,4 +893,50 @@
             toastr.error("{{ session('error') }}", "Error");
         </script>
     @endif
+    <script>
+        function loadFollowups(inquiryId, offset, initial = false) {
+            var container = $('#followup-container-' + inquiryId);
+            var btn = container.siblings('.text-center').find('.load-more-followups');
+            
+            if (!initial) {
+                btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Loading...');
+                // Add scrolling when "Show More" is clicked
+                container.css({
+                    'max-height': '400px',
+                    'overflow-y': 'auto',
+                    'overflow-x': 'hidden',
+                    'padding-right': '5px'
+                });
+            }
+
+            $.ajax({
+                url: "{{ url('get_more_followups') }}",
+                type: 'GET',
+                data: { id: inquiryId, offset: offset },
+                success: function(response) {
+                    if (initial) {
+                        container.html(response.html || '<div class="text-muted fst-italic">No follow-ups found.</div>');
+                    } else {
+                        container.append(response.html);
+                    }
+
+                    if (response.has_more) {
+                        btn.show().prop('disabled', false).html('Show More').data('offset', offset + 5);
+                    } else {
+                        btn.hide();
+                    }
+                },
+                error: function() {
+                    if (initial) container.html('<div class="text-danger">Failed to load follow-ups.</div>');
+                    btn.prop('disabled', false).html('Show More');
+                }
+            });
+        }
+
+        $(document).on('click', '.load-more-followups', function() {
+            var id = $(this).data('id');
+            var offset = $(this).data('offset');
+            loadFollowups(id, offset, false);
+        });
+    </script>
 @endpush

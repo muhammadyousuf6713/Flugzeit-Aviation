@@ -1,9 +1,9 @@
+<link href="{{ asset('/lib/select2/css/select2.min.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('/css/azia.css') }}">
 <link href="{{ asset('/lib/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
 <link href="{{ asset('/lib/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
 <link href="{{ asset('/lib/typicons.font/typicons.css') }}" rel="stylesheet">
 <link href="{{ asset('/lib/spectrum-colorpicker/spectrum.css') }}" rel="stylesheet">
-<link href="{{ asset('/lib/select2/css/select2.min.css') }}" rel="stylesheet">
 <link href="{{ asset('/lib/ion-rangeslider/css/ion.rangeSlider.css') }}" rel="stylesheet">
 <link href="{{ asset('/lib/ion-rangeslider/css/ion.rangeSlider.skinFlat.css') }}" rel="stylesheet">
 <link href="{{ asset('/lib/amazeui-datetimepicker/css/amazeui.datetimepicker.css') }}" rel="stylesheet">

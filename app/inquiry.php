@@ -47,7 +47,7 @@ class inquiry extends Model
 
     public function salesPerson()
     {
-        return $this->belongsTo(user::class, 'saleperson');
+        return $this->belongsTo(User::class, 'saleperson');
     }
 
     public function inquiryType()
@@ -75,7 +75,7 @@ class inquiry extends Model
 
     public function createdBy()
     {
-        return $this->belongsTo(user::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function followupRemarks()

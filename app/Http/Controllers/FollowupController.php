@@ -75,6 +75,16 @@ class FollowupController extends Controller
             $query->whereDate('followup_date', '<=', $v);
         }
 
+        if ($v = request('customer_name')) {
+            $query->where('customers.customer_name', 'like', "%{$v}%");
+        }
+        if ($v = request('customer_cell')) {
+            $query->where('customers.customer_cell', 'like', "%{$v}%");
+        }
+        if ($v = request('id_inquiry')) {
+            $query->where('followup_remarks.inquiry_id', $v);
+        }
+
         // If "Follow-up Today" filter is requested
         if (request('filter') == 'today') {
             $query->whereDate('followup_date', now()->toDateString());

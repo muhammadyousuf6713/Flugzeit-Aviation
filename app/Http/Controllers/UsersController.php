@@ -192,12 +192,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        // $users = User::select('users.id', 'users.name', 'users.status', 'users.created_at', 'users.updated_at', DB::raw('roles.name as role_name'))
-        //     //->join('branches','branches.branch_id','users.branch_id')
-        //     ->join('role_user', 'role_user.user_id', 'users.id', 'left')
-        //     ->join('roles', 'roles.id', 'users.role_id', 'left')->get()->toArray();
-        //        echo '<pre>'; print_r($users);exit;
-        $users = User::where('id', '!=', auth()->user()->id)->get();
+        $users = User::with('roles')->where('id', '!=', auth()->user()->id)->get();
         return view('users.index')->with(compact('users'));
     }
 
@@ -294,7 +289,7 @@ class UsersController extends Controller
     public function update(Request $request)
     {
         // $dec_id = \Crypt::decrypt($request->u_id);
-        $dec_id = $request->u_id;
+        $dec_id = \Crypt::decrypt($request->u_id);
         $validator = [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $dec_id . ',id'

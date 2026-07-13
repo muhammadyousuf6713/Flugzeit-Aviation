@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
 
-    <link href="{{ asset('css/azia.css') }}" rel="stylesheet">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -107,20 +107,28 @@
 
     <div class="col-md-12 col-lg-12 col-xl-12">
         @include('inquiry.bulk_upload')
-        <div class="card card-body pd-40">
-            <div class="az-content-breadcrumb ">
-                <span>Inquiry</span>
-                <span>Edit Inquiry</span>
-            </div>
-            <div class="" style="display: inline">
-                EDIT INQUIRY
-                <span class=""><a href="{{ url('inquiry') }}" class="btn btn-az-primary " style="float: right">Inquiry
-                        List</a></span>
-            </div>
-
-            <div class="az-content">
-                <div class="container-fluid">
-
+        
+        <div class="az-content p-0">
+            <div class="container-fluid p-0">
+                <!-- <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="font-weight-bolder mb-0 text-capitalize"><i class="fa fa-edit text-primary me-2"></i> Edit Inquiry</h4>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                                <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ url('dashboard') }}">Dashboard</a></li>
+                                <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ url('inquiry') }}">Inquiries</a></li>
+                                <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Edit Inquiry</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="mt-3 mt-md-0">
+                        <a href="{{ url('inquiry') }}" class="btn btn-primary text-white shadow-sm mb-0">
+                            <i class="fa fa-list me-2"></i> Inquiry List
+                        </a>
+                    </div>
+                </div>
+     -->
+<br>
                     <div class="az-content-body d-flex flex-column">
                         <form action="{{ url('update_inquiry', $inquiry->id_inquiry) }}" method="post" id="submit_inquiry">
                             @csrf
@@ -327,11 +335,10 @@
                                         </div>
                                         <div class="col-md-4 ">
                                             <label class="form-label">City</label>
-                                            <select name="customer_city" id="customer_city" class="form-control select2" disabled>
-                                                <option disabled selected>Select City</option>
-                                                @foreach ($cities as $city)
-                                                    <option value="{{ $city }}" {{ ($inquiry->customer->city ?? '') == $city ? 'selected' : '' }}>{{ $city }}</option>
-                                                @endforeach
+                                            <select name="customer_city" id="customer_city" class="form-control ajax-city-select2" disabled data-placeholder="Select City">
+                                                @if(isset($inquiry->customer) && $inquiry->customer->city)
+                                                    <option value="{{ $inquiry->customer->city }}" selected>{{ $inquiry->customer->city }}</option>
+                                                @endif
                                             </select>
                                         </div>
                                     </div>
@@ -371,7 +378,7 @@
                                             <i class="fa fa-info-circle " style="color:red;" data-toggle="tooltip"
                                                 title="This field is required"></i>
                                         </label>
-                                        <select name="services[]" id="services" class="form-control service_dis"
+                                        <select name="services[]" id="services" class="form-control service_dis no-select2"
                                             required>
                                             <option>Select Services</option>
                                             @forelse ($services as $service)
@@ -383,26 +390,7 @@
                                             @endforelse
                                         </select>
                                     </div>
-                                    <div class="rmv_service col-lg-6 mg-t-20 mg-lg-t-0">
-                                        <div class="form-group" style="display: nosne;">
-                                            <label class="form-label">Sub
-                                                Services:</label>
-                                            <select style="width: 100%" name="sub_services[]" id="sub_services"
-                                                class="js-example-basic-multiple service_dis" multiple="multiple">
-                                                <option>Select Sub Service</option>
-                                                @if($firstServiceId)
-                                                    @php
-                                                        $subServicesOptions = \App\other_service::where('parent_id', $firstServiceId)->get();
-                                                    @endphp
-                                                    @foreach($subServicesOptions as $subService)
-                                                        <option value="{{ $subService->id_other_services }}" {{ in_array($subService->id_other_services, $firstSubServiceIds) ? 'selected' : '' }}>
-                                                            {{ $subService->service_name }}
-                                                        </option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-                                    </div>
+
                                     <div class="col-lg-1 mg-t-20 mg-md-t-0">
                                          <button onclick="add_more()" class="btn btn-az-primary mt-4" type="button">Add More</button>
                                     </div>
@@ -433,18 +421,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6 mg-t-20 mg-lg-t-0 rmv{{ $index }}">
-                                                <div class="form-group">
-                                                    <label class="form-control-label">Sub Services:</label>
-                                                    <select style="width: 100%" name="sub_services{{ $index }}[]" id="sub_services{{ $index }}" class="js-example-basic-multiple" multiple="multiple">
-                                                        @foreach($subServicesOptions as $subService)
-                                                            <option value="{{ $subService->id_other_services }}" {{ in_array($subService->id_other_services, $subIds) ? 'selected' : '' }}>
-                                                                {{ $subService->service_name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
+
                                             <div class="col-lg-1 mg-t-20 mg-md-t-0 rmv{{ $index }}">
                                                 <button onclick="remove({{ $index }})" class="btn btn-danger mt-4" type="button">Remove</button>
                                             </div>
@@ -475,7 +452,7 @@
                                                 Type: <i class="fa fa-info-circle " style="color:red;"
                                                     data-toggle="tooltip" title="This field is required"></i>
                                             </label>
-                                            <select name="inquiry_type" id="inquiry_type" class="form-control" required>
+                                            <select name="inquiry_type" id="inquiry_type" class="form-control no-select2" required>
                                                 <option>Select Inquiry Type</option>
                                                 @forelse ($inquiry_types as $inq_type)
                                                     <option value="{{ $inq_type->type_id }}" {{ ($inquiry->inquiry_type ?? '') == $inq_type->type_id ? 'selected' : '' }}>
@@ -490,7 +467,7 @@
                                     <div class="col-lg-4 mg-t-20 mg-md-t-0 mt-2">
                                         <label class="form-label">Inquiry
                                             Category:</label>
-                                        <select name="inquiry_category" class="form-control" required>
+                                        <select name="inquiry_category" class="form-control no-select2" required>
                                             <option value="">Select Inquiry Category</option>
                                             <option value="Economy" {{ ($inquiry->inquiry_category ?? '') == 'Economy' ? 'selected' : '' }}>Economy</option>
                                             <option value="Standard" {{ ($inquiry->inquiry_category ?? '') == 'Standard' ? 'selected' : '' }}>Standard</option>
@@ -508,8 +485,7 @@
 
                                             <label class="form-label">Sale
                                                 Reference</label>
-                                            <select class="form-control" id="sale_reference" name="sale_reference"
-                                                required>
+                                            <select class="form-control no-select2" id="sale_reference" name="sale_reference" required>
                                                 <option>Select</option>
                                                 @forelse ($sales_reference as $sale_ref)
                                                     <option value="{{ $sale_ref->type_id }}" {{ ($inquiry->sales_reference ?? '') == $sale_ref->type_id ? 'selected' : '' }}>
@@ -550,7 +526,7 @@
                                                 $assign_others = $get_permission_data['assign_others'] ?? 'false';
                                             @endphp
                                             @if ($assign_others == 'true')
-                                                <select disabled name="sale_person" class="form-control"
+                                                <select disabled name="sale_person" class="form-control no-select2"
                                                     id="sale_person">
                                                     <option>Select</option>
                                                     @forelse ($sale_persons as $sp)
@@ -562,7 +538,7 @@
                                                     @endforelse
                                                 </select>
                                             @elseif($assign_others == 'false')
-                                                <select name="sale_person" class="form-control" id="sale_person">
+                                                <select name="sale_person" class="form-control no-select2" id="sale_person">
                                                     <option>Select</option>
                                                     @forelse ($sale_persons as $sp)
                                                         <option @if ($sp['id'] == ($inquiry->saleperson ?? auth()->user()->id)) selected @endif
@@ -679,11 +655,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Include Select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
@@ -1141,8 +1113,8 @@
             //                $("#search_result").html(' ');
             //              });
 
-            $("#contact_search").keydown(function() { //
-                var typingTimer;
+            var typingTimer;
+            $("#contact_search").on('input keydown', function() {
                 clearTimeout(typingTimer);
                 typingTimer = setTimeout(function() {
                     let val = $("#contact_search").val();
@@ -1160,11 +1132,6 @@
                         }
                     });
                 }, 500);
-                // alert(val);
-
-
-
-
             });
             $("#add_new_customer_btn").click(function() {
                 let val = $("#contact_search").val();
@@ -1178,43 +1145,45 @@
 
 
             $('#search_result').on('click', '.clickable-data', function() {
-                // Handle the onclick event here
-                // You can access the clicked element using $(this)
                 var primaryId = $(this).data('id');
-                // alert(primaryId);
-                //                 alert('primaryId');
                 $.ajax({
                     url: '{{ url('get_customer_details') }}',
                     type: 'GET',
+                    dataType: 'json',
                     data: {
                         id: primaryId
                     },
                     success: function(response) {
-                        $('#customer_details').empty().html(response);
-                        $('#customer_name').addClass('disabled');
-                        $("#customer_name").prop('disabled', true);
-                        $('#customer_type').addClass('disabled');
-                        $("#customer_type").prop('disabled', true);
-                        $('#customer_cell').addClass('disabled');
-                        $("#customer_cell").prop('disabled', true);
-                        $('#whatsapp_number').addClass('disabled');
-                        $("#whatsapp_number").prop('disabled', true);
-                        $('#customer_phone_2').addClass('disabled');
-                        $("#customer_phone_2").prop('disabled', true);
-                        $('#customer_address').addClass('disabled');
-                        $("#customer_address").prop('disabled', true);
-                        $('#customer_city').addClass('disabled');
-                        $("#customer_city").prop('disabled', true);
-                        $('#customer_email').addClass('disabled');
-                        $("#customer_email").prop('disabled', true);
-                        $('#customer_reference').addClass('disabled');
-                        $("#customer_reference").prop('disabled', true);
-                        $('#customer_remarks').addClass('disabled');
-                        $("#customer_remarks").prop('disabled', true);
-                        // $('#sale_person').addClass('disabled');
-                        // $("#sale_person").prop('disabled', true);
-                        $('#whatsapp_check').addClass('disabled');
-                        $("#whatsapp_check").prop('disabled', true);
+                        // Show customer info card
+                        $('#customer_details').empty().html(response.html);
+
+                        // Populate the customer form fields with the existing customer data
+                        var c = response.customer;
+                        if (c) {
+                            $('#customer_name').val(c.customer_name || '');
+                            $('#customer_type').val(c.customer_type || 'Individual');
+                            $('#customer_cell').val(c.customer_cell || '');
+                            $('#whatsapp_number').val(c.customer_phone1 || '');
+                            $('#customer_email').val(c.customer_email || '');
+                            $('#customer_address').val(c.customer_address || '');
+                            if (c.city_id) {
+                                $('#customer_city').val(c.city_id).trigger('change');
+                            }
+
+                            // Show the customer div so the user can see the filled fields
+                            var customerDiv = document.getElementById("customer_div");
+                            if (customerDiv) {
+                                customerDiv.style.display = "block";
+                            }
+                        }
+
+                        // Disable all customer fields
+                        var fieldsToDisable = ['#customer_name','#customer_type','#customer_cell','#whatsapp_number',
+                            '#customer_phone_2','#customer_address','#customer_city','#customer_email',
+                            '#customer_reference','#customer_remarks','#whatsapp_check'];
+                        fieldsToDisable.forEach(function(sel) {
+                            $(sel).addClass('disabled').prop('disabled', true);
+                        });
 
                         Swal.fire({
                             position: "center",
@@ -1228,7 +1197,6 @@
                         console.log(xhr.responseText);
                     }
                 });
-
 
             });
         });

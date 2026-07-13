@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
 
-    <link href="{{ asset('css/azia.css') }}" rel="stylesheet">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -106,52 +106,61 @@
 
 
     <div class="col-md-12 col-lg-12 col-xl-12">
+         <!-- <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 mt-3">
+            <div>
+                <h4 class="font-weight-bolder mb-0 text-capitalize"><i class="fa fa-plus-circle text-primary me-2"></i> Create a New Inquiry</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ url('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ url('inquiry') }}">Inquiries</a></li>
+                        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Add Inquiry</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="mt-3 mt-md-0">
+                <a href="{{ url('inquiry') }}" class="btn btn-primary text-white shadow-sm mb-0">
+                    <i class="fa fa-list me-2"></i> Inquiry List
+                </a>
+            </div>
+        </div> -->
         @include('inquiry.bulk_upload')
-        <div class="card card-body pd-40">
-            <div class="az-content-breadcrumb ">
-                <span>Inquiry</span>
-                <span>Add Inquiry</span>
-            </div>
-            <div class="" style="display: inline">
-                CREATE A NEW INQUIRY
-                <span class=""><a href="{{ url('inquiry') }}" class="btn btn-az-primary " style="float: right">Inquiry
-                        List</a></span>
-            </div>
+        <br>
+        <!-- Modern Page Header -->
+       
 
-            <div class="az-content">
-                <div class="container-fluid">
-
-                    <div class="az-content-body d-flex flex-column">
-                        <form action="{{ url('inquiry/store') }}" method="post" id="submit_inquiry">
-                            @csrf
-                            <div class="card shadow-sm mb-4 p-4">
-                                <h4 class="fw-bold mb-4">
-                                    <i class="fa fa-user-plus text-primary me-2"></i> Inquiry Form
-                                </h4>
-
+        <div class="az-content p-0">
+            <div class="container-fluid p-0">
+                <div class="az-content-body d-flex flex-column">
+                    <form action="{{ url('inquiry/store') }}" method="post" id="submit_inquiry">
+                        @csrf
+                        <div class="card shadow-sm mb-4 border-0">
+                            <div class="card-header bg-white border-bottom pb-3 pt-4 px-4">
+                                <h5 class="fw-bold mb-0">
+                                    <i class="fa fa-user-plus text-primary me-2"></i> Customer Information
+                                </h5>
+                                
+                            </div>
+                            
+                            <div class="card-body p-4">
                                 {{-- Section: Search & Existing Customer --}}
-                                <div class="row g-3 align-items-start">
+                                <div class="row g-4 align-items-start">
 
                                     {{-- Search Input --}}
                                     <div class="col-lg-4">
-                                        <div class="card mb-3">
-                                            <div class="card-header bg-light">
-                                                <label class="form-label fw-semibold">
-                                                    <i class="fa fa-search me-1 text-primary"></i> Search by Name / Contact:
-                                                </label>
-                                            </div>
-                                            <div class="card-body">
-                                                <input class="form-control mb-2 shadow-sm" id="contact_search"
-                                                    type="search" placeholder="Search customer...">
-                                            </div>
+                                        <div class="form-group mb-3">
+                                            <label class="form-label fw-semibold text-secondary">
+                                                <i class="fa fa-search me-1"></i> Search by Name / Contact
+                                            </label>
+                                            <input class="form-control shadow-none border-radius-md" id="contact_search"
+                                                type="search" placeholder="Type to search customer...">
                                         </div>
-                                        <div class="d-flex gap-2 mt-2">
-                                            <button class="btn btn-warning flex-fill" onclick="clear_feilds()"
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-outline-warning flex-fill" onclick="clear_feilds()"
                                                 id="clear_customer_information">
                                                 <i class="fa fa-eraser me-1"></i> Clear
                                             </button>
                                             <a href="#customer_div"
-                                                class="btn btn-success d-none text-white flex-fill toggleCustomerBtn"
+                                                class="btn btn-success text-white flex-fill toggleCustomerBtn"
                                                 id="add_new_customer_btn">
                                                 <i class="fa fa-plus me-1"></i> Add New
                                             </a>
@@ -160,35 +169,33 @@
 
                                     {{-- Search Result --}}
                                     <div class="col-lg-4" id="search_result"
-                                        style="height:200px; overflow-y:auto; background:#fafafa; border-radius:6px; border-left:1px solid #e3e7ed; padding:4px;">
+                                        style="max-height: 200px; overflow-y: auto; padding: 10px;">
+                                        <!-- Search results will populate here -->
                                     </div>
 
                                     {{-- Selected Info --}}
-                                    <div class="col-lg-3" id="customer_details" style="border-left:1px solid #e3e7ed;">
-                                        <div class="small text-secondary mb-2 fw-semibold">
-                                            <i class="fa fa-id-card me-1 text-info"></i> Selected Customer Info:
+                                    <div class="col-lg-4" id="customer_details" style="border-left: 1px dashed #e3e7ed; padding-left: 20px;">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="small text-secondary fw-semibold">
+                                                <i class="fa fa-id-card me-1 text-info"></i> Selected Customer Info
+                                            </div>
+                                            <img src="{{ asset('img/default_user.png') }}" class="rounded-circle border shadow-sm" style="width: 50px; height: 50px; object-fit: cover;" alt="Profile">
                                         </div>
-                                        <p class="mb-1"><i class="fa fa-user text-primary me-1"></i> Customer:
+                                        <p class="mb-1"><i class="fa fa-user text-primary me-2"></i> Customer:
                                             <span class="fw-semibold text-dark text-decoration-underline"></span>
                                         </p>
-                                        <p class="mb-1"><i class="fa fa-phone text-success me-1"></i> Contact#:
+                                        <p class="mb-1"><i class="fa fa-phone text-success me-2"></i> Contact#:
                                             <span class="fw-semibold text-dark text-decoration-underline"></span>
                                         </p>
-                                        <p class="mb-1"><i class="fa fa-envelope text-danger me-1"></i> Email:
+                                        <p class="mb-1"><i class="fa fa-envelope text-danger me-2"></i> Email:
                                             <span class="fw-semibold text-dark text-decoration-underline"></span>
                                         </p>
-                                        <p class="mb-1"><i class="fa fa-file-alt text-info me-1"></i> Last
-                                            Inquiry: <span class="fw-semibold text-dark text-decoration-underline"></span>
+                                        <p class="mb-1"><i class="fa fa-file-alt text-info me-2"></i> Last Inquiry:
+                                            <span class="fw-semibold text-dark text-decoration-underline"></span>
                                         </p>
-                                        <p class="mb-1"><i class="fa fa-info-circle text-warning me-1"></i>
-                                            Status: <span class="fw-semibold text-dark text-decoration-underline"></span>
+                                        <p class="mb-1"><i class="fa fa-info-circle text-warning me-2"></i> Status:
+                                            <span class="fw-semibold text-dark text-decoration-underline"></span>
                                         </p>
-                                    </div>
-
-                                    <div class="col-lg-1 d-flex align-items-start">
-                                        <img src="{{ asset('img/default_user.png') }}"
-                                            class="rounded-circle border shadow-sm" style="width:100%; max-width:80px;"
-                                            alt="Profile">
                                     </div>
                                 </div>
 
@@ -197,81 +204,7 @@
 
 
                                 {{-- Cities --}}
-                                @php
-                                    $cities = [
-                                        'Karachi',
-                                        'Abbottabad',
-                                        'Ahmedpur East',
-                                        'Aliabad',
-                                        'Arifwala',
-                                        'Attock',
-                                        'Baden',
-                                        'Bahawalnagar',
-                                        'Bahawalpur',
-                                        'Burewala',
-                                        'Chakwal',
-                                        'Chaman',
-                                        'Chiniot',
-                                        'Chishtian',
-                                        'Dadu',
-                                        'Daharki',
-                                        'Daska',
-                                        'Dera Ghazi Khan',
-                                        'Dera Ismail Khan',
-                                        'Faisalabad',
-                                        'Ghotki',
-                                        'Gojra',
-                                        'Gujranwala',
-                                        'Gujrat',
-                                        'Hafizabad',
-                                        'Haripur',
-                                        'Hasilpur',
-                                        'Haveli Lakha',
-                                        'Hyderabad',
-                                        'Islamabad',
-                                        'Jacobabad',
-                                        'Jaranwala',
-                                        'Jhang',
-                                        'Jhelum',
-                                        'Kamalpur',
 
-                                        'Kasur',
-                                        'Khanewal',
-                                        'Kharian',
-                                        'Khushab',
-                                        'Kohat',
-                                        'Kotri',
-                                        'Lahore',
-                                        'Larkana',
-                                        'Mandi Bahauddin',
-                                        'Mansehra',
-                                        'Mardan',
-                                        'Mirpur',
-                                        'Mirpur Khas',
-                                        'Multan',
-                                        'Muzaffargarh',
-                                        'Nawabshah',
-                                        'Nowshera',
-                                        'Okara',
-                                        'Peshawar',
-                                        'Rahim Yar Khan',
-                                        'Rawalpindi',
-                                        'Sahiwal',
-                                        'Sargodha',
-                                        'Sialkot',
-                                        'Sheikhupura',
-                                        'Shikarpur',
-                                        'Sukkur',
-                                        'Swabi',
-                                        'Swat',
-                                        'Tando Adam',
-                                        'Tando Allahyar',
-                                        'Taxila',
-                                        'Vehari',
-                                        'Wah Cantonment',
-                                        'Zhob',
-                                    ];
-                                @endphp
 
                                 <div id="customer_div" style="display: none;">
                                     <hr class="my-4">
@@ -328,11 +261,7 @@
                                         </div>
                                         <div class="col-md-4 ">
                                             <label class="form-label">City</label>
-                                            <select name="customer_city" id="customer_city" class="form-control select2">
-                                                <option disabled selected>Select City</option>
-                                                @foreach ($cities as $city)
-                                                    <option value="{{ $city }}">{{ $city }}</option>
-                                                @endforeach
+                                            <select name="customer_city" id="customer_city" class="form-control ajax-city-select2" data-placeholder="Select City">
                                             </select>
                                         </div>
                                     </div>
@@ -358,7 +287,7 @@
                                             <i class="fa fa-info-circle " style="color:red;" data-toggle="tooltip"
                                                 title="This field is required"></i>
                                         </label>
-                                        <select name="services[]" id="services" class="form-control service_dis"
+                                        <select name="services[]" id="services" class="form-control service_dis no-select2"
                                             required>
                                             <option>Select Services</option>
                                             @forelse ($services as $service)
@@ -366,7 +295,7 @@
                                                     {{ $service->service_name }}
                                                 </option>
                                             @empty
-                                                No Results Found
+                                                <option value="" disabled>No Results Found</option>
                                             @endforelse
                                         </select>
                                     </div>
@@ -386,14 +315,14 @@
                                                 Type: <i class="fa fa-info-circle " style="color:red;"
                                                     data-toggle="tooltip" title="This field is required"></i>
                                             </label>
-                                            <select name="inquiry_type" id="inquiry_type" class="form-control" required>
-                                                <option>Select Inquiry Type</option>
+                                            <select name="inquiry_type" id="inquiry_type" class="form-control no-select2" required>
+                                                <option value="" disabled selected>Select Inquiry Type</option>
                                                 @forelse ($inquiry_types as $inq_type)
                                                     <option value="{{ $inq_type->type_id }}">
                                                         {{ $inq_type->type_name }}
                                                     </option>
                                                 @empty
-                                                    No Results Found
+                                                    <option value="" disabled>No Results Found</option>
                                                 @endforelse
                                             </select>
                                         </div>
@@ -401,7 +330,7 @@
                                     <div class="col-lg-4 mg-t-20 mg-md-t-0">
                                         <label class="form-label">Inquiry
                                             Category:</label>
-                                        <select name="inquiry_category" class="form-control" required>
+                                        <select name="inquiry_category" class="form-control no-select2" required>
                                             <option value="">Select Inquiry Category</option>
                                             <option value="Economy">Economy</option>
                                             <option value="Standard">Standard</option>
@@ -422,15 +351,14 @@
 
                                             <label class="form-label">Sale
                                                 Reference</label>
-                                            <select class="form-control" id="sale_reference" name="sale_reference"
-                                                required>
-                                                <option>Select</option>
+                                            <select class="form-control no-select2" id="sale_reference" name="sale_reference" required>
+                                                <option value="" disabled selected>Select Sale Reference</option>
                                                 @forelse ($sales_reference as $sale_ref)
                                                     <option value="{{ $sale_ref->type_id }}">
                                                         {{ $sale_ref->type_name }}
                                                     </option>
                                                 @empty
-                                                    No Results Found
+                                                    <option value="" disabled>No Results Found</option>
                                                 @endforelse
                                             </select>
                                         </div>
@@ -460,7 +388,7 @@
                                                     title="This field is required"></i></label>
                                             @csrf
                                             @if ($get_permission_data['assign_others'] == 'true')
-                                                <select disabled name="sale_person" class="form-control"
+                                                <select disabled name="sale_person" class="form-control no-select2"
                                                     id="sale_person">
                                                     <option>Select</option>
                                                     @forelse ($sale_persons as $sp)
@@ -468,18 +396,18 @@
                                                             value="{{ $sp['id'] }}">{{ $sp['name'] }}
                                                         </option>
                                                     @empty
-                                                        No Results Found
+                                                        <option value="" disabled>No Results Found</option>
                                                     @endforelse
                                                 </select>
                                             @elseif($get_permission_data['assign_others'] == 'false')
-                                                <select name="sale_person" class="form-control" id="sale_person">
+                                                <select name="sale_person" class="form-control no-select2" id="sale_person">
                                                     <option>Select</option>
                                                     @forelse ($sale_persons as $sp)
                                                         <option @if ($sp['id'] == auth()->user()->id) selected @endif
                                                             value="{{ $sp['id'] }}">{{ $sp['name'] }}
                                                         </option>
                                                     @empty
-                                                        No Results Found
+                                                        <option value="" disabled>No Results Found</option>
                                                     @endforelse
                                                 </select>
                                             @endif
@@ -556,10 +484,15 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="mt-4 text-end">
-                                <button type="button" onclick="check_validation()" class="btn btn-az-primary">
-                                    <i class="fa fa-paper-plane me-1"></i> Submit Inquiry
+                            <div class="mt-3 mt-md-0">
+                                
+                            </div>
+                            <div class="mt-4 mb-4 me-3 d-flex justify-content-end align-items-center gap-2">
+                                <a href="{{ url('inquiry') }}" class="btn btn-danger text-white shadow-sm mb-0 px-4 text-uppercase fw-bold">
+                                   Cancel
+                                </a>
+                                <button type="button" onclick="check_validation()" class="btn btn-primary shadow-sm mb-0 px-4 text-uppercase fw-bold" style="background-color: var(--bs-primary) !important; border-color: var(--bs-primary) !important;">
+                                    <i class="fa fa-paper-plane me-2"></i> Submit Inquiry
                                 </button>
                             </div>
                     </div>
@@ -587,11 +520,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Include Select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
@@ -646,6 +575,13 @@
                 toolbar: '#toolbar-container'
             }
         });
+        
+        // Remove select2 from quill header if it was applied globally
+        setTimeout(function() {
+            if ($('.ql-header').hasClass('select2-hidden-accessible')) {
+                $('.ql-header').select2('destroy');
+            }
+        }, 100);
 
         // Function to save the content to the textarea
         function saveQuillContent() {
@@ -1058,8 +994,8 @@
             //                $("#search_result").html(' ');
             //              });
 
-            $("#contact_search").keydown(function() { //
-                var typingTimer;
+            var typingTimer;
+            $("#contact_search").on('input keydown', function() {
                 clearTimeout(typingTimer);
                 typingTimer = setTimeout(function() {
                     let val = $("#contact_search").val();
@@ -1067,21 +1003,10 @@
                         url: "{{ url('customer_list') }}/" + val,
                         type: "GET",
                         success: function(result) {
-                            if (result == " " && val.length >= 0) {
-                                $("#add_new_customer_btn").removeClass("d-none");
-                                console.log("Print");
-                            } else {
-                                $("#add_new_customer_btn").addClass("d-none");
-                            }
                             $("#search_result").empty().html(result);
                         }
                     });
                 }, 500);
-                // alert(val);
-
-
-
-
             });
             $("#add_new_customer_btn").click(function() {
                 let val = $("#contact_search").val();
@@ -1095,43 +1020,54 @@
 
 
             $('#search_result').on('click', '.clickable-data', function() {
-                // Handle the onclick event here
-                // You can access the clicked element using $(this)
                 var primaryId = $(this).data('id');
-                // alert(primaryId);
-                //                 alert('primaryId');
                 $.ajax({
                     url: '{{ url('get_customer_details') }}',
                     type: 'GET',
+                    dataType: 'json',
                     data: {
                         id: primaryId
                     },
                     success: function(response) {
-                        $('#customer_details').empty().html(response);
-                        $('#customer_name').addClass('disabled');
-                        $("#customer_name").prop('disabled', true);
-                        $('#customer_type').addClass('disabled');
-                        $("#customer_type").prop('disabled', true);
-                        $('#customer_cell').addClass('disabled');
-                        $("#customer_cell").prop('disabled', true);
-                        $('#whatsapp_number').addClass('disabled');
-                        $("#whatsapp_number").prop('disabled', true);
-                        $('#customer_phone_2').addClass('disabled');
-                        $("#customer_phone_2").prop('disabled', true);
-                        $('#customer_address').addClass('disabled');
-                        $("#customer_address").prop('disabled', true);
-                        $('#customer_city').addClass('disabled');
-                        $("#customer_city").prop('disabled', true);
-                        $('#customer_email').addClass('disabled');
-                        $("#customer_email").prop('disabled', true);
-                        $('#customer_reference').addClass('disabled');
-                        $("#customer_reference").prop('disabled', true);
-                        $('#customer_remarks').addClass('disabled');
-                        $("#customer_remarks").prop('disabled', true);
-                        // $('#sale_person').addClass('disabled');
-                        // $("#sale_person").prop('disabled', true);
-                        $('#whatsapp_check').addClass('disabled');
-                        $("#whatsapp_check").prop('disabled', true);
+                        // Show customer info card
+                        $('#customer_details').empty().html(response.html);
+
+                        // Populate the customer form fields with the existing customer data
+                        var c = response.customer;
+                        if (c) {
+                            $('#customer_name').val(c.customer_name || '');
+                            $('#customer_type').val(c.customer_type || 'Individual');
+                            $('#customer_cell').val(c.customer_cell || '');
+                            $('#whatsapp_number').val(c.customer_phone1 || '');
+                            $('#customer_email').val(c.customer_email || '');
+                            $('#customer_address').val(c.customer_address || '');
+                            if (c.city_id) {
+                                if ($('#customer_city').find("option[value='" + c.city_id + "']").length) {
+                                    $('#customer_city').val(c.city_id).trigger('change');
+                                } else { 
+                                    var newOption = new Option(c.city_id, c.city_id, true, true);
+                                    $('#customer_city').append(newOption).trigger('change');
+                                }
+                            }
+
+                            // Show the customer div so the user can see the filled fields
+                            var customerDiv = document.getElementById("customer_div");
+                            if (customerDiv) {
+                                customerDiv.style.display = "block";
+                            }
+                        }
+
+                        var fieldsToDisable = ['#customer_name','#customer_type','#customer_cell','#whatsapp_number',
+                            '#customer_phone_2','#customer_address','#customer_city','#customer_email',
+                            '#customer_reference','#customer_remarks','#whatsapp_check'];
+                        fieldsToDisable.forEach(function(sel) {
+                            $(sel).addClass('disabled').prop('disabled', true);
+                        });
+
+                        // Clear the search results and input so it doesn't linger while the modal shows
+                        $('#search_result').empty();
+                        $('#contact_search').val('');
+                        $('#add_new_customer_btn').addClass('d-none');
 
                         Swal.fire({
                             position: "center",
@@ -1146,7 +1082,6 @@
                     }
                 });
 
-
             });
         });
     </script>
@@ -1156,8 +1091,7 @@
 
         $(document).ready(function() {
 
-
-            $('.select2').select2({});
+            $('.select2').select2({ width: '100%' });
 
             $('#services').on('change', function() {
                 var val = $(this).val();
@@ -1168,17 +1102,16 @@
                     type: "GET",
                     success: function(data) {
                         $('#sub_services').html(data);
+                        // Make sub_services visible once it's populated
+                        $('#sub_services').closest('.d-none').removeClass('d-none');
+                        
                         $('#inquiry_type  option').each(function(element) {
                             var get_text = $(this).text()
                             var get_text_res = $.trim($(this).text())
-                            // alert(get_text_res)
-                            // alert(val_text_res)
                             if (get_text_res == val_text_res) {
                                 exists = true;
                                 $(this).attr('selected', true);
                             }
-                            //    alert(get_text==get_campaign)
-
                         });
                     }
                 });

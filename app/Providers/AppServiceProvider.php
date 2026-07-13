@@ -26,5 +26,21 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
+        try {
+            if (Schema::hasTable('organization_settings')) {
+                $orgSetting = \App\Models\OrganizationSetting::first();
+                if (!$orgSetting) {
+                    $orgSetting = \App\Models\OrganizationSetting::create([
+                        'name' => 'Flugzeit Aviation',
+                        'theme_color' => '#cb0c9f', // Soft UI primary pink/purple default
+                        'logo' => '',
+                        'login_bg' => ''
+                    ]);
+                }
+                \Illuminate\Support\Facades\View::share('orgSetting', $orgSetting);
+            }
+        } catch (\Exception $e) {
+            // Ignore during migrations or clear cache
+        }
     }
 }

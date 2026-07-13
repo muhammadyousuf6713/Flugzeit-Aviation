@@ -332,7 +332,7 @@ class AjaxController extends Controller
                 foreach ($customers as $result) {
                     //                    $artilces .= '<div class="card bg-light rounded-2"><div class="card-body"><div id="get_cus_details" data-id="' . $result->id_customers . '" onClick="CusDetails()" class="az-contact-item mt-3 clickable-data"><div class="az-img-user"><img src="' . asset('img/default_user_2.png') . '" alt=""></div><div class="az-contact-body"><h6>' . $result->customer_name . '</h6><span class="phone">' . $result->customer_cell . '</span></div></div></div></div><br>';
                     $artilces .= '
-    <div class="card shadow-sm border-0 mb-2 clickable-data" style="cursor:pointer;" id="get_cus_details" data-id="' . $result->id_customers . '" onClick="CusDetails()">
+    <div class="card shadow-sm border-0 mb-2 clickable-data" style="cursor:pointer;" id="get_cus_details" data-id="' . $result->id_customers . '">
         <div class="d-flex align-items-center p-2">
             <img src="' . asset('img/default_user_2.png') . '" class="rounded-circle border me-2" style="width:40px;height:40px;" alt="User">
             <div class="flex-grow-1">
@@ -434,8 +434,11 @@ class AjaxController extends Controller
 
         $output .= '</ul>';
 
-        // Return the output
-        echo $output;
+        // Return the output as JSON
+        return response()->json([
+            'html' => $output,
+            'customer' => $data
+        ]);
     }
 
     public function check_customer_number($cell)
@@ -3001,9 +3004,9 @@ class AjaxController extends Controller
             ->limit(request('length'))
             ->get()
             ->map(function ($item) {
-                $item->actions = '<a class="btn btn-rounded btn-primary" href="' . url('customers/edit/' . Crypt::encrypt($item->id_customers)) . '">Edit</a> '
-                    . '<a class="btn btn-rounded btn-success" href="' . url('customers/view/' . Crypt::encrypt($item->id_customers)) . '">View</a> '
-                    . '<a class="btn btn-rounded btn-danger" href="' . url('customers/destroy/' . Crypt::encrypt($item->id_customers)) . '">Delete</a>';
+                $item->actions = '<a class="btn btn-sm btn-primary" title="Edit" href="' . url('customers/edit/' . Crypt::encrypt($item->id_customers)) . '"><i class="fa fa-edit"></i></a> '
+                    . '<a class="btn btn-sm btn-success" title="View" href="' . url('customers/view/' . Crypt::encrypt($item->id_customers)) . '"><i class="fa fa-eye"></i></a> '
+                    . '<a class="btn btn-sm btn-danger" title="Delete" href="' . url('customers/destroy/' . Crypt::encrypt($item->id_customers)) . '"><i class="fa fa-trash"></i></a>';
                 return $item;
             });
 

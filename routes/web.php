@@ -4,6 +4,7 @@ use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\InquiryController;
@@ -35,10 +36,10 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [HomeController::class, 'home']);
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    // Route::get('dashboard', function () {
-
-    //     return view('dashboard');
-    // })->name('dashboard');
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/data', [ReportController::class, 'getData'])->name('reports.data');
+    Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
+    Route::get('reports/count', [ReportController::class, 'count'])->name('reports.count');
 
     Route::get('billing', function () {
         return view('billing');
@@ -71,9 +72,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/logout', [SessionsController::class, 'destroy'])->name('logout');
     Route::get('/user-profile', [InfoUserController::class, 'create']);
     Route::post('/user-profile', [InfoUserController::class, 'store']);
-    // Route::get('/login', function () {
-    //     return view('dashboard');
-    // })->name('sign-up');
 
     // Customers
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index')->middleware(['permission:Customers list']);
@@ -83,20 +81,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('customers/{id}', [CustomerController::class, 'update'])->name('customers.update')->middleware(['permission:Customers edit']);
     Route::get('customers/view/{id}', [CustomerController::class, 'view'])->middleware(['permission:Customers view']);
     Route::get('customers/destroy/{id}', [CustomerController::class, 'destroy'])->middleware(['permission:Customers delete']);
-    // Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
-    // Route::get('customers/create', [CustomerController::class, 'create']);
-    // Route::post('customers/store', [CustomerController::class, 'store']);
-    // Route::get('customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
-    // Route::get('customers/edit/{id}', [CustomerController::class, 'edit'])->name('customers.edit');
-    // Route::get('customers/update/{id}', [CustomerController::class, 'update']);
-    // Route::get('customers/view/{id}', [CustomerController::class, 'view']);
+
     Route::get('get-data', [AjaxController::class, 'getData']);
     Route::get('get_customer_details', [AjaxController::class, 'get_customer_details']);
     Route::get('check_customer_number/{cell}', [AjaxController::class, 'check_customer_number']);
     Route::get('customer_list/{query?}', [AjaxController::class, 'customer_search']);
     Route::get('customers/destroy/{id}', [CustomerController::class, 'destroy']);
     Route::put('customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
-    Route::get('get_customer_data', 'AjaxController@getCustomerData')->name('get_customer_data');
+    Route::get('get_customer_data', [AjaxController::class, 'getCustomerData'])->name('get_customer_data');
 
     // Inquiry
     Route::get('/inquiry', [InquiryController::class, 'get_inquiry_list'])->middleware(['permission:Inquiry list'])->name('inquiry.index');
@@ -108,12 +100,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/inquiry/csv-template', [InquiryController::class, 'downloadTemplate'])->name('csv.template.download');
     Route::post('/inquiry/upload', [InquiryController::class, 'uploadCSV'])->name('csv.upload');
 
-    // Route::get('/inquiry', [InquiryController::class, 'get_inquiry_list'])->middleware(['permission:Inquiry list']);
-    // Route::get('/inquiry/create', [InquiryController::class, 'create'])->middleware(['permission:Inquiry add']);
-    // Route::get('/edit_inquiry/{id}', [InquiryController::class, 'edit'])->name('edit_inquiry')->middleware(['permission:Inquiry edit']);
-    // Route::post('/update_inquiry/{id}', [InquiryController::class, 'update'])->name('update_inquiry');
-    // Route::get('/delete_inquiry/{id}', [InquiryController::class, 'destroy'])->name('delete_inquiry');
+
     Route::get('/get_followup_details/{id}', [AjaxController::class, 'get_followup_details']);
+    Route::get('/get_more_followups', [InquiryController::class, 'get_more_followups']);
     // Route::get('/inquiry_edit/{inquiry_id}', [InquiryController::class, 'edit_inquiry_index']);
     Route::get('/inquiry_ajax_list', [InquiryController::class, 'getdata']);
     Route::get('/inquiry_test/create', [InquiryController::class, 'create_test']);
@@ -138,9 +127,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('autocomplete_country', [AjaxController::class, 'autocomplete'])->name('autocomplete_country');
     Route::get('autocomplete_city', [AjaxController::class, 'autocomplete_city'])->name('autocomplete_city');
 
-    // Route::get('user-management', function () {
-    //     return view('laravel-examples/user-management');
-    // })->name('user-management');
+
     Route::get('user-management', [UsersController::class, 'index']);
     Route::get('users/create', [UsersController::class, 'create']);
     Route::post('users/store', [UsersController::class, 'store']);
@@ -210,12 +197,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/followups', [App\Http\Controllers\FollowupController::class, 'index'])->name('followups.index');
     Route::get('/get-followups-data', [App\Http\Controllers\FollowupController::class, 'getData'])->name('followups.data');
-    // Route::get('/create-table', [App\Http\Controllers\Admin\AdminController::class, 'createtable']);
+
 });
 
 Route::group(['middleware' => 'guest'], function () {
-    // Route::get('/register', [RegisterController::class, 'create']);
-    // Route::post('/register', [RegisterController::class, 'store']);
+
     Route::get('/login', [SessionsController::class, 'create']);
     Route::post('/session', [SessionsController::class, 'store']);
     Route::get('/login/forgot-password', [ResetController::class, 'create']);
@@ -227,3 +213,5 @@ Route::group(['middleware' => 'guest'], function () {
 Route::get('/login', function () {
     return view('session/login-session');
 })->name('login');
+
+Route::get('organization-settings', 'App\Http\Controllers\OrganizationSettingController@edit')->name('organization_settings.edit'); Route::post('organization-settings', 'App\Http\Controllers\OrganizationSettingController@update')->name('organization_settings.update');

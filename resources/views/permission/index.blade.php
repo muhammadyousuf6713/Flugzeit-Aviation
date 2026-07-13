@@ -1,6 +1,6 @@
 @extends('layouts.user_type.auth')
 
-<link rel="stylesheet" href="{{ asset('assets/styles/vendor/datatables.min.css') }}">
+
 <style>
     .dot {
         height: 10px;
@@ -158,7 +158,7 @@
                 </div>
             @endif
 
-            <div class="card mb-4 mx-4 shadow-sm border-0">
+            <div class="card mb-4 shadow-sm border-0">
                 <div class="card-header pb-0 bg-white">
                     <div class="d-flex flex-row justify-content-between align-items-center">
                         <div>

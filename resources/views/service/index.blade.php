@@ -106,7 +106,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger" title="Delete"><i class="fa fa-trash"></i></button>
                     </form>
                 </div>
             </div>
@@ -126,45 +126,53 @@
         });
         $(function() {
             oTable = $('#example23').DataTable({
-                dom: 'Bfrtip',
+                dom: '<"d-flex justify-content-between align-items-center mb-3"lB>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+                language: {
+                    paginate: {
+                        previous: "<i class='fa fa-chevron-left'></i>",
+                        next: "<i class='fa fa-chevron-right'></i>"
+                    }
+                },
                 buttons: [{
                         extend: 'csv',
-                        text: 'CSV',
-                        title: 'Supplier List',
-                        className: 'btn btn-default',
+                        text: '<i class="fa fa-file-csv"></i> CSV',
+                        title: 'Services List',
+                        className: 'btn btn-primary text-white',
                         exportOptions: {
                             columns: 'th:not(:last-child)'
                         }
                     },
                     {
                         extend: 'excel',
-                        text: 'Excel',
-                        title: 'Supplier List',
-                        className: 'btn btn-default',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        title: 'Services List',
+                        className: 'btn btn-primary text-white',
                         exportOptions: {
                             columns: 'th:not(:last-child)'
                         }
                     },
                     {
                         extend: 'pdf',
-                        text: 'PDF',
-                        title: 'Supplier List',
-                        className: 'btn btn-default',
+                        text: '<i class="fa fa-file-pdf"></i> PDF',
+                        title: 'Services List',
+                        className: 'btn btn-primary text-white',
                         exportOptions: {
                             columns: 'th:not(:last-child)'
-                        }
+                        },
+                        orientation: 'landscape'
                     },
                     {
                         extend: 'print',
-                        text: 'Print',
-                        title: 'Supplier List',
-                        className: 'btn btn-default',
+                        text: '<i class="fa fa-print"></i> Print',
+                        title: 'Services List',
+                        className: 'btn btn-primary text-white',
                         exportOptions: {
                             columns: 'th:not(:last-child)'
                         }
                     }
                 ],
-                responsive: !0
+                responsive: !0,
+                lengthMenu: [10, 25, 50, 100]
             });
         });
     </script>

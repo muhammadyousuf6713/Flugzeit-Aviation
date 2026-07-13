@@ -172,11 +172,8 @@ class AdminController extends Controller
                 'Admin Dashboard' => ['list', 'view'],
                 'Author Dashboard' => ['list', 'view'],
             ],
+            // Removed unwanted modules from Operations
             'Operations' => [
-                'Academic Programmes' => ['list', 'add', 'edit', 'view', 'delete'],
-                'Admissions' => ['list', 'add', 'edit', 'view', 'delete'],
-                'Administration' => ['list', 'add', 'edit', 'view', 'delete'],
-                'Campus Life' => ['list', 'add', 'edit', 'view', 'delete'],
             ],
             'Administerator' => [
                 'Users Management' => ['list', 'add', 'edit', 'view', 'delete'],

@@ -3,7 +3,7 @@
 @section('content')
     <div>
 
-        <div class="container-fluid py-4">
+        <div class="container-fluid">
             <div class="card">
                 <div class="card-header pb-0 px-3">
                     <h3 class="az-content-title" style="display: inline">Add New User <span><a href="{{ url('user-management') }}"

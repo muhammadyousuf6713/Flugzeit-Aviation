@@ -149,7 +149,7 @@ class PermissionController extends Controller
 
         $assigned_permissions = $role_id ? Role::find($role_id)->permissions->pluck('id')->toArray() : [];
 
-        return view('Permission.index', compact('roles', 'role_id', 'permissions', 'assigned_permissions'));
+        return view('permission.index', compact('roles', 'role_id', 'permissions', 'assigned_permissions'));
     }
 
 

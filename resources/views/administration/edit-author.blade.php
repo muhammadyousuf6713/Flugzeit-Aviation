@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link href="https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css" rel="stylesheet"
         type="text/css" />
-    <div class="container-fluid py-4">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <div class="card">

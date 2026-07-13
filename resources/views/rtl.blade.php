@@ -3,7 +3,7 @@
 @section('content')
 
   <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg overflow-hidden">
-    <div class="container-fluid py-4">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-lg-3 col-sm-6 mb-lg-0 mb-4">
           <div class="card">

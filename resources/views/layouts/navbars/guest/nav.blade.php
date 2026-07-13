@@ -3,8 +3,8 @@
     class="navbar navbar-expand-lg position-absolute top-0 z-index-3 my-3 {{ Request::is('static-sign-up') ? 'w-100 shadow-none  navbar-transparent mt-4' : 'blur blur-rounded shadow py-2 start-0 end-0 mx4' }}">
     <div class="container-fluid {{ Request::is('static-sign-up') ? 'container' : 'container-fluid' }}">
         <a class="d-flex justify-content-center m-0 navbar-brand" href="{{ route('dashboard') }}">
-            <img src="{{ asset('assets/img/logo-ct.png') }}" class="img-fluid" style="max-width: 100%; height: 70px;"
-                alt="Logo">
+            <!-- <img src="{{ asset('assets/img/logo-ct.png') }}" class="img-fluid" style="max-width: 100%; height: 70px;"
+                alt="Logo"> -->
         </a>
         <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse"
             data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">

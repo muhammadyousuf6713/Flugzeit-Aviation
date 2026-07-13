@@ -131,12 +131,16 @@ class CustomerController extends Controller
     public function get_customer_details(Request $request)
     {
         $data = customer::where('id_customers', $request->id)->first();
-        echo '<h5>ID: <span style="text-decoration: underline;">' . $data->id_customers . '<input type="hidden" value="' . $data->id_customers . '" name="searched_customer_id"/></span></h5>
-            <h5>Customer: <span style="text-decoration: underline;">' . $data->customer_name . '</span></h5>
-            <p>Contact# <span style="text-decoration: underline;">' . $data->customer_cell . '</span></p>
-                                <p>Email: <span style="text-decoration: underline;">' . $data->customer_email . '</span></p>
+        $html = '<h5>ID: <span style="text-decoration: underline;">' . $data->id_customers . '<input type="hidden" value="' . $data->id_customers . '" name="searched_customer_id"/></span></h5>
+            <h5>Customer: <span style="text-decoration: underline;">' . htmlspecialchars($data->customer_name) . '</span></h5>
+            <p>Contact# <span style="text-decoration: underline;">' . htmlspecialchars($data->customer_cell) . '</span></p>
+            <p>Email: <span style="text-decoration: underline;">' . htmlspecialchars($data->customer_email ?? '') . '</span></p>
+            <p>Last Inquiry# <span style="text-decoration: underline;"></span></p>';
 
-                                <p>Last Inquiry# <span style="text-decoration: underline;"></span></p>';
+        return response()->json([
+            'html' => $html,
+            'customer' => $data
+        ]);
     }
 
     /**

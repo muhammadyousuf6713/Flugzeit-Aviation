@@ -93,7 +93,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 mg-t-20 mg-lg-t-0">
+                                <!-- <div class="col-lg-6 mg-t-20 mg-lg-t-0">
                                     <div class="form-group">
 
                                         <label class="form-control-label">Sub Services:</label>
@@ -103,7 +103,7 @@
 
                                         </select>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-lg-1 mg-t-20 mg-md-t-0">
                                     {{-- <label class="form-control-label">Add More</label> --}}
                                     <button onclick="add_more()" class="btn btn-az-primary mt-4" type="button">Add

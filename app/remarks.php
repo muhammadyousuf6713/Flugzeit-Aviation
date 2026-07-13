@@ -18,6 +18,6 @@ class remarks extends Model
     
     public function createdBy()
     {
-        return $this->belongsTo(user::class, 'created_by', 'id');
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 }

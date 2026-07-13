@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
 
-    <link href="{{ asset('css/azia.css') }}" rel="stylesheet">
+
     <style>
         body {
             font-family: Arial, sans-serif;

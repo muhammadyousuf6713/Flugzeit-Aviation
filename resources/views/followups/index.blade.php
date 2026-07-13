@@ -86,7 +86,7 @@
             margin-left: 10px;
         }
     </style>
-    <div class="container-fluid py-4">
+    <div class="container-fluid">
 
         {{-- 🔍 Filter Panel --}}
         <div class="card mb-4 shadow-sm">
@@ -128,6 +128,18 @@
                             <div class="col-md-3">
                                 <label class="form-label fw-bold small">To Date</label>
                                 <input type="date" class="form-control form-control-sm" name="date_to">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold small">Customer Name</label>
+                                <input type="text" class="form-control form-control-sm" name="customer_name" placeholder="Name">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold small">Mobile</label>
+                                <input type="text" class="form-control form-control-sm" name="customer_cell" placeholder="Mobile">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold small">Inquiry ID</label>
+                                <input type="text" class="form-control form-control-sm" name="id_inquiry" placeholder="Inquiry ID">
                             </div>
                         </div>
                         <div class="d-flex justify-content-end gap-2 mt-3">
@@ -298,13 +310,6 @@
 @endsection
 
 @push('scripts')
-     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.13.6/b-2.4.2/b-html5-2.4.2/r-2.5.0/datatables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
     <script>
         $(document).ready(function() {
             var table = $('#example23').DataTable({
@@ -323,6 +328,9 @@
                         d.status = $('select[name="status"]').val();
                         d.date_from = $('input[name="date_from"]').val();
                         d.date_to = $('input[name="date_to"]').val();
+                        d.customer_name = $('input[name="customer_name"]').val();
+                        d.customer_cell = $('input[name="customer_cell"]').val();
+                        d.id_inquiry = $('input[name="id_inquiry"]').val();
                         
                         const urlParams = new URLSearchParams(window.location.search);
                         if (urlParams.has('sales_person') && !d.sales_person) {
@@ -348,15 +356,32 @@
                     { data: 'created_by', name: 'cb.name', className: 'none' },
                     { data: 'updated_at', name: 'followup_remarks.updated_at', className: 'none' },
                 ],
-                   dom: 'Blfrtip',
-                buttons: ['excel', 'pdf', 'print'],
-                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                dom: "<'row mb-3'<'col-md-8 d-flex align-items-center gap-2'B l><'col-md-4'f>>t<'row mt-3'<'col-md-6'i><'col-md-6'p>>",
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        className: 'btn btn-sm btn-primaryHtml5',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        className: 'btn btn-sm btn-primaryHtml5',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        }
+                    }
+                ],
+                lengthMenu: [[10, 25, 50, 100, 250], [10, 25, 50, 100, 250]],
                 order: [[0, 'desc']],
                 language: {
                     processing: '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i>',
                     paginate: {
-                        next: '<i class="fa fa-angle-right"></i>',
-                        previous: '<i class="fa fa-angle-left"></i>'
+                        next: '>',
+                        previous: '<'
                     }
                 }
             });

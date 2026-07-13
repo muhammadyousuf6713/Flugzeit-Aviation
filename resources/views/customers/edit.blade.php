@@ -8,7 +8,7 @@
 </style>
 <div class="row">
     <div class="col-12">
-        <div class="card mb-4 mx-4 shadow-sm border-0">
+        <div class="card mb-4 shadow-sm border-0">
             <div class="card-header pb-0 bg-white">
                 <div class="d-flex flex-row justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Edit Customer</h5>
@@ -174,10 +174,12 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-control-label">City</label>
-                                <select name="city" class="form-control" id="city-dropdown">
-                                    <option value="{{ $customer->city_id }}">
-                                        {{ $customer->city->name ?? 'N/A' }}
-                                    </option>
+                                <select name="city" class="form-control ajax-city-select2" id="city-dropdown" data-placeholder="Select City">
+                                    @if(isset($customer) && $customer->city_id)
+                                        <option value="{{ $customer->city_id }}" selected>
+                                            {{ $customer->city_id }}
+                                        </option>
+                                    @endif
                                 </select>
                             </div>
                         </div>
@@ -212,35 +214,6 @@
 @push('scripts')
 <script>
     // Initialize country-city dropdown
-    $(document).ready(function() {
-        // Trigger city load if country is preselected
-        var initialCountry = "{{ $customer->country }}";
-        if(initialCountry) {
-            $('#country-dropdown').trigger('change');
-        }
-
-        $('#country-dropdown').on('change', function() {
-            var country_id = this.value;
-            $("#city-dropdown").html('');
-            $.ajax({
-                url: "{{ url('get-cities-by-country') }}",
-                type: "POST",
-                data: {
-                    country_id: country_id,
-                    _token: '{{ csrf_token() }}'
-                },
-                dataType: 'json',
-                success: function(result) {
-                    $('#city-dropdown').html('<option value="">Select City</option>');
-                    $.each(result.cities, function(key, value) {
-                        var selected = (value.id == "{{ $customer->city_id }}") ? 'selected' : '';
-                        $("#city-dropdown").append('<option value="' + value.id + '" '+selected+'>' + value.name + '</option>');
-                    });
-                }
-            });
-        });
-    });
-
     // Existing customer check
     $("#phone0").on("keyup change", function(e) {
         let val = $(this).val();

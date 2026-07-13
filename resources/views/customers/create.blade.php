@@ -8,7 +8,7 @@
     </style>
     <div class="row">
         <div class="col-12">
-            <div class="card mb-4 mx-4 shadow-sm border-0">
+            <div class="card mb-4 shadow-sm border-0">
                 <div class="card-header pb-0 bg-white">
                     <div class="d-flex flex-row justify-content-between align-items-center">
                         <h5 class="mb-0 fw-bold">Add New Customer</h5>
@@ -161,8 +161,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-control-label">City</label>
-                                    <select name="city" class="form-control" id="city-dropdown">
-                                        <option value="">Select City</option>
+                                    <select name="city" class="form-control ajax-city-select2" id="city-dropdown" data-placeholder="Select City">
                                     </select>
                                 </div>
                             </div>
@@ -212,28 +211,7 @@
         });
         // Ajax to get City
         $(document).ready(function() {
-            $('#country-dropdown').on('change', function() {
-                var country_id = this.value;
-                $("#city-dropdown").html('');
-                $.ajax({
-                    url: "{{ url('get-cities-by-country') }}",
-                    type: "POST",
-                    data: {
-                        country_id: country_id,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    dataType: 'json',
-                    success: function(result) {
-                        $('#city-dropdown').html(
-                            '<option value="">Select City</option>');
-                        $.each(result.cities, function(key, value) {
-                            $("#city-dropdown").append('<option value="' +
-                                value.id +
-                                '">' + value.name + '</option>');
-                        });
-                    }
-                });
-            });
+            // Country dropdown is retained, but City dropdown is now an independent searchable AJAX dropdown.
         });
     </script>
 

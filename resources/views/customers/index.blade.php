@@ -2,14 +2,13 @@
 
 @section('content')
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <div class="container-fluid py-4">
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
+
+    <div class="container-fluid">
 
         {{-- 🔍 Filter Panel --}}
-        <div class="card mb-4 shadow-sm mx-4">
+        <div class="card mb-4 shadow-sm">
             <div class="card-header p-3 d-flex justify-content-between align-items-center cursor-pointer" id="toggleFilterBtn">
                 <h6 class="fw-bold mb-0 text-primary"><i class="fa fa-filter me-2"></i>Filter Customers</h6>
                 <button class="btn btn-sm btn-link p-0 text-primary">
@@ -49,7 +48,7 @@
         {{-- 📋 Customers Table --}}
         <div class="row">
             <div class="col-12">
-                <div class="card mb-4 mx-4 shadow-sm border-0">
+                <div class="card mb-4 shadow-sm border-0 p-2">
                     <div class="card-header bg-white pb-0">
                         <div class="d-flex flex-row justify-content-between align-items-center mb-3">
                             <h5 class="mb-0 fw-bold"><i class="fa fa-users me-2 text-primary"></i>Customers List</h5>
@@ -59,8 +58,8 @@
                         </div>
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
-                        <div class="table-responsive p-3">
-                            <table id="customers-table" class="table table-striped table-bordered nowrap align-middle w-100">
+                        <div class="table-responsive p-0">
+                            <table id="customers-table" class="table table-sm table-striped table-bordered nowrap align-middle w-100">
                                 <thead class="bg-light">
                                     <tr>
                                         <th style="width: 50px;">S.No</th>
@@ -98,13 +97,6 @@
 @endsection
 
 @push('scripts')
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.13.6/b-2.4.2/b-html5-2.4.2/r-2.5.0/datatables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
     <script>
         $(document).ready(function() {
             var table = $('#customers-table').DataTable({
@@ -141,15 +133,32 @@
                     }},
                     { data: 'action', name: 'action', orderable: false, searchable: false }
                 ],
-                dom: 'Blfrtip',
-                buttons: ['excel', 'pdf', 'print'],
-                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                dom: "<'row mb-3'<'col-md-8 d-flex align-items-center gap-2'B l><'col-md-4'f>>t<'row mt-3'<'col-md-6'i><'col-md-6'p>>",
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        className: 'btn btn-sm btn-primaryHtml5',
+                        exportOptions: {
+                            columns: [0, 2, 3, 4, 5, 7, 8, 10, 11]
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        className: 'btn btn-sm btn-primaryHtml5',
+                        exportOptions: {
+                            columns: [0, 2, 3, 4, 5, 7, 8, 10, 11]
+                        }
+                    }
+                ],
+                lengthMenu: [[10, 25, 50, 100, 250], [10, 25, 50, 100, 250]],
                 order: [[0, 'desc']],
                 language: {
                     processing: '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i>',
                     paginate: {
-                        next: '<i class="fa fa-angle-right"></i>',
-                        previous: '<i class="fa fa-angle-left"></i>'
+                        next: '>',
+                        previous: '<'
                     }
                 }
             });
